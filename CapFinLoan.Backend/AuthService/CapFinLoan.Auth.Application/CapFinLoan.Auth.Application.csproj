@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CapFinLoan.Auth.Domain\CapFinLoan.Auth.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
