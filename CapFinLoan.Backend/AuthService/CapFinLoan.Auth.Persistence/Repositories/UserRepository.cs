@@ -1,54 +1,63 @@
 using CapFinLoan.Auth.Application.Interfaces;
 using CapFinLoan.Auth.Domain.Entities;
-using CapFinLoan.Auth.Persistence.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace CapFinLoan.Auth.Persistence.Repositories;
 
 public class UserRepository : IUserRepository
 {
-    private readonly AuthDbContext _dbContext;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public UserRepository(AuthDbContext dbContext)
+    public UserRepository(UserManager<ApplicationUser> userManager)
     {
-        _dbContext = dbContext;
+        _userManager = userManager;
     }
 
     public async Task<bool> ExistsByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
-        return await _dbContext.Users
-            .AsNoTracking()
-            .AnyAsync(x => x.Email == email, cancellationToken);
+        return await _userManager.FindByEmailAsync(email) is not null;
     }
 
-    public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
+    public async Task<ApplicationUser?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
-        return await _dbContext.Users
-            .FirstOrDefaultAsync(x => x.Email == email, cancellationToken);
+        return await _userManager.FindByEmailAsync(email);
     }
 
-    public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<ApplicationUser?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _dbContext.Users
-            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        return await _userManager.FindByIdAsync(id.ToString());
     }
 
-    public async Task<IReadOnlyCollection<User>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyCollection<ApplicationUser>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return await _dbContext.Users
+        return await _userManager.Users
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
 
-    public async Task AddAsync(User user, CancellationToken cancellationToken = default)
+    public async Task CreateAsync(ApplicationUser user, string rawPassword, CancellationToken cancellationToken = default)
     {
-        await _dbContext.Users.AddAsync(user, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        var result = await _userManager.CreateAsync(user, rawPassword);
+        if (!result.Succeeded)
+        {
+            var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+            throw new InvalidOperationException($"Failed to create user: {errors}");
+        }
     }
 
-    public async Task UpdateAsync(User user, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(ApplicationUser user, CancellationToken cancellationToken = default)
     {
-        _dbContext.Users.Update(user);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        var result = await _userManager.UpdateAsync(user);
+        if (!result.Succeeded)
+        {
+            var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+            throw new InvalidOperationException($"Failed to update user: {errors}");
+        }
+    }
+
+    public async Task<bool> CheckPasswordAsync(ApplicationUser user, string password)
+    {
+        return await _userManager.CheckPasswordAsync(user, password);
     }
 }
