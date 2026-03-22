@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CapFinLoan.Admin.Application\CapFinLoan.Admin.Application.csproj" />
+    <ProjectReference Include="..\CapFinLoan.Admin.Domain\CapFinLoan.Admin.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
