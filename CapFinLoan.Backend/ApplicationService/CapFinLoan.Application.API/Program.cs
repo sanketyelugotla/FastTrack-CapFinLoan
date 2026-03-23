@@ -21,6 +21,9 @@ var issuer = jwtSection["Issuer"] ?? throw new InvalidOperationException("JWT is
 var audience = jwtSection["Audience"] ?? throw new InvalidOperationException("JWT audience is missing.");
 var key = Encoding.UTF8.GetBytes(secretKey);
 
+// DEBUG: Log JWT key at startup
+Console.WriteLine($"[DEBUG] JWT Key: {secretKey}");
+
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -34,14 +37,61 @@ builder.Services
             ValidIssuer = issuer,
             ValidAudience = audience,
             IssuerSigningKey = new SymmetricSecurityKey(key),
-            ClockSkew = TimeSpan.FromMinutes(1)
+            ClockSkew = TimeSpan.FromMinutes(1),
+            RoleClaimType = "role",
+            NameClaimType = "name"
+        };
+
+        // DEBUG: Log incoming JWT tokens
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                if (!string.IsNullOrEmpty(context.Token))
+                {
+                    Console.WriteLine($"[DEBUG] Incoming JWT Token: {context.Token}");
+                }
+                return Task.CompletedTask;
+            }
         };
     });
 
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "CapFinLoan Application API",
+        Version = "1.0"
+    });
+
+    // Add JWT Bearer support
+    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description = "Enter 'Bearer' [space] and then your valid JWT token."
+    });
+    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
 
 var app = builder.Build();
 

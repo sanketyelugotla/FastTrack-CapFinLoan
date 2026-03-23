@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CapFinLoan.Auth.Persistence.Data;
 
-public class AuthDbContext : IdentityDbContext<ApplicationUsesr, IdentityRole<Guid>, Guid>
+public class AuthDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
 {
     public AuthDbContext(DbContextOptions<AuthDbContext> options) : base(options)
     {
