@@ -117,6 +117,29 @@ public class ApplicationsController : ControllerBase
         }
     }
 
+    [HttpDelete("{id:guid}")]
+    [Authorize(Roles = RoleNames.Applicant)]
+    public async Task<IActionResult> DeleteDraft(Guid id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _loanApplicationService.DeleteDraftAsync(id, GetUserId(), false, cancellationToken);
+            return NoContent();
+        }
+        catch (KeyNotFoundException exception)
+        {
+            return NotFound(new { message = exception.Message });
+        }
+        catch (InvalidOperationException exception)
+        {
+            return BadRequest(new { message = exception.Message });
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+    }
+
     private Guid GetUserId()
     {
         var value = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub");

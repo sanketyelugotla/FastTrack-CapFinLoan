@@ -11,4 +11,5 @@ public interface ILoanApplicationService
     Task<IReadOnlyCollection<LoanApplicationResponse>> GetMineAsync(Guid applicantUserId, CancellationToken cancellationToken = default);
     Task<LoanApplicationResponse> SubmitAsync(Guid applicationId, Guid requesterUserId, CancellationToken cancellationToken = default);
     Task<LoanApplicationStatusResponse> GetStatusAsync(Guid applicationId, Guid requesterUserId, bool isAdmin, CancellationToken cancellationToken = default);
+    Task DeleteDraftAsync(Guid applicationId, Guid requesterUserId, bool isAdmin, CancellationToken cancellationToken = default);
 }

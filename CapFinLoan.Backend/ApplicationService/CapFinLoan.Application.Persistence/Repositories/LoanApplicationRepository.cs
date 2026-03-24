@@ -38,7 +38,16 @@ public class LoanApplicationRepository : ILoanApplicationRepository
 
     public async Task UpdateAsync(LoanApplication application, CancellationToken cancellationToken = default)
     {
-        _dbContext.LoanApplications.Update(application);
+        if (_dbContext.Entry(application).State == EntityState.Detached)
+        {
+            _dbContext.LoanApplications.Update(application);
+        }
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteAsync(LoanApplication application, CancellationToken cancellationToken = default)
+    {
+        _dbContext.LoanApplications.Remove(application);
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 }

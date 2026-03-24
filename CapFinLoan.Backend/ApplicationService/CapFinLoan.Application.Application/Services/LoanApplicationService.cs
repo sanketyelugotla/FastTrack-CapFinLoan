@@ -122,6 +122,18 @@ public class LoanApplicationService : ILoanApplicationService
         };
     }
 
+    public async Task DeleteDraftAsync(Guid applicationId, Guid requesterUserId, bool isAdmin, CancellationToken cancellationToken = default)
+    {
+        var application = await GetOwnedOrAdminApplicationAsync(applicationId, requesterUserId, isAdmin, cancellationToken);
+
+        if (!string.Equals(application.Status, ApplicationStatuses.Draft, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException("Only draft applications can be deleted.");
+        }
+
+        await _loanApplicationRepository.DeleteAsync(application, cancellationToken);
+    }
+
     private async Task<LoanApplication> GetOwnedOrAdminApplicationAsync(Guid applicationId, Guid requesterUserId, bool isAdmin, CancellationToken cancellationToken)
     {
         var application = await _loanApplicationRepository.GetByIdAsync(applicationId, cancellationToken)
