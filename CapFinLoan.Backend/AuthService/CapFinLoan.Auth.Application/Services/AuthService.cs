@@ -51,6 +51,40 @@ public class AuthService : IAuthService
         };
     }
 
+    public async Task<AuthResponse> SignupAdminAsync(SignupRequest request, CancellationToken cancellationToken = default)
+    {
+        var email = request.Email.Trim().ToLowerInvariant();
+        if (await _userRepository.ExistsByEmailAsync(email, cancellationToken))
+        {
+            throw new InvalidOperationException("An account already exists with this email.");
+        }
+
+        var user = new ApplicationUser
+        {
+            UserName = email,
+            Email = email,
+            PhoneNumber = request.Phone.Trim(),
+            Name = request.Name.Trim(),
+            Role = RoleNames.Admin,
+            IsActive = true,
+            CreatedAtUtc = DateTime.UtcNow,
+            UpdatedAtUtc = DateTime.UtcNow
+        };
+
+        await _userRepository.CreateAsync(user, request.Password, cancellationToken);
+
+        var (token, expiresAtUtc) = _jwtTokenGenerator.GenerateToken(user);
+        return new AuthResponse
+        {
+            Token = token,
+            ExpiresAtUtc = expiresAtUtc,
+            Role = user.Role,
+            UserId = user.Id,
+            Name = user.Name,
+            Email = user.Email!
+        };
+    }
+
     public async Task<AuthResponse> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default)
     {
         var email = request.Email.Trim().ToLowerInvariant();

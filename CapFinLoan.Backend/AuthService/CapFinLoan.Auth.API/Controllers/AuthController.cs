@@ -31,6 +31,22 @@ public class AuthController : ControllerBase
         }
     }
 
+    [HttpPost("signup-admin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> SignupAdmin([FromBody] SignupRequest request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await _authService.SignupAdminAsync(request, cancellationToken);
+            return Ok(result);
+        }
+        catch (InvalidOperationException exception)
+        {
+            return BadRequest(new { message = exception.Message });
+        }
+    }
+
     [HttpPost("login")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
