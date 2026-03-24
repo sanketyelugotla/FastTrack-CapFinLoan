@@ -38,8 +38,8 @@ builder.Services
             ValidAudience = audience,
             IssuerSigningKey = new SymmetricSecurityKey(key),
             ClockSkew = TimeSpan.FromMinutes(1),
-            RoleClaimType = "role",
-            NameClaimType = "name"
+            RoleClaimType = System.Security.Claims.ClaimTypes.Role,
+            NameClaimType = System.Security.Claims.ClaimTypes.Name
         };
 
         // DEBUG: Log incoming JWT tokens
@@ -110,5 +110,7 @@ using (var scope = app.Services.CreateScope())
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+app.MapGet("/", () => "Application Service running");
 
 app.Run();
