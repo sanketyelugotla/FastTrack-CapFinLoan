@@ -19,8 +19,8 @@ foreach ($service in $services) {
 }
 
 Write-Host "All services started!" -ForegroundColor Green
-Write-Host "Auth Service: http://localhost:5025"
-Write-Host "Application Service: http://localhost:5256"
-Write-Host "Document Service: http://localhost:5262"
-Write-Host "Admin Service: http://localhost:5067"
-Write-Host "API Gateway: http://localhost:5021" -ForegroundColor Magenta
+Write-Host "Auth Service: http://localhost:5021"
+Write-Host "Application Service: http://localhost:5022"
+Write-Host "Document Service: http://localhost:5023"
+Write-Host "Admin Service: http://localhost:5024"
+Write-Host "API Gateway: http://localhost:5020" -ForegroundColor Magenta

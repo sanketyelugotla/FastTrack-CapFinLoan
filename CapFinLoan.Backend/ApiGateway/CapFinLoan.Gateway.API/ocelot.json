@@ -2,60 +2,55 @@
   "Routes": [
     {
       "UpstreamPathTemplate": "/gateway/auth/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
       "DownstreamPathTemplate": "/api/auth/{everything}",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        { "Host": "localhost", "Port": 5025 }
-      ]
+      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 5021 }]
     },
     {
       "UpstreamPathTemplate": "/gateway/applications/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
       "DownstreamPathTemplate": "/api/applications/{everything}",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        { "Host": "localhost", "Port": 5256 }
-      ]
+      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 5022 }]
     },
     {
       "UpstreamPathTemplate": "/gateway/documents/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
       "DownstreamPathTemplate": "/api/documents/{everything}",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        { "Host": "localhost", "Port": 5262 }
-      ]
+      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 5023 }]
     },
     {
       "UpstreamPathTemplate": "/gateway/admin/applications/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
       "DownstreamPathTemplate": "/api/admin/applications/{everything}",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        { "Host": "localhost", "Port": 5067 }
-      ]
+      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 5024 }]
     },
     {
       "UpstreamPathTemplate": "/gateway/admin/documents/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
       "DownstreamPathTemplate": "/api/admin/documents/{everything}",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        { "Host": "localhost", "Port": 5262 }
-      ]
+      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 5023 }]
     },
     {
       "UpstreamPathTemplate": "/gateway/admin/users/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
       "DownstreamPathTemplate": "/api/admin/users/{everything}",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        { "Host": "localhost", "Port": 5025 }
-      ]
+      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 5024 }]
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/api/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
+      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 5020 }]
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "http://localhost:5021"
+    "BaseUrl": "http://localhost:5020"
   }
 }
