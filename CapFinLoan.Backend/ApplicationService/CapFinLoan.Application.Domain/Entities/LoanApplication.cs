@@ -4,7 +4,7 @@ namespace CapFinLoan.Application.Domain.Entities;
 
 public class LoanApplication
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; set; }
     public Guid ApplicantUserId { get; set; }
     public string ApplicationNumber { get; set; } = string.Empty;
     public string Status { get; set; } = ApplicationStatuses.Draft;

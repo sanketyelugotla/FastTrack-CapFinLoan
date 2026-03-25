@@ -59,7 +59,7 @@
   "SwaggerEndPoints": [
     {
       "Key": "auth",
-      "TransformByOcelotConfig": false,
+      "TransformByOcelotConfig": true,
       "Config": [
         {
           "Name": "Auth Service",
@@ -70,7 +70,7 @@
     },
     {
       "Key": "applications",
-      "TransformByOcelotConfig": false,
+      "TransformByOcelotConfig": true,
       "Config": [
         {
           "Name": "Application Service",
@@ -81,7 +81,7 @@
     },
     {
       "Key": "documents",
-      "TransformByOcelotConfig": false,
+      "TransformByOcelotConfig": true,
       "Config": [
         {
           "Name": "Document Service",
@@ -92,7 +92,7 @@
     },
     {
       "Key": "admin",
-      "TransformByOcelotConfig": false,
+      "TransformByOcelotConfig": true,
       "Config": [
         {
           "Name": "Admin Service",
