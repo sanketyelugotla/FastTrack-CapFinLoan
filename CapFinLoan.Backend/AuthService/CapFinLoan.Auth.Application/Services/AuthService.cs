@@ -3,6 +3,7 @@ using CapFinLoan.Auth.Application.Contracts.Responses;
 using CapFinLoan.Auth.Application.Interfaces;
 using CapFinLoan.Auth.Domain.Constants;
 using CapFinLoan.Auth.Domain.Entities;
+using CapFinLoan.Messaging.Contracts.Events;
 
 namespace CapFinLoan.Auth.Application.Services;
 
@@ -10,11 +11,13 @@ public class AuthService : IAuthService
 {
     private readonly IUserRepository _userRepository;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
+    private readonly IEventPublisher _eventPublisher;
 
-    public AuthService(IUserRepository userRepository, IJwtTokenGenerator jwtTokenGenerator)
+    public AuthService(IUserRepository userRepository, IJwtTokenGenerator jwtTokenGenerator, IEventPublisher eventPublisher)
     {
         _userRepository = userRepository;
         _jwtTokenGenerator = jwtTokenGenerator;
+        _eventPublisher = eventPublisher;
     }
 
     public async Task<AuthResponse> SignupAsync(SignupRequest request, CancellationToken cancellationToken = default)
@@ -38,6 +41,15 @@ public class AuthService : IAuthService
         };
 
         await _userRepository.CreateAsync(user, request.Password, cancellationToken);
+
+        await _eventPublisher.PublishAsync(new UserRegisteredEvent
+        {
+            UserId = user.Id,
+            Email = user.Email!,
+            FullName = user.Name,
+            Role = user.Role,
+            RegisteredAtUtc = user.CreatedAtUtc
+        }, cancellationToken);
 
         var (token, expiresAtUtc) = _jwtTokenGenerator.GenerateToken(user);
         return new AuthResponse
@@ -72,6 +84,15 @@ public class AuthService : IAuthService
         };
 
         await _userRepository.CreateAsync(user, request.Password, cancellationToken);
+
+        await _eventPublisher.PublishAsync(new UserRegisteredEvent
+        {
+            UserId = user.Id,
+            Email = user.Email!,
+            FullName = user.Name,
+            Role = user.Role,
+            RegisteredAtUtc = user.CreatedAtUtc
+        }, cancellationToken);
 
         var (token, expiresAtUtc) = _jwtTokenGenerator.GenerateToken(user);
         return new AuthResponse

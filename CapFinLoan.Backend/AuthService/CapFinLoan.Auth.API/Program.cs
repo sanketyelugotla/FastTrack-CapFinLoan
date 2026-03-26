@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +35,20 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<CapFinLoan.Auth.Application.Interfaces.IEventPublisher, CapFinLoan.Auth.Infrastructure.Messaging.RabbitMqEventPublisher>();
+
+builder.Services.AddMassTransit(x =>
+{
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("localhost", "/", h =>
+        {
+            h.Username("guest");
+            h.Password("guest");
+        });
+        cfg.ConfigureEndpoints(context);
+    });
+});
 
 var jwtSection = builder.Configuration.GetSection(JwtOptions.SectionName);
 var secretKey = jwtSection["Key"] ?? throw new InvalidOperationException("JWT key is missing.");
