@@ -9,6 +9,11 @@
   <ItemGroup>
     <ProjectReference Include="..\CapFinLoan.Admin.Application\CapFinLoan.Admin.Application.csproj" />
     <ProjectReference Include="..\CapFinLoan.Admin.Domain\CapFinLoan.Admin.Domain.csproj" />
+    <ProjectReference Include="..\..\Shared\CapFinLoan.Messaging.Contracts\CapFinLoan.Messaging.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MassTransit.RabbitMQ" Version="8.2.5" />
   </ItemGroup>
 
 </Project>

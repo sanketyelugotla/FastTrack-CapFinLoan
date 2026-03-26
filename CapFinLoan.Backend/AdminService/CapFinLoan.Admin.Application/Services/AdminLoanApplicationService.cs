@@ -3,6 +3,7 @@ using CapFinLoan.Admin.Application.Contracts.Responses;
 using CapFinLoan.Admin.Application.Interfaces;
 using CapFinLoan.Admin.Domain.Constants;
 using CapFinLoan.Admin.Domain.Entities;
+using CapFinLoan.Messaging.Contracts.Events;
 
 namespace CapFinLoan.Admin.Application.Services;
 
@@ -17,10 +18,12 @@ public class AdminLoanApplicationService : IAdminLoanApplicationService
     };
 
     private readonly IAdminLoanApplicationRepository _adminLoanApplicationRepository;
+    private readonly IEventPublisher _eventPublisher;
 
-    public AdminLoanApplicationService(IAdminLoanApplicationRepository adminLoanApplicationRepository)
+    public AdminLoanApplicationService(IAdminLoanApplicationRepository adminLoanApplicationRepository, IEventPublisher eventPublisher)
     {
         _adminLoanApplicationRepository = adminLoanApplicationRepository;
+        _eventPublisher = eventPublisher;
     }
 
     public async Task<IReadOnlyCollection<AdminApplicationSummaryResponse>> GetQueueAsync(string? status, CancellationToken cancellationToken = default)
@@ -75,6 +78,18 @@ public class AdminLoanApplicationService : IAdminLoanApplicationService
         });
 
         await _adminLoanApplicationRepository.UpdateAsync(application, cancellationToken);
+
+        await _eventPublisher.PublishAsync(new ApplicationStatusChangedEvent
+        {
+            ApplicationId = application.Id,
+            ApplicationNumber = application.ApplicationNumber,
+            PreviousStatus = previousStatus,
+            NewStatus = targetStatus,
+            Remarks = request.Remarks.Trim(),
+            ChangedByUserId = reviewerUserId,
+            ChangedAtUtc = now
+        }, cancellationToken);
+
         return MapDetail(application);
     }
 
