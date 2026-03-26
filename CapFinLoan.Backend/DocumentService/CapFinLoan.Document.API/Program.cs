@@ -1,9 +1,11 @@
 using System.Text;
 using CapFinLoan.Document.Application.Interfaces;
 using CapFinLoan.Document.Application.Services;
+using CapFinLoan.Document.Infrastructure.Messaging;
 using CapFinLoan.Document.Infrastructure.Storage;
 using CapFinLoan.Document.Persistence.Data;
 using CapFinLoan.Document.Persistence.Repositories;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -15,6 +17,20 @@ builder.Services.AddDbContext<DocumentDbContext>(options =>
 
 builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
 builder.Services.AddScoped<IDocumentService, DocumentService>();
+builder.Services.AddScoped<IEventPublisher, RabbitMqEventPublisher>();
+
+builder.Services.AddMassTransit(x =>
+{
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("localhost", "/", h =>
+        {
+            h.Username("guest");
+            h.Password("guest");
+        });
+        cfg.ConfigureEndpoints(context);
+    });
+});
 
 // Local file storage — saves to wwwroot/uploads
 var uploadsPath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot", "uploads");

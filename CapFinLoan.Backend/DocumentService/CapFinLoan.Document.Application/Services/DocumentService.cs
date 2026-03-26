@@ -1,6 +1,7 @@
 using CapFinLoan.Document.Application.Contracts.Responses;
 using CapFinLoan.Document.Application.Interfaces;
 using CapFinLoan.Document.Domain.Entities;
+using CapFinLoan.Messaging.Contracts.Events;
 using Microsoft.AspNetCore.Http;
 
 namespace CapFinLoan.Document.Application.Services;
@@ -9,6 +10,7 @@ public class DocumentService : IDocumentService
 {
     private readonly IDocumentRepository _documentRepository;
     private readonly IFileStorageService _fileStorageService;
+    private readonly IEventPublisher _eventPublisher;
 
     private static readonly HashSet<string> AllowedContentTypes = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -19,10 +21,11 @@ public class DocumentService : IDocumentService
 
     private const long MaxFileSizeBytes = 5 * 1024 * 1024; // 5 MB
 
-    public DocumentService(IDocumentRepository documentRepository, IFileStorageService fileStorageService)
+    public DocumentService(IDocumentRepository documentRepository, IFileStorageService fileStorageService, IEventPublisher eventPublisher)
     {
         _documentRepository = documentRepository;
         _fileStorageService = fileStorageService;
+        _eventPublisher = eventPublisher;
     }
 
     public async Task<DocumentResponse> UploadAsync(Guid userId, Guid applicationId, string documentType, IFormFile file, CancellationToken cancellationToken = default)
@@ -88,6 +91,20 @@ public class DocumentService : IDocumentService
         document.UpdatedAtUtc = DateTime.UtcNow;
 
         await _documentRepository.UpdateAsync(document, cancellationToken);
+
+        await _eventPublisher.PublishAsync(new DocumentVerifiedEvent
+        {
+            DocumentId = document.Id,
+            ApplicationId = document.ApplicationId,
+            UserId = document.UserId,
+            DocumentType = document.DocumentType,
+            FileName = document.FileName,
+            IsVerified = document.IsVerified,
+            Remarks = document.Remarks,
+            VerifiedByUserId = adminUserId,
+            VerifiedAtUtc = document.VerifiedAtUtc ?? DateTime.UtcNow
+        }, cancellationToken);
+
         return MapToResponse(document);
     }
 
