@@ -3,16 +3,19 @@ using CapFinLoan.Application.Application.Contracts.Responses;
 using CapFinLoan.Application.Application.Interfaces;
 using CapFinLoan.Application.Domain.Constants;
 using CapFinLoan.Application.Domain.Entities;
+using CapFinLoan.Messaging.Contracts.Events;
 
 namespace CapFinLoan.Application.Application.Services;
 
 public class LoanApplicationService : ILoanApplicationService
 {
     private readonly ILoanApplicationRepository _loanApplicationRepository;
+    private readonly IEventPublisher _eventPublisher;
 
-    public LoanApplicationService(ILoanApplicationRepository loanApplicationRepository)
+    public LoanApplicationService(ILoanApplicationRepository loanApplicationRepository, IEventPublisher eventPublisher)
     {
         _loanApplicationRepository = loanApplicationRepository;
+        _eventPublisher = eventPublisher;
     }
 
     public async Task<LoanApplicationResponse> CreateDraftAsync(Guid applicantUserId, SaveLoanApplicationRequest request, CancellationToken cancellationToken = default)
@@ -97,6 +100,19 @@ public class LoanApplicationService : ILoanApplicationService
         });
 
         await _loanApplicationRepository.UpdateAsync(application, cancellationToken);
+
+        await _eventPublisher.PublishAsync(new ApplicationSubmittedEvent
+        {
+            ApplicationId = application.Id,
+            ApplicantUserId = application.ApplicantUserId,
+            ApplicationNumber = application.ApplicationNumber,
+            ApplicantName = $"{application.FirstName} {application.LastName}".Trim(),
+            Email = application.Email,
+            RequestedAmount = application.RequestedAmount,
+            RequestedTenureMonths = application.RequestedTenureMonths,
+            SubmittedAtUtc = now
+        }, cancellationToken);
+
         return Map(application);
     }
 

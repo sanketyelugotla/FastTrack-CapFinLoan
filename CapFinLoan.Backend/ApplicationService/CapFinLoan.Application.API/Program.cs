@@ -1,8 +1,10 @@
 using System.Text;
 using CapFinLoan.Application.Application.Interfaces;
 using CapFinLoan.Application.Application.Services;
+using CapFinLoan.Application.Infrastructure.Messaging;
 using CapFinLoan.Application.Persistence.Data;
 using CapFinLoan.Application.Persistence.Repositories;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -14,6 +16,23 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<ILoanApplicationRepository, LoanApplicationRepository>();
 builder.Services.AddScoped<ILoanApplicationService, LoanApplicationService>();
+builder.Services.AddScoped<IEventPublisher, RabbitMqEventPublisher>();
+
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<ApplicationStatusChangedConsumer>();
+    x.AddConsumer<UserRegisteredConsumer>();
+
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("localhost", "/", h =>
+        {
+            h.Username("guest");
+            h.Password("guest");
+        });
+        cfg.ConfigureEndpoints(context);
+    });
+});
 
 var jwtSection = builder.Configuration.GetSection("Jwt");
 var secretKey = jwtSection["Key"] ?? throw new InvalidOperationException("JWT key is missing.");
