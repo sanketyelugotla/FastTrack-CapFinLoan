@@ -1,3 +1,5 @@
+using CapFinLoan.Admin.Domain.Constants;
+
 namespace CapFinLoan.Admin.Domain.Entities;
 
 public class LoanApplication
@@ -5,7 +7,7 @@ public class LoanApplication
     public Guid Id { get; set; }
     public Guid ApplicantUserId { get; set; }
     public string ApplicationNumber { get; set; } = string.Empty;
-    public string Status { get; set; } = string.Empty;
+    public string Status { get; set; } = ApplicationStatuses.Draft;
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public DateTime? DateOfBirth { get; set; }
@@ -26,9 +28,10 @@ public class LoanApplication
     public int RequestedTenureMonths { get; set; }
     public string LoanPurpose { get; set; } = string.Empty;
     public string Remarks { get; set; } = string.Empty;
-    public DateTime CreatedAtUtc { get; set; }
-    public DateTime UpdatedAtUtc { get; set; }
+    public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAtUtc { get; set; } = DateTime.UtcNow;
     public DateTime? SubmittedAtUtc { get; set; }
 
     public ICollection<ApplicationStatusHistory> StatusHistory { get; set; } = new List<ApplicationStatusHistory>();
+    public ICollection<Decision> Decisions { get; set; } = new List<Decision>();
 }

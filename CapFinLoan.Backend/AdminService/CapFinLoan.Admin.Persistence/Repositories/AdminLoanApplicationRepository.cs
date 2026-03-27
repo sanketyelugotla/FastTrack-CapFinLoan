@@ -19,6 +19,7 @@ public class AdminLoanApplicationRepository : IAdminLoanApplicationRepository
     {
         return await _dbContext.LoanApplications
             .Include(x => x.StatusHistory)
+            .Include(x => x.Decisions)
             .FirstOrDefaultAsync(x => x.Id == applicationId, cancellationToken);
     }
 

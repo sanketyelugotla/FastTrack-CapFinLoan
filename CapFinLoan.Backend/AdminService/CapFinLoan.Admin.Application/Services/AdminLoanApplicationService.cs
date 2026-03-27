@@ -77,6 +77,20 @@ public class AdminLoanApplicationService : IAdminLoanApplicationService
             ChangedAtUtc = now
         });
 
+        application.Decisions.Add(new Decision
+        {
+            LoanApplicationId = application.Id,
+            AdminUserId = reviewerUserId,
+            DecisionStatus = targetStatus,
+            Remarks = request.Remarks.Trim(),
+            // Approved decisions default to requested amount unless future workflow captures a custom sanction amount.
+            SanctionAmount = string.Equals(targetStatus, ApplicationStatuses.Approved, StringComparison.OrdinalIgnoreCase)
+                ? application.RequestedAmount
+                : null,
+            InterestRate = null,
+            DecisionAtUtc = now
+        });
+
         await _adminLoanApplicationRepository.UpdateAsync(application, cancellationToken);
 
         await _eventPublisher.PublishAsync(new ApplicationStatusChangedEvent
@@ -139,12 +153,14 @@ public class AdminLoanApplicationService : IAdminLoanApplicationService
 
     private static string NormalizeStatus(string status)
     {
-        return status.Trim() switch
+        var compact = status.Trim().Replace(" ", string.Empty).Replace("-", string.Empty).Replace("_", string.Empty);
+
+        return compact switch
         {
-            var value when value.Equals(ApplicationStatuses.DocsPending, StringComparison.OrdinalIgnoreCase) => ApplicationStatuses.DocsPending,
-            var value when value.Equals(ApplicationStatuses.UnderReview, StringComparison.OrdinalIgnoreCase) => ApplicationStatuses.UnderReview,
-            var value when value.Equals(ApplicationStatuses.Approved, StringComparison.OrdinalIgnoreCase) => ApplicationStatuses.Approved,
-            var value when value.Equals(ApplicationStatuses.Rejected, StringComparison.OrdinalIgnoreCase) => ApplicationStatuses.Rejected,
+            var value when value.Equals("DocsPending", StringComparison.OrdinalIgnoreCase) => ApplicationStatuses.DocsPending,
+            var value when value.Equals("UnderReview", StringComparison.OrdinalIgnoreCase) => ApplicationStatuses.UnderReview,
+            var value when value.Equals("Approved", StringComparison.OrdinalIgnoreCase) => ApplicationStatuses.Approved,
+            var value when value.Equals("Rejected", StringComparison.OrdinalIgnoreCase) => ApplicationStatuses.Rejected,
             _ => status.Trim()
         };
     }
@@ -205,13 +221,15 @@ public class AdminLoanApplicationService : IAdminLoanApplicationService
             UpdatedAtUtc = application.UpdatedAtUtc,
             SubmittedAtUtc = application.SubmittedAtUtc,
             Timeline = application.StatusHistory
-                .OrderBy(x => x.ChangedAtUtc)
+                .OrderByDescending(x => x.ChangedAtUtc)
                 .Select(x => new AdminApplicationStatusHistoryResponse
                 {
+                    Status = x.ToStatus,
                     FromStatus = x.FromStatus,
                     ToStatus = x.ToStatus,
                     Remarks = x.Remarks,
                     ChangedByUserId = x.ChangedByUserId,
+                    CreatedAtUtc = x.ChangedAtUtc,
                     ChangedAtUtc = x.ChangedAtUtc
                 })
                 .ToArray()

@@ -11,6 +11,7 @@ public class AdminDbContext : DbContext
 
     public DbSet<LoanApplication> LoanApplications => Set<LoanApplication>();
     public DbSet<ApplicationStatusHistory> ApplicationStatusHistories => Set<ApplicationStatusHistory>();
+    public DbSet<Decision> Decisions => Set<Decision>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -45,6 +46,11 @@ public class AdminDbContext : DbContext
                 .WithOne(x => x.LoanApplication)
                 .HasForeignKey(x => x.LoanApplicationId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasMany(x => x.Decisions)
+                .WithOne(x => x.LoanApplication)
+                .HasForeignKey(x => x.LoanApplicationId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<ApplicationStatusHistory>(entity =>
@@ -54,6 +60,16 @@ public class AdminDbContext : DbContext
             entity.Property(x => x.FromStatus).HasMaxLength(30);
             entity.Property(x => x.ToStatus).HasMaxLength(30).IsRequired();
             entity.Property(x => x.Remarks).HasMaxLength(1000);
+        });
+
+        modelBuilder.Entity<Decision>(entity =>
+        {
+            entity.ToTable("Decisions");
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.DecisionStatus).HasMaxLength(30).IsRequired();
+            entity.Property(x => x.Remarks).HasMaxLength(1000);
+            entity.Property(x => x.SanctionAmount).HasColumnType("decimal(18,2)");
+            entity.Property(x => x.InterestRate).HasColumnType("decimal(5,2)");
         });
     }
 }
