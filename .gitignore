@@ -70,3 +70,6 @@ npm-debug.log*
 
 # Ignore temporary files
 ~$*
+
+# Stitch screens
+Stitch_Screens
