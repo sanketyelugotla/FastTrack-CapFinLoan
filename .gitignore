@@ -38,7 +38,9 @@ Thumbs.db
 
 # Ignore local settings
 appsettings.*.json
-!appsettings.json
+
+# Document upload folders (DocumentService)
+CapFinLoan.Backend/DocumentService/CapFinLoan.Document.API/wwwroot/uploads/
 
 # Ignore logs
 logs/
