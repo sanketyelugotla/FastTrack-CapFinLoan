@@ -1,3 +1,5 @@
+using CapFinLoan.Document.Domain.Constants;
+
 namespace CapFinLoan.Document.Domain.Entities;
 
 /// <summary>
@@ -16,7 +18,11 @@ public class LoanDocument
 
     public string DocumentType { get; set; } = string.Empty;
 
-    public bool IsVerified { get; set; }
+    /// <summary>Explicit status of this document in the review lifecycle.</summary>
+    public DocumentStatus Status { get; set; } = DocumentStatus.Pending;
+
+    // Legacy derived fields — kept for backwards compatibility
+    public bool IsVerified => Status == DocumentStatus.Verified;
     public Guid? VerifiedByUserId { get; set; }
     public DateTime? VerifiedAtUtc { get; set; }
     public string? Remarks { get; set; }

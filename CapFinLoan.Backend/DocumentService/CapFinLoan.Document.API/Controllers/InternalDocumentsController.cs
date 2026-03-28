@@ -8,13 +8,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace CapFinLoan.Document.API.Controllers;
 
 [ApiController]
-[Route("api/admin/documents")]
+[Route("api/internal/documents")]
 [Authorize(Roles = RoleNames.Admin)]
-public class AdminDocumentsController : ControllerBase
+public class InternalDocumentsController : ControllerBase
 {
     private readonly IDocumentService _documentService;
 
-    public AdminDocumentsController(IDocumentService documentService)
+    public InternalDocumentsController(IDocumentService documentService)
     {
         _documentService = documentService;
     }

@@ -7,13 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace CapFinLoan.Auth.API.Controllers;
 
 [ApiController]
-[Route("api/admin/users")]
+[Route("api/internal/users")]
 [Authorize(Roles = RoleNames.Admin)]
-public class AdminUsersController : ControllerBase
+public class InternalUsersController : ControllerBase
 {
     private readonly IAuthService _authService;
 
-    public AdminUsersController(IAuthService authService)
+    public InternalUsersController(IAuthService authService)
     {
         _authService = authService;
     }

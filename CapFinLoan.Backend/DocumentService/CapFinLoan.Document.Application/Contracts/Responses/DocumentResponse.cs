@@ -9,6 +9,11 @@ public class DocumentResponse
     public string ContentType { get; set; } = string.Empty;
     public long FileSizeBytes { get; set; }
     public string DocumentType { get; set; } = string.Empty;
+
+    /// <summary>Explicit status: Pending | UnderReview | Verified | ReuploadRequired</summary>
+    public string Status { get; set; } = "Pending";
+
+    // Kept for backwards compatibility with existing frontend/consumers
     public bool IsVerified { get; set; }
     public Guid? VerifiedByUserId { get; set; }
     public DateTime? VerifiedAtUtc { get; set; }

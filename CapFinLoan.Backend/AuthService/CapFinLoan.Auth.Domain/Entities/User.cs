@@ -3,10 +3,6 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CapFinLoan.Auth.Domain.Entities;
 
-/// <summary>
-/// Extends ASP.NET Core IdentityUser with application-specific fields.
-/// Phone is stored via IdentityUser.PhoneNumber.
-/// </summary>
 public class ApplicationUser : IdentityUser<Guid>
 {
     public string Name { get; set; } = string.Empty;

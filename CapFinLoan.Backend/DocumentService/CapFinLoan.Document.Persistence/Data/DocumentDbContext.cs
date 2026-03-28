@@ -1,3 +1,4 @@
+using CapFinLoan.Document.Domain.Constants;
 using CapFinLoan.Document.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,6 +24,16 @@ public class DocumentDbContext : DbContext
             entity.Property(d => d.ContentType).IsRequired().HasMaxLength(100);
             entity.Property(d => d.DocumentType).IsRequired().HasMaxLength(50);
             entity.Property(d => d.Remarks).HasMaxLength(1000);
+
+            // Store Status as a readable string (e.g. "Pending", "Verified", "ReuploadRequired")
+            entity.Property(d => d.Status)
+                  .HasConversion<string>()
+                  .HasMaxLength(30)
+                  .HasDefaultValue(DocumentStatus.Pending)
+                  .IsRequired();
+
+            // IsVerified is a computed property — ignore it in EF mapping
+            entity.Ignore(d => d.IsVerified);
 
             entity.HasIndex(d => d.ApplicationId);
             entity.HasIndex(d => d.UserId);

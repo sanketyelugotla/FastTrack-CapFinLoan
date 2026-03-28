@@ -77,6 +77,36 @@ public class DocumentsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Replace/edit a previously uploaded document.
+    /// </summary>
+    [HttpPut("{id:guid}")]
+    [Authorize(Roles = RoleNames.Applicant)]
+    public async Task<IActionResult> Replace(
+        Guid id,
+        IFormFile file,
+        [FromForm] string? documentType,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await _documentService.ReplaceAsync(GetUserId(), id, file, documentType, cancellationToken);
+            return Ok(result);
+        }
+        catch (KeyNotFoundException exception)
+        {
+            return NotFound(new { message = exception.Message });
+        }
+        catch (UnauthorizedAccessException exception)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = exception.Message });
+        }
+        catch (InvalidOperationException exception)
+        {
+            return BadRequest(new { message = exception.Message });
+        }
+    }
+
     private Guid GetUserId()
     {
         var value = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub");

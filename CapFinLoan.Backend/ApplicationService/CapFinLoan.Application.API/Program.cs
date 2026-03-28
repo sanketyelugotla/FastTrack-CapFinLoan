@@ -22,6 +22,7 @@ builder.Services.AddMassTransit(x =>
 {
     x.AddConsumer<ApplicationStatusChangedConsumer>();
     x.AddConsumer<UserRegisteredConsumer>();
+    x.AddConsumer<DocumentVerifiedConsumer>();
 
     x.UsingRabbitMq((context, cfg) =>
     {

@@ -124,24 +124,24 @@ public class AdminLoanApplicationService : IAdminLoanApplicationService
             throw new InvalidOperationException("Application is already in the requested status.");
         }
 
-        if (string.Equals(targetStatus, ApplicationStatuses.Approved, StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(currentStatus, ApplicationStatuses.UnderReview, StringComparison.OrdinalIgnoreCase))
-        {
-            throw new InvalidOperationException("Applications can be approved only from Under Review status.");
-        }
-
         if (string.Equals(targetStatus, ApplicationStatuses.Rejected, StringComparison.OrdinalIgnoreCase) &&
             string.IsNullOrWhiteSpace(remarks))
         {
             throw new InvalidOperationException("Remarks are required when rejecting an application.");
         }
 
+        if (string.Equals(targetStatus, ApplicationStatuses.DocsPending, StringComparison.OrdinalIgnoreCase) &&
+            string.IsNullOrWhiteSpace(remarks))
+        {
+            throw new InvalidOperationException("Remarks are required when requesting document re-upload.");
+        }
+
         var allowedFromStatuses = targetStatus switch
         {
-            ApplicationStatuses.DocsPending => new[] { ApplicationStatuses.Submitted, ApplicationStatuses.UnderReview },
-            ApplicationStatuses.UnderReview => new[] { ApplicationStatuses.Submitted, ApplicationStatuses.DocsPending },
-            ApplicationStatuses.Approved => new[] { ApplicationStatuses.UnderReview },
-            ApplicationStatuses.Rejected => new[] { ApplicationStatuses.Submitted, ApplicationStatuses.DocsPending, ApplicationStatuses.UnderReview },
+            ApplicationStatuses.DocsPending => new[] { ApplicationStatuses.Submitted, ApplicationStatuses.DocsVerified, ApplicationStatuses.UnderReview },
+            ApplicationStatuses.UnderReview => new[] { ApplicationStatuses.Submitted, ApplicationStatuses.DocsPending, ApplicationStatuses.DocsVerified },
+            ApplicationStatuses.Approved => new[] { ApplicationStatuses.Submitted, ApplicationStatuses.DocsPending, ApplicationStatuses.DocsVerified, ApplicationStatuses.UnderReview },
+            ApplicationStatuses.Rejected => new[] { ApplicationStatuses.Submitted, ApplicationStatuses.DocsPending, ApplicationStatuses.DocsVerified, ApplicationStatuses.UnderReview },
             _ => Array.Empty<string>()
         };
 
@@ -158,6 +158,7 @@ public class AdminLoanApplicationService : IAdminLoanApplicationService
         return compact switch
         {
             var value when value.Equals("DocsPending", StringComparison.OrdinalIgnoreCase) => ApplicationStatuses.DocsPending,
+            var value when value.Equals("DocsVerified", StringComparison.OrdinalIgnoreCase) => ApplicationStatuses.DocsVerified,
             var value when value.Equals("UnderReview", StringComparison.OrdinalIgnoreCase) => ApplicationStatuses.UnderReview,
             var value when value.Equals("Approved", StringComparison.OrdinalIgnoreCase) => ApplicationStatuses.Approved,
             var value when value.Equals("Rejected", StringComparison.OrdinalIgnoreCase) => ApplicationStatuses.Rejected,

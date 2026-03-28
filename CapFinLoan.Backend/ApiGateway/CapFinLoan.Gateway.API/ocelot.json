@@ -25,25 +25,9 @@
       "SwaggerKey": "documents"
     },
     {
-      "UpstreamPathTemplate": "/gateway/admin/applications/{everything}",
+      "UpstreamPathTemplate": "/gateway/admin/{everything}",
       "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
-      "DownstreamPathTemplate": "/api/admin/applications/{everything}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 5024 }],
-      "SwaggerKey": "admin"
-    },
-    {
-      "UpstreamPathTemplate": "/gateway/admin/documents/{everything}",
-      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
-      "DownstreamPathTemplate": "/api/admin/documents/{everything}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 5023 }],
-      "SwaggerKey": "documents"
-    },
-    {
-      "UpstreamPathTemplate": "/gateway/admin/users/{everything}",
-      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
-      "DownstreamPathTemplate": "/api/admin/users/{everything}",
+      "DownstreamPathTemplate": "/api/admin/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 5024 }],
       "SwaggerKey": "admin"

@@ -59,6 +59,18 @@ builder.Services
         };
     });
 
+builder.Services.AddHttpClient("AuthServiceClient", client =>
+{
+    // Point this to AuthService address
+    client.BaseAddress = new Uri("http://localhost:5021");
+});
+
+builder.Services.AddHttpClient("DocumentServiceClient", client =>
+{
+    // Point this to DocumentService address
+    client.BaseAddress = new Uri("http://localhost:5023");
+});
+
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

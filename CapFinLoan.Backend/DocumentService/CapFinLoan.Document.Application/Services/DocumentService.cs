@@ -1,5 +1,6 @@
 using CapFinLoan.Document.Application.Contracts.Responses;
 using CapFinLoan.Document.Application.Interfaces;
+using CapFinLoan.Document.Domain.Constants;
 using CapFinLoan.Document.Domain.Entities;
 using CapFinLoan.Messaging.Contracts.Events;
 using Microsoft.AspNetCore.Http;
@@ -51,12 +52,47 @@ public class DocumentService : IDocumentService
             ContentType = file.ContentType,
             FileSizeBytes = file.Length,
             DocumentType = documentType,
-            IsVerified = false,
+            Status = DocumentStatus.Pending,
             CreatedAtUtc = DateTime.UtcNow,
             UpdatedAtUtc = DateTime.UtcNow
         };
 
         await _documentRepository.AddAsync(document, cancellationToken);
+        return MapToResponse(document);
+    }
+
+    public async Task<DocumentResponse> ReplaceAsync(Guid userId, Guid documentId, IFormFile file, string? documentType = null, CancellationToken cancellationToken = default)
+    {
+        if (file.Length == 0)
+            throw new InvalidOperationException("File is empty.");
+
+        if (file.Length > MaxFileSizeBytes)
+            throw new InvalidOperationException($"File size exceeds the maximum allowed size of {MaxFileSizeBytes / (1024 * 1024)} MB.");
+
+        if (!AllowedContentTypes.Contains(file.ContentType))
+            throw new InvalidOperationException("File type is not supported. Allowed types: PDF, JPG, PNG.");
+
+        var document = await _documentRepository.GetByIdAsync(documentId, cancellationToken)
+                       ?? throw new KeyNotFoundException("Document not found.");
+
+        if (document.UserId != userId)
+            throw new UnauthorizedAccessException("You are not allowed to edit this document.");
+
+        await using var stream = file.OpenReadStream();
+        var storedFileName = await _fileStorageService.SaveFileAsync(stream, file.FileName, cancellationToken);
+
+        document.FileName = file.FileName;
+        document.StoredFileName = storedFileName;
+        document.ContentType = file.ContentType;
+        document.FileSizeBytes = file.Length;
+        document.DocumentType = string.IsNullOrWhiteSpace(documentType) ? document.DocumentType : documentType;
+        document.Status = DocumentStatus.Pending;  // Reset to pending on re-upload
+        document.VerifiedByUserId = null;
+        document.VerifiedAtUtc = null;
+        document.Remarks = null;
+        document.UpdatedAtUtc = DateTime.UtcNow;
+
+        await _documentRepository.UpdateAsync(document, cancellationToken);
         return MapToResponse(document);
     }
 
@@ -84,9 +120,9 @@ public class DocumentService : IDocumentService
         var document = await _documentRepository.GetByIdAsync(documentId, cancellationToken)
                        ?? throw new KeyNotFoundException("Document not found.");
 
-        document.IsVerified = isVerified;
+        document.Status = isVerified ? DocumentStatus.Verified : DocumentStatus.ReuploadRequired;
         document.VerifiedByUserId = adminUserId;
-        document.VerifiedAtUtc = DateTime.UtcNow;
+        document.VerifiedAtUtc = isVerified ? DateTime.UtcNow : null;
         document.Remarks = remarks;
         document.UpdatedAtUtc = DateTime.UtcNow;
 
@@ -119,6 +155,7 @@ public class DocumentService : IDocumentService
             ContentType = document.ContentType,
             FileSizeBytes = document.FileSizeBytes,
             DocumentType = document.DocumentType,
+            Status = document.Status.ToString(),
             IsVerified = document.IsVerified,
             VerifiedByUserId = document.VerifiedByUserId,
             VerifiedAtUtc = document.VerifiedAtUtc,
