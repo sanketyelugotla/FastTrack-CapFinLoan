@@ -1,0 +1,111 @@
+<div class="animate-fade-in-up">
+  <a
+    routerLink="/applicant/applications"
+    class="text-sm text-[var(--color-outline)] hover:text-[var(--color-primary)] mb-2 inline-block"
+    >← Back to Applications</a
+  >
+  <h1 class="text-2xl font-extrabold font-[var(--font-heading)] text-[var(--color-primary)] mb-2">
+    Documents
+  </h1>
+  <p class="text-sm text-[var(--color-on-surface-variant)] mb-8">
+    Upload required documents for your loan application.
+  </p>
+
+  @if (error()) {
+    <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+      {{ error() }}
+    </div>
+  }
+
+  <!-- Upload section -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+    @for (type of docTypes; track type.value) {
+      <div class="card">
+        <h3 class="text-sm font-bold text-[var(--color-primary)] mb-1">{{ type.label }}</h3>
+        <p class="text-xs text-[var(--color-outline)] mb-4">{{ type.description }}</p>
+
+        @if (getDocForType(type.value); as doc) {
+          <div
+            class="p-3 rounded-lg"
+            [class]="
+              doc.status === 'ReuploadRequired'
+                ? 'bg-amber-50 border border-amber-200'
+                : 'bg-[var(--color-surface-container-low)]'
+            "
+          >
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <p class="text-sm font-medium text-[var(--color-on-surface)]">{{ doc.fileName }}</p>
+                <p class="text-xs text-[var(--color-outline)]">
+                  Uploaded {{ doc.uploadedAtUtc || doc.createdAtUtc | date: 'mediumDate' }}
+                </p>
+              </div>
+              @if (doc.status === 'Verified') {
+                <span class="badge badge-approved">Verified</span>
+              } @else if (doc.status === 'ReuploadRequired') {
+                <span
+                  class="px-2 py-0.5 rounded text-[10px] font-bold uppercase font-label bg-amber-100 border border-amber-400 text-amber-700"
+                  >Re-upload Needed</span
+                >
+              } @else if (doc.status === 'UnderReview') {
+                <span class="badge badge-under-review">Under Review</span>
+              } @else {
+                <span class="badge badge-under-review">Pending</span>
+              }
+            </div>
+
+            @if (doc.status === 'ReuploadRequired' && doc.remarks) {
+              <div
+                class="mt-3 rounded-lg border border-amber-300 bg-white px-3 py-2 text-xs text-amber-800 flex items-start gap-1.5"
+              >
+                <span class="material-symbols-outlined text-[13px] shrink-0 mt-0.5">warning</span>
+                <span><strong>Admin:</strong> {{ doc.remarks }}</span>
+              </div>
+            }
+
+            <label
+              class="mt-3 block border border-[var(--color-outline-variant)]/40 rounded-lg p-3 text-center cursor-pointer hover:border-[var(--color-primary)]/40 hover:bg-white transition-all"
+              [class]="
+                doc.status === 'ReuploadRequired' ? 'border-amber-300 hover:border-amber-500' : ''
+              "
+            >
+              <input
+                type="file"
+                class="hidden"
+                (change)="replaceFile($event, doc.id, type.value)"
+                accept=".pdf,.jpg,.jpeg,.png"
+              />
+              @if (doc.status === 'ReuploadRequired') {
+                <p class="text-xs font-semibold text-amber-700">Re-upload Document</p>
+                <p class="text-[11px] text-amber-600 mt-1">
+                  Upload corrected document as requested by admin
+                </p>
+              } @else {
+                <p class="text-xs font-semibold text-[var(--color-primary)]">Replace / Re-upload</p>
+                <p class="text-[11px] text-[var(--color-outline)] mt-1">
+                  Upload corrected document
+                </p>
+              }
+            </label>
+          </div>
+        } @else {
+          <label
+            class="block border-2 border-dashed border-[var(--color-outline-variant)]/40 rounded-lg p-6 text-center cursor-pointer hover:border-[var(--color-primary)]/40 hover:bg-[var(--color-surface-container-low)] transition-all"
+          >
+            <input
+              type="file"
+              class="hidden"
+              (change)="uploadFile($event, type.value)"
+              accept=".pdf,.jpg,.jpeg,.png"
+            />
+            <p class="text-2xl mb-2">📎</p>
+            <p class="text-sm font-medium text-[var(--color-on-surface-variant)]">
+              Click to upload
+            </p>
+            <p class="text-xs text-[var(--color-outline)]">PDF, JPG, PNG (max 5MB)</p>
+          </label>
+        }
+      </div>
+    }
+  </div>
+</div>

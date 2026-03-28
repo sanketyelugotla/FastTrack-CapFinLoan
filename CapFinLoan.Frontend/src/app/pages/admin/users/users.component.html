@@ -1,0 +1,154 @@
+<div class="p-8 space-y-8 max-w-screen-2xl mx-auto animate-fade-in-up pb-12">
+    <!-- Header Section -->
+    <section class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+        <div>
+            <h2 class="font-headline font-extrabold text-3xl text-[var(--color-primary)] tracking-tight">User Management</h2>
+            <p class="text-[var(--color-on-surface-variant)] font-body mt-1">Manage system access levels and track administrative activity.</p>
+        </div>
+        <div class="flex gap-3">
+            <button class="flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-slate-900 border border-[var(--color-outline-variant)]/20 text-[var(--color-primary)] font-semibold rounded-xl shadow-sm hover:shadow-md transition-all active:scale-95 font-label">
+                <span class="material-symbols-outlined text-[18px]">filter_list</span>
+                <span>Filter</span>
+            </button>
+            <button class="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] text-white font-semibold rounded-xl shadow-lg hover:brightness-110 transition-all active:scale-95 font-label">
+                <span class="material-symbols-outlined text-[18px]">person_add</span>
+                <span>Add New User</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- Stats Ribbon -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border border-[var(--color-outline-variant)]/20 space-y-1 hover:shadow-md transition-shadow">
+            <p class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-widest font-label">Total Users</p>
+            <div class="flex items-baseline gap-2">
+                <span class="text-3xl font-headline font-extrabold text-[var(--color-primary)]">{{ totalUsers() }}</span>
+            </div>
+        </div>
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border border-[var(--color-outline-variant)]/20 space-y-1 hover:shadow-md transition-shadow">
+            <p class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-widest font-label">Active Users</p>
+            <div class="flex items-baseline gap-2">
+                <span class="text-3xl font-headline font-extrabold text-[var(--color-secondary)]">{{ activeUsers() }}</span>
+                <span class="text-[var(--color-secondary)] text-sm font-semibold font-body">Live</span>
+            </div>
+        </div>
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border border-[var(--color-outline-variant)]/20 space-y-1 hover:shadow-md transition-shadow">
+            <p class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-widest font-label">Admins</p>
+            <div class="flex items-baseline gap-2">
+                <span class="text-3xl font-headline font-extrabold text-[var(--color-primary)]">{{ adminUsers() }}</span>
+                <span class="text-[var(--color-outline)] text-sm font-medium font-body">Secured</span>
+            </div>
+        </div>
+        <div class="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border border-[var(--color-outline-variant)]/20 space-y-1 hover:shadow-md transition-shadow">
+            <p class="text-xs font-bold text-[var(--color-outline)] uppercase tracking-widest font-label">Deactivated / Inactive</p>
+            <div class="flex items-baseline gap-2">
+                <span class="text-3xl font-headline font-extrabold text-error">{{ inactiveUsers() }}</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- User Table Canvas -->
+    <section class="bg-[var(--color-surface-container-lowest)] rounded-xl overflow-hidden shadow-sm border border-[var(--color-outline-variant)]/20">
+        <div class="overflow-x-auto min-h-[400px]">
+            @if (loading()) {
+                <div class="flex items-center justify-center h-64">
+                    <span class="material-symbols-outlined animate-spin text-4xl text-[var(--color-primary)]/50">sync</span>
+                </div>
+            } @else {
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-[var(--color-surface-container-low)]/50 dark:bg-slate-800 text-[var(--color-on-surface-variant)] text-[11px] font-bold uppercase tracking-widest font-label">
+                            <th class="px-6 py-4">Name / ID</th>
+                            <th class="px-6 py-4">Role</th>
+                            <th class="px-6 py-4">Email Address</th>
+                            <th class="px-6 py-4">Status</th>
+                            <th class="px-6 py-4">Joined</th>
+                            <th class="px-6 py-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm font-body divide-y divide-[var(--color-outline-variant)]/20">
+                        @for (user of users(); track user.id) {
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-9 h-9 rounded-full bg-[var(--color-primary-fixed)] flex items-center justify-center font-bold text-[var(--color-on-primary-fixed)] text-xs shadow-inner">
+                                            {{ getInitials(user.email) }}
+                                        </div>
+                                        <div>
+                                            <p class="font-bold text-[var(--color-on-surface)]">{{ user.role === 'ADMIN' ? 'Administrator' : 'Applicant' }}</p>
+                                            <p class="text-[11px] text-[var(--color-outline)] font-mono">UID: {{ user.id.substring(0, 8) | uppercase }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="bg-[var(--color-surface-container-highest)] px-3 py-1 rounded-full text-[10px] font-bold text-[var(--color-on-surface-variant)] uppercase tracking-wider font-label">
+                                        {{ user.role }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-[var(--color-on-surface)] font-medium">{{ user.email }}</td>
+                                <td class="px-6 py-4">
+                                    @if (user.isActive) {
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-[var(--color-secondary-container)]/30 text-[var(--color-secondary)] text-xs font-bold rounded-full font-label">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-[var(--color-secondary)]"></span>
+                                            Active
+                                        </span>
+                                    } @else {
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-error-container/30 text-error text-xs font-bold rounded-full font-label">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                                            Inactive
+                                        </span>
+                                    }
+                                </td>
+                                <td class="px-6 py-4 text-[var(--color-on-surface-variant)]">{{ user.createdAtUtc | date:'mediumDate' }}</td>
+                                <td class="px-6 py-4 text-right">
+                                    <div class="flex justify-end gap-1">
+                                        <button class="p-2 text-[var(--color-outline)] hover:text-[var(--color-primary)] hover:bg-[var(--color-surface-container-highest)] rounded-lg transition-all" title="Edit User">
+                                            <span class="material-symbols-outlined text-[18px]">edit</span>
+                                        </button>
+                                        @if (user.isActive) {
+                                            <button (click)="toggleStatus(user)" class="p-2 text-[var(--color-outline)] hover:text-error hover:bg-error-container/20 rounded-lg transition-all cursor-pointer" title="Deactivate">
+                                                <span class="material-symbols-outlined text-[18px]">do_not_disturb_on</span>
+                                            </button>
+                                        } @else {
+                                            <button (click)="toggleStatus(user)" class="p-2 text-[var(--color-outline)] hover:text-[var(--color-secondary)] hover:bg-[var(--color-secondary-container)]/20 rounded-lg transition-all cursor-pointer" title="Activate">
+                                                <span class="material-symbols-outlined text-[18px]">check_circle</span>
+                                            </button>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </section>
+
+    <!-- Bottom Action Grid (Contextual Help & Settings) -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+        <div class="flex gap-6 p-6 bg-white dark:bg-slate-900 border border-[var(--color-outline-variant)]/20 rounded-xl shadow-sm">
+            <div class="w-12 h-12 shrink-0 rounded-xl bg-[var(--color-secondary-container)] flex items-center justify-center text-[var(--color-secondary)]">
+                <span class="material-symbols-outlined mx-auto" style="font-variation-settings: 'FILL' 1;">policy</span>
+            </div>
+            <div>
+                <h4 class="font-bold text-[var(--color-primary)] font-headline">Compliance Logs</h4>
+                <p class="text-sm text-[var(--color-on-surface-variant)] mt-1 font-body">Review full audit trails and security logs for regulatory compliance requirements.</p>
+                <button class="mt-4 text-xs font-bold text-[var(--color-primary)] uppercase tracking-widest flex items-center gap-2 hover:gap-3 transition-all font-label">
+                    View Logs <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                </button>
+            </div>
+        </div>
+        <div class="flex gap-6 p-6 bg-white dark:bg-slate-900 border border-[var(--color-outline-variant)]/20 rounded-xl shadow-sm">
+            <div class="w-12 h-12 shrink-0 rounded-xl bg-[var(--color-primary-fixed)] flex items-center justify-center text-[var(--color-primary)]">
+                <span class="material-symbols-outlined mx-auto" style="font-variation-settings: 'FILL' 1;">security_update_good</span>
+            </div>
+            <div>
+                <h4 class="font-bold text-[var(--color-primary)] font-headline">Access Controls</h4>
+                <p class="text-sm text-[var(--color-on-surface-variant)] mt-1 font-body">Global permission management for loan officers and document verifiers.</p>
+                <button class="mt-4 text-xs font-bold text-[var(--color-primary)] uppercase tracking-widest flex items-center gap-2 hover:gap-3 transition-all font-label">
+                    Manage Roles <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                </button>
+            </div>
+        </div>
+    </section>
+</div>

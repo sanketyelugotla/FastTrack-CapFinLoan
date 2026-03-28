@@ -1,0 +1,113 @@
+<div class="animate-fade-in-up">
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-2xl font-extrabold font-[var(--font-heading)] text-[var(--color-primary)]">
+        My Applications
+      </h1>
+      <p class="text-sm text-[var(--color-on-surface-variant)] mt-1">
+        View and manage all your loan applications.
+      </p>
+    </div>
+    <a routerLink="/applicant/apply" class="btn-primary">+ New Application</a>
+  </div>
+
+  @if (loading()) {
+    <div class="flex items-center justify-center py-20">
+      <span
+        class="w-8 h-8 border-3 border-[var(--color-primary-fixed)] border-t-[var(--color-primary)] rounded-full animate-spin"
+      ></span>
+    </div>
+  } @else if (applications().length === 0) {
+    <div class="card text-center py-16">
+      <p class="text-5xl mb-4">📄</p>
+      <h3 class="text-lg font-bold text-[var(--color-primary)] mb-2">No applications found</h3>
+      <p class="text-sm text-[var(--color-on-surface-variant)] mb-6">
+        Create your first loan application to get started.
+      </p>
+      <a routerLink="/applicant/apply" class="btn-primary">Apply Now</a>
+    </div>
+  } @else {
+    <div class="card !p-0 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-[var(--color-surface-container-low)]">
+              <th
+                class="text-left px-6 py-3 text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wider"
+              >
+                App Number
+              </th>
+              <th
+                class="text-left px-6 py-3 text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wider"
+              >
+                Amount
+              </th>
+              <th
+                class="text-left px-6 py-3 text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wider"
+              >
+                Tenure
+              </th>
+              <th
+                class="text-left px-6 py-3 text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wider"
+              >
+                Status
+              </th>
+              <th
+                class="text-left px-6 py-3 text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wider"
+              >
+                Created
+              </th>
+              <th
+                class="text-left px-6 py-3 text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wider"
+              >
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[var(--color-outline-variant)]/10">
+            @for (app of applications(); track app.id) {
+              <tr class="hover:bg-[var(--color-surface-container-low)] transition-colors">
+                <td class="px-6 py-4 font-medium">{{ app.applicationNumber }}</td>
+                <td class="px-6 py-4">₹{{ app.loanDetails.requestedAmount | number }}</td>
+                <td class="px-6 py-4">{{ app.loanDetails.requestedTenureMonths }} mo</td>
+                <td class="px-6 py-4"><app-status-badge [status]="app.status" /></td>
+                <td class="px-6 py-4 text-[var(--color-outline)]">
+                  {{ app.createdAtUtc | date: 'mediumDate' }}
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex gap-2">
+                    <a
+                      [routerLink]="['/applicant/applications', app.id]"
+                      class="text-[var(--color-primary)] font-medium hover:underline text-xs"
+                      >View</a
+                    >
+                    @if (app.status === 'Submitted' || app.status !== 'Draft') {
+                      <a
+                        [routerLink]="['/applicant/applications', app.id, 'status']"
+                        class="text-[var(--color-secondary)] font-medium hover:underline text-xs"
+                        >Track</a
+                      >
+                    }
+                    @if (app.status === 'Draft') {
+                      <a
+                        [routerLink]="['/applicant/apply', app.id]"
+                        class="text-[var(--color-secondary)] font-medium hover:underline text-xs"
+                        >Edit</a
+                      >
+                      <button
+                        (click)="deleteDraft(app.id)"
+                        class="text-[var(--color-error)] font-medium hover:underline text-xs"
+                      >
+                        Delete
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>

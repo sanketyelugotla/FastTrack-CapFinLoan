@@ -1,0 +1,115 @@
+@if (loading()) {
+  <div class="flex items-center justify-center py-20">
+    <span
+      class="h-8 w-8 animate-spin rounded-full border-3 border-primary-fixed border-t-primary"
+    ></span>
+  </div>
+} @else if (status(); as s) {
+  <div class="animate-fade-in-up max-w-2xl mx-auto">
+    <a
+      routerLink="/applicant/applications"
+      class="text-sm text-outline hover:text-primary mb-2 inline-block"
+      >← Back to Applications</a
+    >
+    <h1 class="text-2xl font-(--font-heading) text-primary mb-2">Track Application</h1>
+    <p class="text-sm text-on-surface-variant mb-8">
+      {{ s.applicationNumber }} · Current Status: <strong>{{ s.currentStatus }}</strong>
+    </p>
+
+    <!-- Timeline -->
+    <div class="relative pl-8">
+      <div class="absolute left-3 top-0 bottom-0 w-0.5 bg-outline-variant/30"></div>
+      @for (entry of s.timeline; track entry.createdAtUtc; let i = $index) {
+        <div class="relative mb-8 animate-fade-in-up" [style.animation-delay]="i * 100 + 'ms'">
+          <div
+            class="absolute -left-5 w-6 h-6 rounded-full flex items-center justify-center"
+            [class]="
+              i === 0
+                ? 'bg-linear-to-br from-primary to-primary-container shadow-lg'
+                : 'bg-surface-container-high'
+            "
+          >
+            <div class="w-2 h-2 rounded-full" [class]="i === 0 ? 'bg-white' : 'bg-outline'"></div>
+          </div>
+          <div class="card ml-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm font-bold text-primary">{{ entry.status }}</span>
+              <span class="text-xs text-outline">{{ entry.createdAtUtc | date: 'medium' }}</span>
+            </div>
+            @if (entry.remarks) {
+              <p class="text-sm text-on-surface-variant">{{ entry.remarks }}</p>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+} @else {
+  <div class="animate-fade-in-up">
+    <h1 class="mb-2 text-2xl font-(--font-heading) text-primary">Track Status</h1>
+    <p class="mb-8 text-sm text-on-surface-variant">
+      Choose an application to view its full approval timeline.
+    </p>
+
+    @if (applications().length === 0) {
+      <div class="card py-12 text-center">
+        <h2 class="text-lg font-bold text-primary">No applications available</h2>
+        <p class="mt-2 text-sm text-on-surface-variant">
+          Once you submit an application, its status timeline appears here.
+        </p>
+        <a routerLink="/applicant/apply" class="btn-primary mt-6">Start Application</a>
+      </div>
+    } @else {
+      <div class="card p-0! overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="bg-surface-container-low">
+                <th
+                  class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-on-surface-variant"
+                >
+                  Application
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-on-surface-variant"
+                >
+                  Current Status
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-on-surface-variant"
+                >
+                  Updated
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-on-surface-variant"
+                >
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant/10">
+              @for (app of applications(); track app.id) {
+                <tr class="transition-colors hover:bg-surface-container-low">
+                  <td class="px-6 py-4 font-medium text-primary">
+                    {{ app.applicationNumber }}
+                  </td>
+                  <td class="px-6 py-4"><app-status-badge [status]="app.status" /></td>
+                  <td class="px-6 py-4 text-outline">
+                    {{ app.updatedAtUtc | date: 'mediumDate' }}
+                  </td>
+                  <td class="px-6 py-4">
+                    <a
+                      [routerLink]="['/applicant/applications', app.id, 'status']"
+                      class="text-xs font-medium text-secondary hover:underline"
+                      >Open timeline</a
+                    >
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  </div>
+}

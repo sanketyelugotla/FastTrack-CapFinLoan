@@ -1,0 +1,56 @@
+<div class="animate-fade-in-up">
+  <div class="mb-8">
+    <h1 class="text-2xl font-extrabold font-[var(--font-heading)] text-[var(--color-primary)]">
+      Admin Dashboard
+    </h1>
+    <p class="text-sm text-[var(--color-on-surface-variant)] mt-1">
+      Overview of all loan activity.
+    </p>
+  </div>
+
+  @if (data(); as d) {
+    <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5 mb-10 stagger">
+      <div class="card animate-fade-in-up text-center">
+        <p class="text-3xl font-bold font-[var(--font-heading)] text-[var(--color-primary)]">
+          {{ d.totalApplications }}
+        </p>
+        <p class="text-xs text-[var(--color-outline)] mt-1">Total</p>
+      </div>
+      <div class="card animate-fade-in-up text-center">
+        <p class="text-3xl font-bold font-[var(--font-heading)] text-blue-600">
+          {{ d.submittedCount }}
+        </p>
+        <p class="text-xs text-[var(--color-outline)] mt-1">Submitted</p>
+      </div>
+      <div class="card animate-fade-in-up text-center">
+        <p class="text-3xl font-bold font-[var(--font-heading)] text-orange-500">
+          {{ d.docsPendingCount }}
+        </p>
+        <p class="text-xs text-[var(--color-outline)] mt-1">Docs Pending</p>
+      </div>
+      <div class="card animate-fade-in-up text-center">
+        <p class="text-3xl font-bold font-[var(--font-heading)] text-amber-500">
+          {{ d.underReviewCount }}
+        </p>
+        <p class="text-xs text-[var(--color-outline)] mt-1">Under Review</p>
+      </div>
+      <div class="card animate-fade-in-up text-center">
+        <p class="text-3xl font-bold font-[var(--font-heading)] text-[var(--color-success)]">
+          {{ d.approvedCount }}
+        </p>
+        <p class="text-xs text-[var(--color-outline)] mt-1">Approved</p>
+      </div>
+      <div class="card animate-fade-in-up text-center">
+        <p class="text-3xl font-bold font-[var(--font-heading)] text-[var(--color-error)]">
+          {{ d.rejectedCount }}
+        </p>
+        <p class="text-xs text-[var(--color-outline)] mt-1">Rejected</p>
+      </div>
+    </div>
+  }
+
+  <div class="flex flex-wrap gap-3">
+    <a routerLink="/admin/queue" class="btn-primary">View Application Queue →</a>
+    <a routerLink="/admin/users" class="btn-secondary">Manage Users</a>
+  </div>
+</div>

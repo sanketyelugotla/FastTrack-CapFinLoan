@@ -1,0 +1,134 @@
+<div class="mx-auto max-w-screen-2xl space-y-8 px-8 pb-12 animate-fade-in-up">
+    <!-- Page Title & Greeting -->
+    <section>
+        <h1 class="font-headline text-3xl font-extrabold text-[var(--color-primary)] tracking-tight">Applications Queue</h1>
+        <p class="font-body text-[var(--color-on-surface-variant)]">Review and process active loan requests in real-time.</p>
+    </section>
+
+    <!-- KPI Cards - Tonal Depth Layout -->
+    @if (dashboard(); as d) {
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Total Queue -->
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-xl transition-all hover:shadow-lg group shadow-sm border border-[var(--color-outline-variant)]/20">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 bg-[var(--color-primary-container)]/10 rounded-lg text-[var(--color-primary)]">
+                        <span class="material-symbols-outlined">database</span>
+                    </div>
+                    <span class="text-xs font-bold text-[var(--color-secondary)] uppercase tracking-wider font-label">All Activity</span>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-[var(--color-on-surface-variant)] text-sm font-medium font-body">Total Queue</p>
+                    <p class="text-4xl font-headline font-extrabold text-[var(--color-primary)]">{{ d.totalApplications }}</p>
+                </div>
+            </div>
+
+            <!-- Pending Review List -->
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-xl transition-all hover:shadow-lg group shadow-sm border border-[var(--color-outline-variant)]/20">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 bg-[var(--color-secondary-container)]/30 rounded-lg text-[var(--color-secondary)]">
+                        <span class="material-symbols-outlined">pending_actions</span>
+                    </div>
+                    <span class="text-xs font-bold text-[var(--color-primary)] uppercase tracking-wider font-label">Action Needed</span>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-[var(--color-on-surface-variant)] text-sm font-medium font-body">Under Review / Pending</p>
+                    <p class="text-4xl font-headline font-extrabold text-[var(--color-primary)]">{{ d.underReviewCount + d.docsPendingCount }}</p>
+                </div>
+            </div>
+
+            <!-- Approved -->
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-xl transition-all hover:shadow-lg group border-b-4 border-[var(--color-secondary)] shadow-sm">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 bg-[var(--color-tertiary-fixed)]/30 rounded-lg text-[var(--color-on-tertiary-container)]">
+                        <span class="material-symbols-outlined">check_circle</span>
+                    </div>
+                    <span class="text-xs font-bold text-[var(--color-secondary)] uppercase tracking-wider font-label">Success</span>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-[var(--color-on-surface-variant)] text-sm font-medium font-body">Total Approved</p>
+                    <p class="text-4xl font-headline font-extrabold text-[var(--color-primary)]">{{ d.approvedCount }}</p>
+                </div>
+            </div>
+        </section>
+    }
+
+    <!-- Main Table Section -->
+    <section class="bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm border border-[var(--color-outline-variant)]/20">
+        <div class="p-6 border-b border-[var(--color-surface-container-low)] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <h3 class="font-headline font-bold text-lg text-[var(--color-primary)]">Live Applications</h3>
+            
+            <div class="flex flex-wrap items-center gap-2">
+                @for (tab of tabs; track tab.value) {
+                    <button 
+                        (click)="filter(tab.value)"
+                        class="px-4 py-1.5 rounded-full text-xs font-bold font-label transition-colors"
+                        [class.bg-[var(--color-primary)]]="activeFilter() === tab.value"
+                        [class.text-white]="activeFilter() === tab.value"
+                        [class.bg-[var(--color-surface-container-high)]]="activeFilter() !== tab.value"
+                        [class.text-[var(--color-on-surface-variant)]]="activeFilter() !== tab.value"
+                        [class.hover:bg-[var(--color-surface-variant)]]="activeFilter() !== tab.value">
+                        {{ tab.label }}
+                    </button>
+                }
+            </div>
+        </div>
+
+        <div class="overflow-x-auto min-h-[400px]">
+            @if (loading()) {
+                <div class="flex items-center justify-center h-48">
+                    <span class="material-symbols-outlined animate-spin text-4xl text-[var(--color-primary)]/50">sync</span>
+                </div>
+            } @else if (applications().length === 0) {
+                <div class="flex flex-col items-center justify-center h-48 text-[var(--color-on-surface-variant)] gap-3 bg-[var(--color-surface-container-lowest)] text-center">
+                    <span class="material-symbols-outlined text-4xl opacity-50">search_off</span>
+                    <p class="text-sm font-medium font-body">No applications found for this filter.</p>
+                </div>
+            } @else {
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-[var(--color-surface-container-low)]/50 dark:bg-slate-800">
+                            <th class="px-6 py-4 text-[11px] font-bold uppercase text-[var(--color-on-surface-variant)] tracking-widest font-label">App #</th>
+                            <th class="px-6 py-4 text-[11px] font-bold uppercase text-[var(--color-on-surface-variant)] tracking-widest font-label">Applicant Name</th>
+                            <th class="px-6 py-4 text-[11px] font-bold uppercase text-[var(--color-on-surface-variant)] tracking-widest font-label">Loan Scope</th>
+                            <th class="px-6 py-4 text-[11px] font-bold uppercase text-[var(--color-on-surface-variant)] tracking-widest text-right font-label">Amount</th>
+                            <th class="px-6 py-4 text-[11px] font-bold uppercase text-[var(--color-on-surface-variant)] tracking-widest font-label">Status</th>
+                            <th class="px-6 py-4 text-[11px] font-bold uppercase text-[var(--color-on-surface-variant)] tracking-widest text-right font-label">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[var(--color-outline-variant)]/20">
+                        @for (app of applications(); track app.id) {
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                                <td class="px-6 py-5 font-mono text-xs text-[var(--color-primary)] font-bold">LN-{{ app.applicationNumber }}</td>
+                                <td class="px-6 py-5">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-[var(--color-primary-container)] flex items-center justify-center font-bold text-[10px] text-[var(--color-on-primary-container)] uppercase shadow-inner">
+                                            {{ initials(app.applicantName) }}
+                                        </div>
+                                        <div>
+                                            <p class="font-bold text-sm text-[var(--color-primary)] leading-none font-body">{{ app.applicantName }}</p>
+                                            <p class="text-[10px] text-[var(--color-on-surface-variant)] mt-1 font-body">{{ app.email }} • {{ app.phone }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-5 text-sm text-[var(--color-on-surface-variant)] font-body">
+                                    {{ app.requestedTenureMonths }} mo
+                                </td>
+                                <td class="px-6 py-5 text-sm font-bold text-[var(--color-primary)] text-right font-body">
+                                    ₹{{ app.requestedAmount | number }}
+                                </td>
+                                <td class="px-6 py-5 font-body">
+                                    <app-status-badge [status]="app.status" />
+                                </td>
+                                <td class="px-6 py-5 text-right font-body">
+                                    <a [routerLink]="['/admin/applications', app.id]" class="inline-block bg-[var(--color-primary)] text-white px-4 py-1.5 rounded-lg text-xs font-bold shadow-md hover:shadow-lg active:scale-95 transition-all font-label cursor-pointer">
+                                        Review
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </section>
+</div>

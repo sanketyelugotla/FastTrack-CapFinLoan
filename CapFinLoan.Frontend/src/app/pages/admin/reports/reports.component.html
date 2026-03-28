@@ -1,0 +1,170 @@
+<div class="animate-fade-in-up">
+    @if (loading()) {
+        <div class="flex items-center justify-center min-h-[500px]">
+            <span class="material-symbols-outlined animate-spin text-4xl text-[var(--color-primary)]">sync</span>
+        </div>
+    } @else if (dashboard(); as d) {
+        <div class="p-8 space-y-8 max-w-screen-2xl mx-auto pb-12">
+            
+            <!-- Filters Section -->
+            <section class="bg-white dark:bg-slate-900 border border-[var(--color-outline-variant)]/20 rounded-xl p-6 shadow-sm flex flex-wrap items-end gap-6">
+                <div class="flex-1 min-w-[200px] space-y-2">
+                    <label class="text-[10px] font-bold uppercase tracking-wider text-[var(--color-outline)] px-1 font-label">Date Range</label>
+                    <div class="relative">
+                        <select class="w-full appearance-none bg-[var(--color-surface-container-low)] border-none rounded-lg py-3 pl-4 pr-10 text-sm font-medium focus:ring-2 focus:ring-[var(--color-primary)]/20 font-body text-[var(--color-on-surface)]">
+                            <option>All Time History</option>
+                            <option>Last 30 Days</option>
+                            <option>Current Fiscal Year</option>
+                        </select>
+                        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-outline)] pointer-events-none text-[18px]">calendar_today</span>
+                    </div>
+                </div>
+                <div class="flex-1 min-w-[200px] space-y-2">
+                    <label class="text-[10px] font-bold uppercase tracking-wider text-[var(--color-outline)] px-1 font-label">Loan Scope</label>
+                    <div class="relative">
+                        <select class="w-full appearance-none bg-[var(--color-surface-container-low)] border-none rounded-lg py-3 pl-4 pr-10 text-sm font-medium focus:ring-2 focus:ring-[var(--color-primary)]/20 font-body text-[var(--color-on-surface)]">
+                            <option>All Loan Types</option>
+                        </select>
+                        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-outline)] pointer-events-none text-[18px]">expand_more</span>
+                    </div>
+                </div>
+                <div class="flex-1 min-w-[200px] space-y-2">
+                    <label class="text-[10px] font-bold uppercase tracking-wider text-[var(--color-outline)] px-1 font-label">Stage</label>
+                    <div class="relative">
+                        <select class="w-full appearance-none bg-[var(--color-surface-container-low)] border-none rounded-lg py-3 pl-4 pr-10 text-sm font-medium focus:ring-2 focus:ring-[var(--color-primary)]/20 font-body text-[var(--color-on-surface)]">
+                            <option>All Stages</option>
+                            <option>Final Decisions (Approved/Rejected)</option>
+                            <option>In Progress (Pending/Review)</option>
+                        </select>
+                        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-outline)] pointer-events-none text-[18px]">public</span>
+                    </div>
+                </div>
+                <button class="bg-[var(--color-surface-container-low)] hover:bg-[var(--color-surface-container-high)] text-[var(--color-primary)] font-bold px-8 py-3 rounded-lg transition-all active:scale-95 flex items-center gap-2 font-label cursor-pointer text-sm">
+                    <span class="material-symbols-outlined text-lg">filter_alt</span>
+                    <span>Apply Scope</span>
+                </button>
+            </section>
+
+            <!-- Top Level Metrics -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="bg-white dark:bg-slate-900 border border-[var(--color-outline-variant)]/20 space-y-1 hover:shadow-md transition-shadow p-6 rounded-xl shadow-sm border-l-4 border-l-[var(--color-primary)]">
+                    <p class="text-[11px] font-bold text-[var(--color-outline)] uppercase tracking-widest font-label">Total Applications</p>
+                    <div class="flex items-end justify-between mt-2">
+                        <h3 class="font-headline text-3xl font-extrabold text-[var(--color-primary)] tracking-tight">{{ d.totalApplications }}</h3>
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-slate-900 border border-[var(--color-outline-variant)]/20 space-y-1 hover:shadow-md transition-shadow p-6 rounded-xl shadow-sm border-l-4 border-l-[var(--color-secondary)]">
+                    <p class="text-[11px] font-bold text-[var(--color-outline)] uppercase tracking-widest font-label">Approved Accounts</p>
+                    <div class="flex items-end justify-between mt-2">
+                        <h3 class="font-headline text-3xl font-extrabold text-[var(--color-primary)] tracking-tight">{{ d.approvedCount }}</h3>
+                        <span class="text-[var(--color-secondary)] font-bold text-xs bg-[var(--color-secondary-container)] px-2 py-1 rounded-full flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[14px]">trending_up</span> {{ approvalRate() }}%
+                        </span>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 border border-[var(--color-outline-variant)]/20 space-y-1 hover:shadow-md transition-shadow p-6 rounded-xl shadow-sm border-l-4 border-l-orange-500">
+                    <p class="text-[11px] font-bold text-[var(--color-outline)] uppercase tracking-widest font-label">In Pipeline</p>
+                    <div class="flex items-end justify-between mt-2">
+                        <h3 class="font-headline text-3xl font-extrabold text-[var(--color-primary)] tracking-tight">{{ d.docsPendingCount + d.underReviewCount }}</h3>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 border border-[var(--color-outline-variant)]/20 space-y-1 hover:shadow-md transition-shadow p-6 rounded-xl shadow-sm border-l-4 border-l-error">
+                    <p class="text-[11px] font-bold text-[var(--color-outline)] uppercase tracking-widest font-label">Rejection Rate</p>
+                    <div class="flex items-end justify-between mt-2">
+                        <h3 class="font-headline text-3xl font-extrabold text-[var(--color-primary)] tracking-tight">{{ rejectionRate() }}%</h3>
+                        <span class="text-error font-bold text-xs bg-error-container px-2 py-1 rounded-full flex items-center gap-1">
+                            Total: {{ d.rejectedCount }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Visualizations -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                <!-- Approvals Visualization -->
+                <div class="bg-white dark:bg-slate-900 border border-[var(--color-outline-variant)]/20 p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex justify-between items-start mb-8">
+                        <div>
+                            <h4 class="font-headline text-lg font-bold text-[var(--color-primary)]">Pipeline Composition</h4>
+                            <p class="text-xs text-[var(--color-on-surface-variant)] mt-1 font-body">Distribution of all application statuses</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <!-- Pending / Docs Pending -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs font-semibold text-[var(--color-on-surface)]">
+                                <span>Action Required (Draft/Pending Docs)</span>
+                                <span class="font-bold font-body">{{ d.docsPendingCount + d.submittedCount }}</span>
+                            </div>
+                            <div class="h-2 w-full bg-[var(--color-surface-container-highest)] rounded-full overflow-hidden">
+                                <div class="h-full bg-orange-400 rounded-full transition-all" [style.width.%]="((d.docsPendingCount + d.submittedCount)/d.totalApplications)*100"></div>
+                            </div>
+                        </div>
+
+                        <!-- Under Review -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs font-semibold text-[var(--color-on-surface)]">
+                                <span>Under Admin Review</span>
+                                <span class="font-bold font-body">{{ d.underReviewCount }}</span>
+                            </div>
+                            <div class="h-2 w-full bg-[var(--color-surface-container-highest)] rounded-full overflow-hidden">
+                                <div class="h-full bg-amber-500 rounded-full transition-all" [style.width.%]="(d.underReviewCount/d.totalApplications)*100"></div>
+                            </div>
+                        </div>
+
+                        <!-- Approved -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs font-semibold text-[var(--color-on-surface)]">
+                                <span>Successfully Approved</span>
+                                <span class="font-bold font-body">{{ d.approvedCount }}</span>
+                            </div>
+                            <div class="h-2 w-full bg-[var(--color-surface-container-highest)] rounded-full overflow-hidden">
+                                <div class="h-full bg-[var(--color-secondary)] rounded-full transition-all" [style.width.%]="(d.approvedCount/d.totalApplications)*100"></div>
+                            </div>
+                        </div>
+
+                        <!-- Rejected -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs font-semibold text-[var(--color-on-surface)]">
+                                <span>Rejected Decisions</span>
+                                <span class="font-bold font-body">{{ d.rejectedCount }}</span>
+                            </div>
+                            <div class="h-2 w-full bg-[var(--color-surface-container-highest)] rounded-full overflow-hidden">
+                                <div class="h-full bg-error rounded-full transition-all" [style.width.%]="(d.rejectedCount/d.totalApplications)*100"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategic Summary Data Block -->
+                <div class="bg-white dark:bg-slate-900 border border-[var(--color-outline-variant)]/20 p-8 rounded-xl shadow-sm flex flex-col justify-end min-h-[300px] relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] opacity-[0.95]"></div>
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 backdrop-blur-3xl group-hover:scale-110 transition-transform duration-700 ease-out"></div>
+                    <div class="absolute bottom-0 left-0 w-48 h-48 bg-[var(--color-secondary)]/20 rounded-full -ml-24 -mb-24 backdrop-blur-3xl group-hover:scale-110 transition-transform duration-700 ease-out"></div>
+                    
+                    <div class="relative z-10 text-white">
+                        <span class="material-symbols-outlined text-4xl mb-4 opacity-70" style="font-variation-settings: 'FILL' 1;">insights</span>
+                        <h4 class="font-headline text-2xl font-extrabold mb-2 tracking-tight">Sovereign Action Intelligence</h4>
+                        <p class="text-sm text-white/80 max-w-sm mb-8 font-body">Cap FinLoan operations are running smoothly. The total aggregated conversion rate sits at <span class="font-bold text-white">{{ approvalRate() }}%</span>. Generating automated ledger reports will assist stakeholders in strategic asset routing.</p>
+                        
+                        <div class="flex gap-4">
+                            <button class="bg-white text-[var(--color-primary)] px-6 py-2.5 rounded-xl font-bold shadow-lg hover:shadow-xl active:scale-95 transition-all text-sm font-label flex items-center gap-2 cursor-pointer border border-transparent">
+                                <span class="material-symbols-outlined text-[18px]">download</span> Generate Full Report
+                            </button>
+                            <button class="bg-white/10 text-white border border-white/20 px-6 py-2.5 rounded-xl font-bold hover:bg-white/20 active:scale-95 transition-all text-sm font-label flex items-center gap-2 cursor-pointer">
+                                Download CSV
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    }
+</div>

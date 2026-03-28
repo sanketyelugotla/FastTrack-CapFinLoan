@@ -1,0 +1,601 @@
+<div class="max-w-4xl mx-auto px-6 py-12 animate-fade-in-up">
+  @if (loading()) {
+    <div class="flex items-center justify-center py-32">
+      <span
+        class="w-10 h-10 border-4 border-[var(--color-primary-fixed)] border-t-[var(--color-primary)] rounded-full animate-spin"
+      ></span>
+    </div>
+  } @else {
+    <!-- Header Content -->
+    <div class="mb-12 text-center">
+      <h1
+        class="font-headline text-3xl font-extrabold text-[var(--color-primary)] tracking-tight mb-2"
+      >
+        Loan Application
+      </h1>
+      <p class="text-[var(--color-on-surface-variant)] font-body">
+        Complete the following steps to submit your financing request.
+      </p>
+    </div>
+
+    <!-- Stepper -->
+    <div class="relative flex justify-between items-center mb-16 px-4">
+      <!-- Background Line -->
+      <div
+        class="absolute top-1/2 left-0 w-full h-0.5 bg-[var(--color-surface-container-high)] -translate-y-1/2 -z-10"
+      ></div>
+      <!-- Progress Line -->
+      <div
+        class="absolute top-1/2 left-0 h-0.5 bg-[var(--color-secondary)] -translate-y-1/2 -z-10 transition-all duration-300"
+        [style.width]="(currentStep() / 3) * 100 + '%'"
+      ></div>
+
+      @for (s of stepLabels; track s; let i = $index) {
+        <div class="flex flex-col items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shadow-md ring-4 ring-[var(--color-surface)] transition-all duration-300"
+            [class]="
+              i <= currentStep()
+                ? 'bg-[var(--color-primary)] text-white'
+                : 'bg-[var(--color-surface-container-high)] text-[var(--color-on-surface-variant)]'
+            "
+          >
+            @if (i < currentStep()) {
+              <span class="material-symbols-outlined text-sm">check</span>
+            } @else {
+              {{ i + 1 }}
+            }
+          </div>
+          <span
+            class="text-xs font-bold font-label uppercase tracking-wider hidden sm:block"
+            [class]="
+              i <= currentStep()
+                ? 'text-[var(--color-primary)]'
+                : 'text-[var(--color-on-surface-variant)]'
+            "
+          >
+            {{ s }}
+          </span>
+        </div>
+      }
+    </div>
+
+    @if (error()) {
+      <div
+        class="p-3 mb-6 rounded-lg bg-[var(--color-error-container)] text-[var(--color-on-error-container)] text-sm font-medium flex items-center gap-2"
+      >
+        <span class="material-symbols-outlined text-sm">error</span>
+        {{ error() }}
+      </div>
+    }
+
+    <!-- Application Form Card -->
+    <div
+      class="bg-white dark:bg-slate-900 rounded-xl p-8 md:p-12 shadow-sm border border-slate-200/50 dark:border-slate-800"
+    >
+      <div
+        class="flex items-center gap-4 mb-10 border-b border-[var(--color-surface-container-low)] pb-6"
+      >
+        <div
+          class="w-12 h-12 bg-[var(--color-secondary-container)] text-[var(--color-on-secondary-container)] rounded-full flex items-center justify-center"
+        >
+          <span class="material-symbols-outlined">{{
+            currentStep() === 0
+              ? 'person'
+              : currentStep() === 1
+                ? 'work'
+                : currentStep() === 2
+                  ? 'account_balance'
+                  : 'fact_check'
+          }}</span>
+        </div>
+        <div>
+          <h2 class="font-headline text-xl font-bold text-[var(--color-primary)]">
+            {{
+              currentStep() === 0
+                ? 'Personal Information'
+                : currentStep() === 1
+                  ? 'Employment Details'
+                  : currentStep() === 2
+                    ? 'Loan Details'
+                    : 'Review & Submit'
+            }}
+          </h2>
+          <p class="text-sm text-[var(--color-on-surface-variant)]">
+            {{
+              currentStep() === 0
+                ? 'Tell us a bit about yourself to get started.'
+                : currentStep() === 1
+                  ? 'Provide information about your current job.'
+                  : currentStep() === 2
+                    ? 'Specify your desired loan amount and terms.'
+                    : 'Please verify all details before submitting.'
+            }}
+          </p>
+        </div>
+      </div>
+
+      <form>
+        @if (currentStep() === 0) {
+          <!-- Step 1: Personal Details -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-[var(--color-primary)] font-label"
+                >First Name</label
+              >
+              <input
+                class="w-full px-4 py-3 rounded-lg border-0 bg-[var(--color-surface-container-low)] focus:ring-2 focus:ring-[var(--color-primary)] transition-all font-body text-sm"
+                [(ngModel)]="form.personalDetails.firstName"
+                name="firstName"
+                placeholder="John"
+              />
+            </div>
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-[var(--color-primary)] font-label"
+                >Last Name</label
+              >
+              <input
+                class="w-full px-4 py-3 rounded-lg border-0 bg-[var(--color-surface-container-low)] focus:ring-2 focus:ring-[var(--color-primary)] transition-all font-body text-sm"
+                [(ngModel)]="form.personalDetails.lastName"
+                name="lastName"
+                placeholder="Doe"
+              />
+            </div>
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-[var(--color-primary)] font-label"
+                >Email Address</label
+              >
+              <input
+                type="email"
+                class="w-full px-4 py-3 rounded-lg border-0 bg-[var(--color-surface-container-low)] focus:ring-2 focus:ring-[var(--color-primary)] transition-all font-body text-sm"
+                [(ngModel)]="form.personalDetails.email"
+                name="email"
+                placeholder="john@example.com"
+              />
+            </div>
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-[var(--color-primary)] font-label"
+                >Phone Number</label
+              >
+              <input
+                type="tel"
+                class="w-full px-4 py-3 rounded-lg border-0 bg-[var(--color-surface-container-low)] focus:ring-2 focus:ring-[var(--color-primary)] transition-all font-body text-sm"
+                [(ngModel)]="form.personalDetails.phone"
+                name="phone"
+                placeholder="+1 (555) 000-0000"
+              />
+            </div>
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-[var(--color-primary)] font-label"
+                >Date of Birth</label
+              >
+              <input
+                type="date"
+                class="w-full px-4 py-3 rounded-lg border-0 bg-[var(--color-surface-container-low)] focus:ring-2 focus:ring-[var(--color-primary)] transition-all font-body text-sm"
+                [(ngModel)]="form.personalDetails.dateOfBirth"
+                name="dob"
+              />
+            </div>
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-[var(--color-primary)] font-label"
+                >Gender</label
+              >
+              <select
+                class="w-full px-4 py-3 rounded-lg border-0 bg-[var(--color-surface-container-low)] focus:ring-2 focus:ring-[var(--color-primary)] transition-all font-body text-sm"
+                [(ngModel)]="form.personalDetails.gender"
+                name="gender"
+              >
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="md:col-span-2 space-y-2">
+              <label class="block text-sm font-semibold text-[var(--color-primary)] font-label"
+                >Address Line 1</label
+              >
+              <input
+                class="w-full px-4 py-3 rounded-lg border-0 bg-[var(--color-surface-container-low)] focus:ring-2 focus:ring-[var(--color-primary)] transition-all font-body text-sm"
+                [(ngModel)]="form.personalDetails.addressLine1"
+                name="addr1"
+                placeholder="Street address"
+              />
+            </div>
+            <div class="md:col-span-2 space-y-2">
+              <label class="block text-sm font-semibold text-[var(--color-primary)] font-label"
+                >Address Line 2 (Optional)</label
+              >
+              <input
+                class="w-full px-4 py-3 rounded-lg border-0 bg-[var(--color-surface-container-low)] focus:ring-2 focus:ring-[var(--color-primary)] transition-all font-body text-sm"
+                [(ngModel)]="form.personalDetails.addressLine2"
+                name="addr2"
+                placeholder="Suite, floor, etc."
+              />
+            </div>
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-[var(--color-primary)] font-label"
+                >City</label
+              >
+              <input
+                class="w-full px-4 py-3 rounded-lg border-0 bg-[var(--color-surface-container-low)] focus:ring-2 focus:ring-[var(--color-primary)] transition-all font-body text-sm"
+                [(ngModel)]="form.personalDetails.city"
+                name="city"
+                placeholder="New York"
+              />
+            </div>
+            <div class="space-y-2 col-span-2 md:col-span-1 grid grid-cols-2 gap-4">
+              <div class="space-y-2">
+                <label class="block text-sm font-semibold text-[var(--color-primary)] font-label"
+                  >State</label
+                >
+                <input
+                  class="w-full px-4 py-3 rounded-lg border-0 bg-[var(--color-surface-container-low)] focus:ring-2 focus:ring-[var(--color-primary)] transition-all font-body text-sm"
+                  [(ngModel)]="form.personalDetails.state"
+                  name="state"
+                  placeholder="NY"
+                />
+              </div>
+              <div class="space-y-2">
+                <label class="block text-sm font-semibold text-[var(--color-primary)] font-label"
+                  >Zip Code</label
+                >
+                <input
+                  class="w-full px-4 py-3 rounded-lg border-0 bg-[var(--color-surface-container-low)] focus:ring-2 focus:ring-[var(--color-primary)] transition-all font-body text-sm"
+                  [(ngModel)]="form.personalDetails.postalCode"
+                  name="zip"
+                  placeholder="10001"
+                />
+              </div>
+            </div>
+          </div>
+        }
+
+        @if (currentStep() === 1) {
+          <!-- Step 2: Employment Details -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-[var(--color-primary)] font-label"
+                >Employer Name</label
+              >
+              <input
+                class="w-full px-4 py-3 rounded-lg border-0 bg-[var(--color-surface-container-low)] focus:ring-2 focus:ring-[var(--color-primary)] transition-all font-body text-sm"
+                [(ngModel)]="form.employmentDetails.employerName"
+                name="employer"
+                placeholder="Company Inc."
+              />
+            </div>
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-[var(--color-primary)] font-label"
+                >Employment Type</label
+              >
+              <select
+                class="w-full px-4 py-3 rounded-lg border-0 bg-[var(--color-surface-container-low)] focus:ring-2 focus:ring-[var(--color-primary)] transition-all font-body text-sm"
+                [(ngModel)]="form.employmentDetails.employmentType"
+                name="empType"
+              >
+                <option value="">Select Type</option>
+                <option value="Salaried">Salaried</option>
+                <option value="SelfEmployed">Self Employed</option>
+                <option value="Business">Business</option>
+              </select>
+            </div>
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-[var(--color-primary)] font-label"
+                >Monthly Income</label
+              >
+              <div class="relative">
+                <span class="absolute left-4 top-3 text-[var(--color-outline-variant)]">$</span>
+                <input
+                  type="number"
+                  class="w-full pl-8 pr-4 py-3 rounded-lg border-0 bg-[var(--color-surface-container-low)] focus:ring-2 focus:ring-[var(--color-primary)] transition-all font-body text-sm"
+                  [(ngModel)]="form.employmentDetails.monthlyIncome"
+                  name="monthlyInc"
+                  placeholder="5000"
+                />
+              </div>
+            </div>
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-[var(--color-primary)] font-label"
+                >Annual Income</label
+              >
+              <div class="relative">
+                <span class="absolute left-4 top-3 text-[var(--color-outline-variant)]">$</span>
+                <input
+                  type="number"
+                  class="w-full pl-8 pr-4 py-3 rounded-lg border-0 bg-[var(--color-surface-container-low)] focus:ring-2 focus:ring-[var(--color-primary)] transition-all font-body text-sm"
+                  [(ngModel)]="form.employmentDetails.annualIncome"
+                  name="annualInc"
+                  placeholder="60000"
+                />
+              </div>
+            </div>
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-[var(--color-primary)] font-label"
+                >Existing EMI / Debt Payments</label
+              >
+              <div class="relative">
+                <span class="absolute left-4 top-3 text-[var(--color-outline-variant)]">$</span>
+                <input
+                  type="number"
+                  class="w-full pl-8 pr-4 py-3 rounded-lg border-0 bg-[var(--color-surface-container-low)] focus:ring-2 focus:ring-[var(--color-primary)] transition-all font-body text-sm"
+                  [(ngModel)]="form.employmentDetails.existingEmiAmount"
+                  name="emi"
+                  placeholder="0"
+                />
+              </div>
+            </div>
+          </div>
+        }
+
+        @if (currentStep() === 2) {
+          <!-- Step 3: Loan Details -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-[var(--color-primary)] font-label"
+                >Requested Loan Amount</label
+              >
+              <div class="relative">
+                <span class="absolute left-4 top-3 text-[var(--color-outline-variant)]">$</span>
+                <input
+                  type="number"
+                  class="w-full pl-8 pr-4 py-3 rounded-lg border-0 bg-[var(--color-surface-container-low)] focus:ring-2 focus:ring-[var(--color-primary)] transition-all font-body text-sm font-bold text-lg text-[var(--color-primary)]"
+                  [(ngModel)]="form.loanDetails.requestedAmount"
+                  name="reqAmount"
+                  placeholder="10000"
+                />
+              </div>
+            </div>
+            <div class="space-y-2">
+              <label class="block text-sm font-semibold text-[var(--color-primary)] font-label"
+                >Loan Term (Months)</label
+              >
+              <input
+                type="number"
+                class="w-full px-4 py-3 rounded-lg border-0 bg-[var(--color-surface-container-low)] focus:ring-2 focus:ring-[var(--color-primary)] transition-all font-body text-sm"
+                [(ngModel)]="form.loanDetails.requestedTenureMonths"
+                name="tenure"
+                placeholder="36"
+              />
+            </div>
+            <div class="md:col-span-2 space-y-2">
+              <label class="block text-sm font-semibold text-[var(--color-primary)] font-label"
+                >Purpose of Loan</label
+              >
+              <input
+                class="w-full px-4 py-3 rounded-lg border-0 bg-[var(--color-surface-container-low)] focus:ring-2 focus:ring-[var(--color-primary)] transition-all font-body text-sm"
+                [(ngModel)]="form.loanDetails.loanPurpose"
+                name="purpose"
+                placeholder="e.g. Debt Consolidation"
+              />
+            </div>
+            <div class="md:col-span-2 space-y-2">
+              <label class="block text-sm font-semibold text-[var(--color-primary)] font-label"
+                >Additional Remarks</label
+              >
+              <textarea
+                rows="3"
+                class="w-full px-4 py-3 rounded-lg border-0 bg-[var(--color-surface-container-low)] focus:ring-2 focus:ring-[var(--color-primary)] transition-all font-body text-sm resize-none"
+                [(ngModel)]="form.loanDetails.remarks"
+                name="remarks"
+                placeholder="Optional details..."
+              ></textarea>
+            </div>
+          </div>
+        }
+
+        @if (currentStep() === 3) {
+          <!-- Step 4: Review -->
+          <div class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="bg-[var(--color-surface-container-low)] rounded-lg p-5">
+                <div class="flex justify-between items-center mb-4">
+                  <h3 class="font-bold text-[var(--color-on-surface)] flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[var(--color-primary)] text-sm"
+                      >person</span
+                    >
+                    Personal
+                  </h3>
+                  <button
+                    type="button"
+                    (click)="currentStep.set(0)"
+                    class="text-xs text-[var(--color-primary)] hover:underline font-bold"
+                  >
+                    EDIT
+                  </button>
+                </div>
+                <div class="space-y-2 text-sm font-body">
+                  <p>
+                    <span class="text-[var(--color-on-surface-variant)] mr-2 w-16 inline-block"
+                      >Name:</span
+                    >
+                    <strong
+                      >{{ form.personalDetails.firstName }}
+                      {{ form.personalDetails.lastName }}</strong
+                    >
+                  </p>
+                  <p>
+                    <span class="text-[var(--color-on-surface-variant)] mr-2 w-16 inline-block"
+                      >Email:</span
+                    >
+                    <strong>{{ form.personalDetails.email }}</strong>
+                  </p>
+                  <p>
+                    <span class="text-[var(--color-on-surface-variant)] mr-2 w-16 inline-block"
+                      >Phone:</span
+                    >
+                    <strong>{{ form.personalDetails.phone }}</strong>
+                  </p>
+                  <p>
+                    <span class="text-[var(--color-on-surface-variant)] mr-2 w-16 inline-block"
+                      >City:</span
+                    >
+                    <strong>{{ form.personalDetails.city }}</strong>
+                  </p>
+                </div>
+              </div>
+
+              <div class="bg-[var(--color-surface-container-low)] rounded-lg p-5">
+                <div class="flex justify-between items-center mb-4">
+                  <h3 class="font-bold text-[var(--color-on-surface)] flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[var(--color-primary)] text-sm"
+                      >work</span
+                    >
+                    Employment
+                  </h3>
+                  <button
+                    type="button"
+                    (click)="currentStep.set(1)"
+                    class="text-xs text-[var(--color-primary)] hover:underline font-bold"
+                  >
+                    EDIT
+                  </button>
+                </div>
+                <div class="space-y-2 text-sm font-body">
+                  <p>
+                    <span class="text-[var(--color-on-surface-variant)] mr-2 w-16 inline-block"
+                      >Employer:</span
+                    >
+                    <strong>{{ form.employmentDetails.employerName }}</strong>
+                  </p>
+                  <p>
+                    <span class="text-[var(--color-on-surface-variant)] mr-2 w-16 inline-block"
+                      >Income:</span
+                    >
+                    <strong class="text-[var(--color-success)]"
+                      >${{ form.employmentDetails.monthlyIncome }}/mo</strong
+                    >
+                  </p>
+                  <p>
+                    <span class="text-[var(--color-on-surface-variant)] mr-2 w-16 inline-block"
+                      >EMI:</span
+                    >
+                    <strong>${{ form.employmentDetails.existingEmiAmount }}/mo</strong>
+                  </p>
+                </div>
+              </div>
+
+              <div
+                class="bg-[var(--color-surface-container-low)] rounded-lg p-5 md:col-span-2 shadow-sm border border-slate-200"
+              >
+                <div class="flex justify-between items-center mb-4">
+                  <h3 class="font-bold text-[var(--color-on-surface)] flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[var(--color-primary)] text-sm"
+                      >account_balance</span
+                    >
+                    Loan Request
+                  </h3>
+                  <button
+                    type="button"
+                    (click)="currentStep.set(2)"
+                    class="text-xs text-[var(--color-primary)] hover:underline font-bold"
+                  >
+                    EDIT
+                  </button>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm font-body">
+                  <div>
+                    <p class="text-[var(--color-on-surface-variant)] text-xs mb-1">Amount</p>
+                    <p class="text-xl font-bold text-[var(--color-primary)]">
+                      ${{ form.loanDetails.requestedAmount }}
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-[var(--color-on-surface-variant)] text-xs mb-1">Term</p>
+                    <p class="text-xl font-bold">
+                      {{ form.loanDetails.requestedTenureMonths }} Months
+                    </p>
+                  </div>
+                  <div class="col-span-2">
+                    <p class="text-[var(--color-on-surface-variant)] text-xs mb-1">Purpose</p>
+                    <p class="font-medium truncate">{{ form.loanDetails.loanPurpose }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Action Buttons -->
+        <div
+          class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-10 mt-10 border-t border-[var(--color-surface-container-low)]"
+        >
+          <div class="order-2 sm:order-1 flex gap-3 w-full sm:w-auto">
+            @if (currentStep() > 0) {
+              <button
+                type="button"
+                (click)="currentStep.set(currentStep() - 1)"
+                class="w-full sm:w-auto px-6 py-3 font-bold text-[var(--color-primary)] bg-transparent hover:bg-slate-100 rounded-lg transition-all font-label"
+              >
+                Back
+              </button>
+            }
+            @if (currentStep() < 3) {
+              <button
+                type="button"
+                (click)="saveDraftAndNext()"
+                [disabled]="saving()"
+                class="w-full sm:w-auto text-[var(--color-primary)] font-bold px-6 py-3 hover:bg-[var(--color-surface-container-low)] rounded-lg transition-all font-label flex items-center justify-center gap-2 border border-transparent shadow-sm hover:shadow"
+              >
+                <span class="material-symbols-outlined">save</span>
+                Save Draft
+              </button>
+            }
+          </div>
+
+          <div class="order-1 sm:order-2 w-full sm:w-auto">
+            @if (currentStep() < 3) {
+              <button
+                type="button"
+                (click)="saveDraftAndNext()"
+                [disabled]="saving()"
+                class="w-full sm:w-auto bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] text-white px-10 py-3 rounded-lg font-bold shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all font-label flex items-center justify-center gap-2 disabled:opacity-50 disabled:scale-100"
+              >
+                {{ saving() ? 'Saving...' : 'Next Step' }}
+                <span class="material-symbols-outlined">arrow_forward</span>
+              </button>
+            } @else {
+              <button
+                type="button"
+                (click)="submitApplication()"
+                [disabled]="saving()"
+                class="w-full sm:w-auto bg-[var(--color-success)] text-white px-10 py-3 rounded-lg font-bold shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all font-label flex items-center justify-center gap-2 disabled:opacity-50 disabled:scale-100"
+              >
+                {{ saving() ? 'Submitting...' : 'Submit Application' }}
+                <span class="material-symbols-outlined">check_circle</span>
+              </button>
+            }
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Supportive Content -->
+    <div class="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6 opacity-70">
+      <div class="bg-white/50 backdrop-blur-sm p-6 rounded-xl text-center border border-slate-200">
+        <span class="material-symbols-outlined text-[var(--color-primary)] mb-2">timer</span>
+        <p class="text-[10px] font-bold text-[var(--color-primary)] uppercase tracking-widest mb-1">
+          Time to complete
+        </p>
+        <p class="text-xs text-[var(--color-on-surface-variant)]">Approx. 4 minutes</p>
+      </div>
+      <div class="bg-white/50 backdrop-blur-sm p-6 rounded-xl text-center border border-slate-200">
+        <span class="material-symbols-outlined text-[var(--color-primary)] mb-2">security</span>
+        <p class="text-[10px] font-bold text-[var(--color-primary)] uppercase tracking-widest mb-1">
+          Secure
+        </p>
+        <p class="text-xs text-[var(--color-on-surface-variant)]">256-bit encryption</p>
+      </div>
+      <div class="bg-white/50 backdrop-blur-sm p-6 rounded-xl text-center border border-slate-200">
+        <span class="material-symbols-outlined text-[var(--color-primary)] mb-2"
+          >assignment_turned_in</span
+        >
+        <p class="text-[10px] font-bold text-[var(--color-primary)] uppercase tracking-widest mb-1">
+          Status
+        </p>
+        <p class="text-xs text-[var(--color-on-surface-variant)]">Draft Auto-saves</p>
+      </div>
+    </div>
+  }
+  <!-- end @else -->
+</div>

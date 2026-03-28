@@ -1,0 +1,135 @@
+<div class="min-h-screen flex">
+  <!-- Left – Branding -->
+  <div
+    class="hidden lg:flex flex-1 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] items-center justify-center p-12"
+  >
+    <div class="max-w-md text-center">
+      <div
+        class="w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center mx-auto mb-8"
+      >
+        <span class="text-4xl">🚀</span>
+      </div>
+      <h2 class="text-3xl font-extrabold font-[var(--font-heading)] text-white mb-4">
+        Start Your Journey
+      </h2>
+      <p class="text-white/60 leading-relaxed">
+        Create an account in minutes and apply for your first loan. No paperwork, no hassle.
+      </p>
+    </div>
+  </div>
+
+  <!-- Right – Form -->
+  <div class="flex-1 flex items-center justify-center px-6 py-12 bg-white">
+    <div class="w-full max-w-md animate-fade-in-up">
+      <a routerLink="/" class="flex items-center gap-2.5 mb-10">
+        <div
+          class="w-9 h-9 rounded-lg bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] flex items-center justify-center"
+        >
+          <span class="text-white font-bold text-sm">CF</span>
+        </div>
+        <span class="text-lg font-bold font-[var(--font-heading)] text-[var(--color-primary)]"
+          >CapFinLoan</span
+        >
+      </a>
+
+      <h1
+        class="text-2xl font-extrabold font-[var(--font-heading)] text-[var(--color-primary)] mb-1"
+      >
+        Create Account
+      </h1>
+      <p class="text-sm text-[var(--color-on-surface-variant)] mb-8">
+        Fill in your details to get started.
+      </p>
+
+      @if (error()) {
+        <div
+          class="p-3 mb-6 rounded-lg bg-[var(--color-error-container)] text-[var(--color-on-error-container)] text-sm"
+        >
+          {{ error() }}
+        </div>
+      }
+
+      <form (ngSubmit)="onSubmit()" class="space-y-4">
+        <div>
+          <label class="input-label" for="name">Full Name</label>
+          <input
+            id="name"
+            type="text"
+            class="input-field"
+            placeholder="John Doe"
+            [(ngModel)]="name"
+            name="name"
+            required
+          />
+        </div>
+        <div>
+          <label class="input-label" for="email">Email Address</label>
+          <input
+            id="email"
+            type="email"
+            class="input-field"
+            placeholder="you&#64;example.com"
+            [(ngModel)]="email"
+            name="email"
+            required
+          />
+        </div>
+        <div>
+          <label class="input-label" for="phone">Phone Number</label>
+          <input
+            id="phone"
+            type="tel"
+            class="input-field"
+            placeholder="+91 9876543210"
+            [(ngModel)]="phone"
+            name="phone"
+            required
+          />
+        </div>
+        <div>
+          <label class="input-label" for="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            class="input-field"
+            placeholder="Min 8 chars, uppercase, number, symbol"
+            [(ngModel)]="password"
+            name="password"
+            required
+          />
+        </div>
+
+        <!-- Role toggle (for demo) -->
+        <div class="flex items-center gap-3 pt-1">
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" [(ngModel)]="isAdmin" name="isAdmin" class="sr-only peer" />
+            <div
+              class="w-9 h-5 bg-[var(--color-outline-variant)] peer-focus:ring-2 peer-focus:ring-[var(--color-primary-fixed)] rounded-full peer peer-checked:bg-[var(--color-primary)] after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full"
+            ></div>
+          </label>
+          <span class="text-sm text-[var(--color-on-surface-variant)]"
+            >Sign up as Admin (demo)</span
+          >
+        </div>
+
+        <button type="submit" class="btn-primary w-full !py-3 text-base" [disabled]="loading()">
+          @if (loading()) {
+            <span
+              class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"
+            ></span>
+            Creating Account...
+          } @else {
+            Create Account
+          }
+        </button>
+      </form>
+
+      <p class="text-sm text-center text-[var(--color-on-surface-variant)] mt-8">
+        Already have an account?
+        <a routerLink="/login" class="font-semibold text-[var(--color-primary)] hover:underline"
+          >Sign in</a
+        >
+      </p>
+    </div>
+  </div>
+</div>

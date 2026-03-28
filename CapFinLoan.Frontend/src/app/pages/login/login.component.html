@@ -1,0 +1,111 @@
+<div class="min-h-screen flex">
+  <!-- Left – Form -->
+  <div class="flex-1 flex items-center justify-center px-6 py-12 bg-white">
+    <div class="w-full max-w-md animate-fade-in-up">
+      <a routerLink="/" class="flex items-center gap-2.5 mb-10">
+        <div
+          class="w-9 h-9 rounded-lg bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] flex items-center justify-center"
+        >
+          <span class="text-white font-bold text-sm">CF</span>
+        </div>
+        <span class="text-lg font-bold font-[var(--font-heading)] text-[var(--color-primary)]"
+          >CapFinLoan</span
+        >
+      </a>
+
+      <h1
+        class="text-2xl font-extrabold font-[var(--font-heading)] text-[var(--color-primary)] mb-1"
+      >
+        Welcome back
+      </h1>
+      <p class="text-sm text-[var(--color-on-surface-variant)] mb-8">
+        Sign in to continue to your dashboard.
+      </p>
+
+      @if (error()) {
+        <div
+          class="p-3 mb-6 rounded-lg bg-[var(--color-error-container)] text-[var(--color-on-error-container)] text-sm"
+        >
+          {{ error() }}
+        </div>
+      }
+
+      <form (ngSubmit)="onSubmit()" class="space-y-5">
+        <div>
+          <label class="input-label" for="email">Email Address</label>
+          <input
+            id="email"
+            type="email"
+            class="input-field"
+            placeholder="you&#64;example.com"
+            [(ngModel)]="email"
+            name="email"
+            required
+          />
+        </div>
+        <div>
+          <label class="input-label" for="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            class="input-field"
+            placeholder="Enter your password"
+            [(ngModel)]="password"
+            name="password"
+            required
+          />
+        </div>
+        <button type="submit" class="btn-primary w-full !py-3 text-base" [disabled]="loading()">
+          @if (loading()) {
+            <span
+              class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"
+            ></span>
+            Signing in...
+          } @else {
+            Sign In
+          }
+        </button>
+      </form>
+
+      <p class="text-sm text-center text-[var(--color-on-surface-variant)] mt-8">
+        Don't have an account?
+        <a routerLink="/signup" class="font-semibold text-[var(--color-primary)] hover:underline"
+          >Create one</a
+        >
+      </p>
+    </div>
+  </div>
+
+  <!-- Right – Branding Panel -->
+  <div
+    class="hidden lg:flex flex-1 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] items-center justify-center p-12"
+  >
+    <div class="max-w-md text-center">
+      <div
+        class="w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center mx-auto mb-8"
+      >
+        <span class="text-4xl">🏦</span>
+      </div>
+      <h2 class="text-3xl font-extrabold font-[var(--font-heading)] text-white mb-4">
+        Smart Lending, Simplified
+      </h2>
+      <p class="text-white/60 leading-relaxed">
+        Access your loan dashboard, track applications, and manage documents — all in one place.
+      </p>
+      <div class="mt-10 grid grid-cols-3 gap-6 text-center">
+        <div>
+          <p class="text-2xl font-bold text-white">98%</p>
+          <p class="text-xs text-white/50 mt-1">Approval Rate</p>
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-white">24h</p>
+          <p class="text-xs text-white/50 mt-1">Processing</p>
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-white">10K+</p>
+          <p class="text-xs text-white/50 mt-1">Customers</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
