@@ -1,0 +1,80 @@
+<nav
+  class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-[var(--color-outline-variant)]/20"
+>
+  <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+    <!-- Logo -->
+    <a routerLink="/" class="flex items-center gap-2.5 no-underline">
+      <div
+        class="w-9 h-9 rounded-lg bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] flex items-center justify-center"
+      >
+        <span class="text-white font-bold text-sm font-[var(--font-heading)]">CF</span>
+      </div>
+      <span class="text-lg font-bold font-[var(--font-heading)] text-[var(--color-primary)]"
+        >CapFinLoan</span
+      >
+    </a>
+
+    <!-- Center Links (public) -->
+    @if (!auth.isLoggedIn()) {
+      <div class="hidden md:flex items-center gap-8">
+        <a
+          routerLink="/"
+          class="text-sm font-medium text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-colors"
+          >Home</a
+        >
+        <a
+          href="#features"
+          class="text-sm font-medium text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-colors"
+          >Features</a
+        >
+        <a
+          href="#how-it-works"
+          class="text-sm font-medium text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-colors"
+          >How It Works</a
+        >
+      </div>
+    }
+
+    <!-- Auth Buttons / User Menu -->
+    <div class="flex items-center gap-3">
+      @if (auth.isLoggedIn()) {
+        @if (auth.isApplicant()) {
+          <a
+            routerLink="/applicant/dashboard"
+            routerLinkActive="text-[var(--color-primary)]"
+            class="text-sm font-medium text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-colors hidden md:block"
+            >Dashboard</a
+          >
+          <a
+            routerLink="/applicant/applications"
+            routerLinkActive="text-[var(--color-primary)]"
+            class="text-sm font-medium text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-colors hidden md:block"
+            >My Applications</a
+          >
+          <a routerLink="/applicant/apply" class="btn-primary btn-sm hidden md:inline-flex"
+            >Apply Now</a
+          >
+        }
+        <div
+          class="flex items-center gap-3 ml-4 pl-4 border-l border-[var(--color-outline-variant)]/30"
+        >
+          <div class="hidden sm:block text-right">
+            <p class="text-sm font-semibold text-[var(--color-on-surface)] leading-tight">
+              {{ auth.currentUser()?.name }}
+            </p>
+            <p class="text-xs text-[var(--color-outline)]">{{ auth.currentUser()?.role }}</p>
+          </div>
+          <button
+            (click)="auth.logout()"
+            class="btn-ghost btn-sm text-[var(--color-error)] hover:bg-[var(--color-error-container)]"
+          >
+            Logout
+          </button>
+        </div>
+      } @else {
+        <a routerLink="/login" class="btn-ghost btn-sm">Sign In</a>
+        <a routerLink="/signup" class="btn-primary btn-sm">Get Started</a>
+      }
+    </div>
+  </div>
+</nav>
