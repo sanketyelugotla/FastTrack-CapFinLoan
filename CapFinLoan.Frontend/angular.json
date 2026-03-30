@@ -25,13 +25,11 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.css"
-            ],
+            "styles": ["src/styles.css"],
             "server": "src/main.server.ts",
             "outputMode": "server",
             "security": {
-              "allowedHosts": []
+              "allowedHosts": ["localhost", "127.0.0.1", "[::1]"]
             },
             "prerender": false,
             "ssr": {
@@ -64,6 +62,11 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "host": "0.0.0.0",
+            "port": 4200,
+            "allowedHosts": ["localhost", "127.0.0.1", "[::1]"]
+          },
           "configurations": {
             "production": {
               "buildTarget": "CapFinLoan.Frontend:build:production"

@@ -11,6 +11,12 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var rabbitHost = builder.Configuration["RabbitMQ:Host"] ?? "localhost";
+var rabbitUsername = builder.Configuration["RabbitMQ:Username"] ?? "guest";
+var rabbitPassword = builder.Configuration["RabbitMQ:Password"] ?? "guest";
+var authServiceBaseUrl = builder.Configuration["AdminDependencies:AuthServiceBaseUrl"] ?? "http://localhost:5021";
+var documentServiceBaseUrl = builder.Configuration["AdminDependencies:DocumentServiceBaseUrl"] ?? "http://localhost:5023";
+
 builder.Services.AddDbContext<AdminDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("CapFinLoanDb")));
 
@@ -25,10 +31,10 @@ builder.Services.AddMassTransit(x =>
 
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host("localhost", "/", h =>
+        cfg.Host(rabbitHost, "/", h =>
         {
-            h.Username("guest");
-            h.Password("guest");
+            h.Username(rabbitUsername);
+            h.Password(rabbitPassword);
         });
         cfg.ConfigureEndpoints(context);
     });
@@ -61,14 +67,12 @@ builder.Services
 
 builder.Services.AddHttpClient("AuthServiceClient", client =>
 {
-    // Point this to AuthService address
-    client.BaseAddress = new Uri("http://localhost:5021");
+    client.BaseAddress = new Uri(authServiceBaseUrl);
 });
 
 builder.Services.AddHttpClient("DocumentServiceClient", client =>
 {
-    // Point this to DocumentService address
-    client.BaseAddress = new Uri("http://localhost:5023");
+    client.BaseAddress = new Uri(documentServiceBaseUrl);
 });
 
 builder.Services.AddAuthorization();
@@ -116,7 +120,7 @@ using (var scope = app.Services.CreateScope())
     await dbContext.Database.MigrateAsync();
 }
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker"))
 {
     app.UseSwagger();
     app.UseSwaggerUI();

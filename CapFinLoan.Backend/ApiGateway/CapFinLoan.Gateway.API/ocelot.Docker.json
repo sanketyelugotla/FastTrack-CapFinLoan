@@ -1,0 +1,94 @@
+{
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/gateway/auth/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
+      "DownstreamPathTemplate": "/api/auth/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "auth-service", "Port": 8080 }],
+      "SwaggerKey": "auth"
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/applications/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
+      "DownstreamPathTemplate": "/api/applications/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "application-service", "Port": 8080 }
+      ],
+      "SwaggerKey": "applications"
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/documents/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
+      "DownstreamPathTemplate": "/api/documents/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "document-service", "Port": 8080 }],
+      "SwaggerKey": "documents"
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/admin/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
+      "DownstreamPathTemplate": "/api/admin/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "admin-service", "Port": 8080 }],
+      "SwaggerKey": "admin"
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/api/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
+      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "api-gateway", "Port": 8080 }]
+    }
+  ],
+  "SwaggerEndPoints": [
+    {
+      "Key": "auth",
+      "TransformByOcelotConfig": true,
+      "Config": [
+        {
+          "Name": "Auth Service",
+          "Version": "v1",
+          "Url": "http://auth-service:8080/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "applications",
+      "TransformByOcelotConfig": true,
+      "Config": [
+        {
+          "Name": "Application Service",
+          "Version": "v1",
+          "Url": "http://application-service:8080/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "documents",
+      "TransformByOcelotConfig": true,
+      "Config": [
+        {
+          "Name": "Document Service",
+          "Version": "v1",
+          "Url": "http://document-service:8080/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "admin",
+      "TransformByOcelotConfig": true,
+      "Config": [
+        {
+          "Name": "Admin Service",
+          "Version": "v1",
+          "Url": "http://admin-service:8080/swagger/v1/swagger.json"
+        }
+      ]
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://api-gateway:8080"
+  }
+}

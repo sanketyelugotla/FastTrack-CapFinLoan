@@ -4,7 +4,8 @@ using MMLib.SwaggerForOcelot.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
+var ocelotFileName = builder.Environment.IsEnvironment("Docker") ? "ocelot.Docker.json" : "ocelot.json";
+builder.Configuration.AddJsonFile(ocelotFileName, optional: false, reloadOnChange: true);
 
 builder.Services.AddOcelot(builder.Configuration);
 builder.Services.AddSwaggerForOcelot(builder.Configuration);

@@ -1,0 +1,208 @@
+name: capfinloan
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: capfinloan-sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "CapFinLoan@12345"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - capfinloan-net
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "bash -c '</dev/tcp/localhost/1433' 2>/dev/null && echo OK || exit 1",
+        ]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: capfinloan-rabbitmq
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+    networks:
+      - capfinloan-net
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 20s
+
+  auth-service:
+    build:
+      context: ./CapFinLoan.Backend
+      dockerfile: AuthService/CapFinLoan.Auth.API/Dockerfile
+    container_name: capfinloan-auth-service
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__CapFinLoanDb: "Server=sqlserver,1433;Database=CapFinLoanDb;User Id=sa;Password=CapFinLoan@12345;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True"
+      RabbitMQ__Host: rabbitmq
+      RabbitMQ__Username: guest
+      RabbitMQ__Password: guest
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "5021:8080"
+    networks:
+      - capfinloan-net
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/localhost/8080' 2>/dev/null && echo OK || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  application-service:
+    build:
+      context: ./CapFinLoan.Backend
+      dockerfile: ApplicationService/CapFinLoan.Application.API/Dockerfile
+    container_name: capfinloan-application-service
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__CapFinLoanDb: "Server=sqlserver,1433;Database=CapFinLoanDb;User Id=sa;Password=CapFinLoan@12345;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True"
+      RabbitMQ__Host: rabbitmq
+      RabbitMQ__Username: guest
+      RabbitMQ__Password: guest
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+    ports:
+      - "5022:8080"
+    networks:
+      - capfinloan-net
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/localhost/8080' 2>/dev/null && echo OK || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  document-service:
+    build:
+      context: ./CapFinLoan.Backend
+      dockerfile: DocumentService/CapFinLoan.Document.API/Dockerfile
+    container_name: capfinloan-document-service
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__CapFinLoanDb: "Server=sqlserver,1433;Database=CapFinLoanDb;User Id=sa;Password=CapFinLoan@12345;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True"
+      RabbitMQ__Host: rabbitmq
+      RabbitMQ__Username: guest
+      RabbitMQ__Password: guest
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+      application-service:
+        condition: service_healthy
+    ports:
+      - "5023:8080"
+    volumes:
+      - document_uploads:/app/wwwroot/uploads
+    networks:
+      - capfinloan-net
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/localhost/8080' 2>/dev/null && echo OK || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  admin-service:
+    build:
+      context: ./CapFinLoan.Backend
+      dockerfile: AdminService/CapFinLoan.Admin.API/Dockerfile
+    container_name: capfinloan-admin-service
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__CapFinLoanDb: "Server=sqlserver,1433;Database=CapFinLoanDb;User Id=sa;Password=CapFinLoan@12345;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True"
+      RabbitMQ__Host: rabbitmq
+      RabbitMQ__Username: guest
+      RabbitMQ__Password: guest
+      AdminDependencies__AuthServiceBaseUrl: http://auth-service:8080
+      AdminDependencies__DocumentServiceBaseUrl: http://document-service:8080
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+      document-service:
+        condition: service_healthy
+    ports:
+      - "5024:8080"
+    networks:
+      - capfinloan-net
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/localhost/8080' 2>/dev/null && echo OK || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  api-gateway:
+    build:
+      context: ./CapFinLoan.Backend
+      dockerfile: ApiGateway/CapFinLoan.Gateway.API/Dockerfile
+    container_name: capfinloan-api-gateway
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      ASPNETCORE_URLS: http://+:8080
+    depends_on:
+      auth-service:
+        condition: service_healthy
+      application-service:
+        condition: service_healthy
+      document-service:
+        condition: service_healthy
+      admin-service:
+        condition: service_healthy
+    ports:
+      - "5020:8080"
+    networks:
+      - capfinloan-net
+
+  frontend:
+    build:
+      context: ./CapFinLoan.Frontend
+      dockerfile: Dockerfile
+    container_name: capfinloan-frontend
+    depends_on:
+      - api-gateway
+    ports:
+      - "4200:4200"
+    networks:
+      - capfinloan-net
+
+volumes:
+  sqlserver_data:
+  document_uploads:
+
+networks:
+  capfinloan-net:
+    driver: bridge

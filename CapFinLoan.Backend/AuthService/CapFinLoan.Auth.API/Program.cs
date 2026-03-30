@@ -14,6 +14,10 @@ using MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var rabbitHost = builder.Configuration["RabbitMQ:Host"] ?? "localhost";
+var rabbitUsername = builder.Configuration["RabbitMQ:Username"] ?? "guest";
+var rabbitPassword = builder.Configuration["RabbitMQ:Password"] ?? "guest";
+
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.SectionName));
 
 builder.Services.AddDbContext<AuthDbContext>(options =>
@@ -41,10 +45,10 @@ builder.Services.AddMassTransit(x =>
 {
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host("localhost", "/", h =>
+        cfg.Host(rabbitHost, "/", h =>
         {
-            h.Username("guest");
-            h.Password("guest");
+            h.Username(rabbitUsername);
+            h.Password(rabbitPassword);
         });
         cfg.ConfigureEndpoints(context);
     });
@@ -81,7 +85,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker"))
 {
     app.UseSwagger();
     app.UseSwaggerUI();
