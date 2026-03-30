@@ -84,8 +84,6 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-      auth-service:
-        condition: service_healthy
     ports:
       - "5022:8080"
     networks:
@@ -113,10 +111,6 @@ services:
       sqlserver:
         condition: service_healthy
       rabbitmq:
-        condition: service_healthy
-      auth-service:
-        condition: service_healthy
-      application-service:
         condition: service_healthy
     ports:
       - "5023:8080"
@@ -149,10 +143,6 @@ services:
       sqlserver:
         condition: service_healthy
       rabbitmq:
-        condition: service_healthy
-      auth-service:
-        condition: service_healthy
-      document-service:
         condition: service_healthy
     ports:
       - "5024:8080"
