@@ -30,10 +30,17 @@
     <Project Path="DocumentService/CapFinLoan.Document.Infrastructure/CapFinLoan.Document.Infrastructure.csproj" />
     <Project Path="DocumentService/CapFinLoan.Document.Persistence/CapFinLoan.Document.Persistence.csproj" />
   </Folder>
+  <Folder Name="/NotificationService/">
+    <Project Path="NotificationService/CapFinLoan.Notification.API/CapFinLoan.Notification.API.csproj" />
+    <Project Path="NotificationService/CapFinLoan.Notification.Application/CapFinLoan.Notification.Application.csproj" />
+    <Project Path="NotificationService/CapFinLoan.Notification.Domain/CapFinLoan.Notification.Domain.csproj" />
+    <Project Path="NotificationService/CapFinLoan.Notification.Infrastructure/CapFinLoan.Notification.Infrastructure.csproj" />
+    <Project Path="NotificationService/CapFinLoan.Notification.Persistence/CapFinLoan.Notification.Persistence.csproj" />
+  </Folder>
   <Folder Name="/Shared/">
     <Project Path="Shared/CapFinLoan.Messaging.Contracts/CapFinLoan.Messaging.Contracts.csproj" />
   </Folder>
   <Properties Name="Visual Studio">
-    <Property Name="StartupItem" Value="ApiGateway\CapFinLoan.Gateway.API\CapFinLoan.Gateway.API.csproj;AdminService\CapFinLoan.Admin.API\CapFinLoan.Admin.API.csproj;ApplicationService\CapFinLoan.Application.API\CapFinLoan.Application.API.csproj;AuthService\CapFinLoan.Auth.API\CapFinLoan.Auth.API.csproj;DocumentService\CapFinLoan.Document.API\CapFinLoan.Document.API.csproj" />
+    <Property Name="StartupItem" Value="ApiGateway\CapFinLoan.Gateway.API\CapFinLoan.Gateway.API.csproj;AdminService\CapFinLoan.Admin.API\CapFinLoan.Admin.API.csproj;ApplicationService\CapFinLoan.Application.API\CapFinLoan.Application.API.csproj;AuthService\CapFinLoan.Auth.API\CapFinLoan.Auth.API.csproj;DocumentService\CapFinLoan.Document.API\CapFinLoan.Document.API.csproj;NotificationService\CapFinLoan.Notification.API\CapFinLoan.Notification.API.csproj" />
   </Properties>
 </Solution>

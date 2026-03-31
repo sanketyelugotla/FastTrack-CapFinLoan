@@ -51,6 +51,7 @@ services:
       RabbitMQ__Host: rabbitmq
       RabbitMQ__Username: guest
       RabbitMQ__Password: guest
+      InternalApi__Key: capfinloan-internal-key
     depends_on:
       sqlserver:
         condition: service_healthy
@@ -61,7 +62,11 @@ services:
     networks:
       - capfinloan-net
     healthcheck:
-      test: ["CMD-SHELL", "bash -c '</dev/tcp/localhost/8080' 2>/dev/null && echo OK || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "bash -c '</dev/tcp/localhost/8080' 2>/dev/null && echo OK || exit 1",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -89,7 +94,11 @@ services:
     networks:
       - capfinloan-net
     healthcheck:
-      test: ["CMD-SHELL", "bash -c '</dev/tcp/localhost/8080' 2>/dev/null && echo OK || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "bash -c '</dev/tcp/localhost/8080' 2>/dev/null && echo OK || exit 1",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -119,7 +128,11 @@ services:
     networks:
       - capfinloan-net
     healthcheck:
-      test: ["CMD-SHELL", "bash -c '</dev/tcp/localhost/8080' 2>/dev/null && echo OK || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "bash -c '</dev/tcp/localhost/8080' 2>/dev/null && echo OK || exit 1",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -149,7 +162,51 @@ services:
     networks:
       - capfinloan-net
     healthcheck:
-      test: ["CMD-SHELL", "bash -c '</dev/tcp/localhost/8080' 2>/dev/null && echo OK || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "bash -c '</dev/tcp/localhost/8080' 2>/dev/null && echo OK || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  notification-service:
+    build:
+      context: ./CapFinLoan.Backend
+      dockerfile: NotificationService/CapFinLoan.Notification.API/Dockerfile
+    container_name: capfinloan-notification-service
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      ASPNETCORE_URLS: http://+:8080
+      RabbitMQ__Host: rabbitmq
+      RabbitMQ__Username: guest
+      RabbitMQ__Password: guest
+      NotificationDependencies__AuthServiceBaseUrl: http://auth-service:8080/
+      NotificationDependencies__InternalApiKey: capfinloan-internal-key
+      Email__SmtpHost: smtp.gmail.com
+      Email__Port: 587
+      Email__Username: ${EMAIL_USERNAME:-}
+      Email__Password: ${EMAIL_PASSWORD:-}
+      Email__FromAddress: ${EMAIL_FROM_ADDRESS:-noreply@capfinloan.local}
+      Email__FromName: ${EMAIL_FROM_NAME:-CapFinLoan}
+      Email__AlertRecipient: ${EMAIL_ALERT_RECIPIENT:-}
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+    ports:
+      - "5025:8080"
+    networks:
+      - capfinloan-net
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "bash -c '</dev/tcp/localhost/8080' 2>/dev/null && echo OK || exit 1",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
