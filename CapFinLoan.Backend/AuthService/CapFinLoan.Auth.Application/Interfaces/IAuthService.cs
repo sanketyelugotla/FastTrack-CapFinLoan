@@ -9,5 +9,6 @@ public interface IAuthService
     Task<AuthResponse> SignupAdminAsync(SignupRequest request, CancellationToken cancellationToken = default);
     Task<AuthResponse> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default);
     Task<IReadOnlyCollection<UserSummaryResponse>> GetUsersAsync(CancellationToken cancellationToken = default);
+    Task<UserNotificationInfoResponse> GetUserNotificationInfoAsync(Guid userId, CancellationToken cancellationToken = default);
     Task<UserSummaryResponse> UpdateUserStatusAsync(Guid userId, bool isActive, CancellationToken cancellationToken = default);
 }
