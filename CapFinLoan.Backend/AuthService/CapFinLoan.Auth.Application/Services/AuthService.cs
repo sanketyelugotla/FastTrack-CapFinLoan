@@ -34,7 +34,6 @@ public class AuthService : IAuthService
             Email = email,
             PhoneNumber = request.Phone.Trim(),
             Name = request.Name.Trim(),
-            Role = RoleNames.Applicant,
             IsActive = true,
             CreatedAtUtc = DateTime.UtcNow,
             UpdatedAtUtc = DateTime.UtcNow
@@ -42,21 +41,28 @@ public class AuthService : IAuthService
 
         await _userRepository.CreateAsync(user, request.Password, cancellationToken);
 
+        // Assign user to Applicant role
+        await _userRepository.AddToRoleAsync(user, RoleNames.Applicant, cancellationToken);
+
+        // Get user roles for JWT token and event
+        var userRoles = await _userRepository.GetRolesAsync(user, cancellationToken);
+        var primaryRole = userRoles.FirstOrDefault() ?? RoleNames.Applicant;
+
         await _eventPublisher.PublishAsync(new UserRegisteredEvent
         {
             UserId = user.Id,
             Email = user.Email!,
             FullName = user.Name,
-            Role = user.Role,
+            Role = primaryRole,
             RegisteredAtUtc = user.CreatedAtUtc
         }, cancellationToken);
 
-        var (token, expiresAtUtc) = _jwtTokenGenerator.GenerateToken(user);
+        var (token, expiresAtUtc) = await _jwtTokenGenerator.GenerateTokenAsync(user, userRoles);
         return new AuthResponse
         {
             Token = token,
             ExpiresAtUtc = expiresAtUtc,
-            Role = user.Role,
+            Role = primaryRole,
             UserId = user.Id,
             Name = user.Name,
             Email = user.Email!
@@ -77,7 +83,6 @@ public class AuthService : IAuthService
             Email = email,
             PhoneNumber = request.Phone.Trim(),
             Name = request.Name.Trim(),
-            Role = RoleNames.Admin,
             IsActive = true,
             CreatedAtUtc = DateTime.UtcNow,
             UpdatedAtUtc = DateTime.UtcNow
@@ -85,21 +90,28 @@ public class AuthService : IAuthService
 
         await _userRepository.CreateAsync(user, request.Password, cancellationToken);
 
+        // Assign user to Admin role
+        await _userRepository.AddToRoleAsync(user, RoleNames.Admin, cancellationToken);
+
+        // Get user roles for JWT token and event
+        var userRoles = await _userRepository.GetRolesAsync(user, cancellationToken);
+        var primaryRole = userRoles.FirstOrDefault() ?? RoleNames.Admin;
+
         await _eventPublisher.PublishAsync(new UserRegisteredEvent
         {
             UserId = user.Id,
             Email = user.Email!,
             FullName = user.Name,
-            Role = user.Role,
+            Role = primaryRole,
             RegisteredAtUtc = user.CreatedAtUtc
         }, cancellationToken);
 
-        var (token, expiresAtUtc) = _jwtTokenGenerator.GenerateToken(user);
+        var (token, expiresAtUtc) = await _jwtTokenGenerator.GenerateTokenAsync(user, userRoles);
         return new AuthResponse
         {
             Token = token,
             ExpiresAtUtc = expiresAtUtc,
-            Role = user.Role,
+            Role = primaryRole,
             UserId = user.Id,
             Name = user.Name,
             Email = user.Email!
@@ -121,12 +133,16 @@ public class AuthService : IAuthService
             throw new UnauthorizedAccessException("User is deactivated.");
         }
 
-        var (token, expiresAtUtc) = _jwtTokenGenerator.GenerateToken(user);
+        // Get user roles for JWT token
+        var userRoles = await _userRepository.GetRolesAsync(user, cancellationToken);
+        var primaryRole = userRoles.FirstOrDefault() ?? "UNKNOWN";
+
+        var (token, expiresAtUtc) = await _jwtTokenGenerator.GenerateTokenAsync(user, userRoles);
         return new AuthResponse
         {
             Token = token,
             ExpiresAtUtc = expiresAtUtc,
-            Role = user.Role,
+            Role = primaryRole,
             UserId = user.Id,
             Name = user.Name,
             Email = user.Email!
@@ -136,10 +152,29 @@ public class AuthService : IAuthService
     public async Task<IReadOnlyCollection<UserSummaryResponse>> GetUsersAsync(CancellationToken cancellationToken = default)
     {
         var users = await _userRepository.GetAllAsync(cancellationToken);
-        return users
-            .OrderByDescending(x => x.CreatedAtUtc)
-            .Select(MapUser)
-            .ToArray();
+        var result = new List<UserSummaryResponse>();
+
+        foreach (var user in users.OrderByDescending(x => x.CreatedAtUtc))
+        {
+            var roles = await _userRepository.GetRolesAsync(user, cancellationToken);
+            var role = roles.FirstOrDefault() ?? "UNKNOWN";
+            result.Add(MapUser(user, role));
+        }
+
+        return result;
+    }
+
+    public async Task<UserNotificationInfoResponse> GetUserNotificationInfoAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        var user = await _userRepository.GetByIdAsync(userId, cancellationToken)
+                   ?? throw new KeyNotFoundException("User not found.");
+
+        return new UserNotificationInfoResponse
+        {
+            Id = user.Id,
+            Name = user.Name,
+            Email = user.Email ?? string.Empty
+        };
     }
 
     public async Task<UserSummaryResponse> UpdateUserStatusAsync(Guid userId, bool isActive, CancellationToken cancellationToken = default)
@@ -151,10 +186,12 @@ public class AuthService : IAuthService
         user.UpdatedAtUtc = DateTime.UtcNow;
         await _userRepository.UpdateAsync(user, cancellationToken);
 
-        return MapUser(user);
+        var roles = await _userRepository.GetRolesAsync(user, cancellationToken);
+        var role = roles.FirstOrDefault() ?? "UNKNOWN";
+        return MapUser(user, role);
     }
 
-    private static UserSummaryResponse MapUser(ApplicationUser user)
+    private static UserSummaryResponse MapUser(ApplicationUser user, string role)
     {
         return new UserSummaryResponse
         {
@@ -162,7 +199,7 @@ public class AuthService : IAuthService
             Name = user.Name,
             Email = user.Email ?? string.Empty,
             Phone = user.PhoneNumber ?? string.Empty,
-            Role = user.Role,
+            Role = role,
             IsActive = user.IsActive,
             CreatedAtUtc = user.CreatedAtUtc
         };

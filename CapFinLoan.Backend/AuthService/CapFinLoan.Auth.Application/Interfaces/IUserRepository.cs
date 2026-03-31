@@ -1,4 +1,5 @@
 using CapFinLoan.Auth.Domain.Entities;
+using System.Security.Claims;
 
 namespace CapFinLoan.Auth.Application.Interfaces;
 
@@ -11,4 +12,8 @@ public interface IUserRepository
     Task CreateAsync(ApplicationUser user, string rawPassword, CancellationToken cancellationToken = default);
     Task UpdateAsync(ApplicationUser user, CancellationToken cancellationToken = default);
     Task<bool> CheckPasswordAsync(ApplicationUser user, string password);
+    Task AddToRoleAsync(ApplicationUser user, string roleName, CancellationToken cancellationToken = default);
+    Task<IList<string>> GetRolesAsync(ApplicationUser user, CancellationToken cancellationToken = default);
+    Task AddClaimAsync(ApplicationUser user, Claim claim, CancellationToken cancellationToken = default);
+    Task<IList<Claim>> GetClaimsAsync(ApplicationUser user, CancellationToken cancellationToken = default);
 }

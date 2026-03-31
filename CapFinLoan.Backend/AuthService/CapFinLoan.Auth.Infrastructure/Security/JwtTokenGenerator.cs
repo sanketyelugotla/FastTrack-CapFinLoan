@@ -18,7 +18,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         _options = options.Value;
     }
 
-    public (string Token, DateTime ExpiresAtUtc) GenerateToken(ApplicationUser user)
+    public Task<(string Token, DateTime ExpiresAtUtc)> GenerateTokenAsync(ApplicationUser user, IList<string> roles)
     {
         var expiresAtUtc = DateTime.UtcNow.AddMinutes(_options.ExpiryMinutes);
 
@@ -26,9 +26,14 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         {
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
-            new(ClaimTypes.Name, user.Name),
-            new(ClaimTypes.Role, user.Role)
+            new(ClaimTypes.Name, user.Name)
         };
+
+        // Add all roles as separate role claims
+        foreach (var role in roles)
+        {
+            claims.Add(new(ClaimTypes.Role, role));
+        }
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Key));
         var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -41,6 +46,6 @@ public class JwtTokenGenerator : IJwtTokenGenerator
             signingCredentials: signingCredentials);
 
         var tokenValue = new JwtSecurityTokenHandler().WriteToken(token);
-        return (tokenValue, expiresAtUtc);
+        return Task.FromResult((tokenValue, expiresAtUtc));
     }
 }

@@ -1,6 +1,7 @@
 using System.Text;
 using CapFinLoan.Auth.Application.Interfaces;
 using CapFinLoan.Auth.Application.Services;
+using CapFinLoan.Auth.Domain.Constants;
 using CapFinLoan.Auth.Domain.Entities;
 using CapFinLoan.Auth.Infrastructure.Configuration;
 using CapFinLoan.Auth.Infrastructure.Security;
@@ -95,6 +96,17 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
     dbContext.Database.Migrate();
+
+    // Seed roles
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+    var roles = new[] { RoleNames.Applicant, RoleNames.Admin };
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole<Guid> { Name = role });
+        }
+    }
 }
 
 app.UseAuthentication();

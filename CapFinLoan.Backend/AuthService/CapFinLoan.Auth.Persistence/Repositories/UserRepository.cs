@@ -2,6 +2,7 @@ using CapFinLoan.Auth.Application.Interfaces;
 using CapFinLoan.Auth.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace CapFinLoan.Auth.Persistence.Repositories;
 
@@ -59,5 +60,47 @@ public class UserRepository : IUserRepository
     public async Task<bool> CheckPasswordAsync(ApplicationUser user, string password)
     {
         return await _userManager.CheckPasswordAsync(user, password);
+    }
+
+    /// <summary>
+    /// Add a user to a role using Identity roles (AspNetUserRoles table).
+    /// </summary>
+    public async Task AddToRoleAsync(ApplicationUser user, string roleName, CancellationToken cancellationToken = default)
+    {
+        var result = await _userManager.AddToRoleAsync(user, roleName);
+        if (!result.Succeeded)
+        {
+            var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+            throw new InvalidOperationException($"Failed to add user to role: {errors}");
+        }
+    }
+
+    /// <summary>
+    /// Get all roles for a user.
+    /// </summary>
+    public async Task<IList<string>> GetRolesAsync(ApplicationUser user, CancellationToken cancellationToken = default)
+    {
+        return await _userManager.GetRolesAsync(user);
+    }
+
+    /// <summary>
+    /// Add a claim to a user (stored in AspNetUserClaims table).
+    /// </summary>
+    public async Task AddClaimAsync(ApplicationUser user, Claim claim, CancellationToken cancellationToken = default)
+    {
+        var result = await _userManager.AddClaimAsync(user, claim);
+        if (!result.Succeeded)
+        {
+            var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+            throw new InvalidOperationException($"Failed to add claim to user: {errors}");
+        }
+    }
+
+    /// <summary>
+    /// Get all claims for a user.
+    /// </summary>
+    public async Task<IList<Claim>> GetClaimsAsync(ApplicationUser user, CancellationToken cancellationToken = default)
+    {
+        return await _userManager.GetClaimsAsync(user);
     }
 }

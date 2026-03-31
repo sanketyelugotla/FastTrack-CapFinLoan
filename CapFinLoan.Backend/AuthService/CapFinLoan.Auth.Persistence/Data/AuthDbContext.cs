@@ -19,7 +19,6 @@ public class AuthDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Gui
         modelBuilder.Entity<ApplicationUser>(entity =>
         {
             entity.Property(x => x.Name).HasMaxLength(100).IsRequired();
-            entity.Property(x => x.Role).HasMaxLength(30).IsRequired();
         });
     }
 }

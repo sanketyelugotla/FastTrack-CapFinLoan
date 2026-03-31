@@ -4,5 +4,5 @@ namespace CapFinLoan.Auth.Application.Interfaces;
 
 public interface IJwtTokenGenerator
 {
-    (string Token, DateTime ExpiresAtUtc) GenerateToken(ApplicationUser user);
+    Task<(string Token, DateTime ExpiresAtUtc)> GenerateTokenAsync(ApplicationUser user, IList<string> roles);
 }
