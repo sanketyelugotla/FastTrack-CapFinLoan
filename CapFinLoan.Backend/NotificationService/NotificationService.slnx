@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/NotificationService/">
+    <Project Path="CapFinLoan.Notification.API/CapFinLoan.Notification.API.csproj" />
+    <Project Path="CapFinLoan.Notification.Application/CapFinLoan.Notification.Application.csproj" />
+    <Project Path="CapFinLoan.Notification.Domain/CapFinLoan.Notification.Domain.csproj" />
+    <Project Path="CapFinLoan.Notification.Infrastructure/CapFinLoan.Notification.Infrastructure.csproj" />
+    <Project Path="CapFinLoan.Notification.Persistence/CapFinLoan.Notification.Persistence.csproj" />
+  </Folder>
+</Solution>
