@@ -96,6 +96,7 @@ public class AdminLoanApplicationService : IAdminLoanApplicationService
         await _eventPublisher.PublishAsync(new ApplicationStatusChangedEvent
         {
             ApplicationId = application.Id,
+            ApplicantUserId = application.ApplicantUserId,
             ApplicationNumber = application.ApplicationNumber,
             PreviousStatus = previousStatus,
             NewStatus = targetStatus,
