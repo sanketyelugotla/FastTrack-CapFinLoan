@@ -47,6 +47,54 @@ public class AuthController : ControllerBase
         }
     }
 
+    [HttpPost("send-otp")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> SendOtp([FromQuery] string email, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await _authService.SendSignupOtpAsync(email, cancellationToken);
+            return Ok(result);
+        }
+        catch (InvalidOperationException exception)
+        {
+            return BadRequest(new { message = exception.Message });
+        }
+    }
+
+    [HttpPost("verify-otp-signup")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> VerifyOtpAndSignup([FromBody] OtpVerificationRequest request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await _authService.VerifyOtpAndSignupAsync(request, cancellationToken);
+            return Ok(result);
+        }
+        catch (InvalidOperationException exception)
+        {
+            return BadRequest(new { message = exception.Message });
+        }
+    }
+
+    [HttpPost("verify-otp-signup-admin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> VerifyOtpAndSignupAdmin([FromBody] OtpVerificationRequest request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await _authService.VerifyOtpAndSignupAdminAsync(request, cancellationToken);
+            return Ok(result);
+        }
+        catch (InvalidOperationException exception)
+        {
+            return BadRequest(new { message = exception.Message });
+        }
+    }
+
     [HttpPost("login")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]

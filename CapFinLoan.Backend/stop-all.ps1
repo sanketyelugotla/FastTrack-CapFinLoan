@@ -8,7 +8,8 @@ $processNames = @(
     "CapFinLoan.Application.API",
     "CapFinLoan.Admin.API",
     "CapFinLoan.Document.API",
-    "CapFinLoan.Gateway.API"
+    "CapFinLoan.Gateway.API",
+    "CapFinLoan.Notification.API"
 )
 
 foreach ($name in $processNames) {

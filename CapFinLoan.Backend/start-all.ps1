@@ -10,7 +10,8 @@ $services = @(
     @{ Name = "Application Service"; Path = "ApplicationService\CapFinLoan.Application.API" },
     @{ Name = "Admin Service"; Path = "AdminService\CapFinLoan.Admin.API" },
     @{ Name = "Document Service"; Path = "DocumentService\CapFinLoan.Document.API" },
-    @{ Name = "API Gateway"; Path = "ApiGateway\CapFinLoan.Gateway.API" }
+    @{ Name = "API Gateway"; Path = "ApiGateway\CapFinLoan.Gateway.API" },
+    @{ Name = "Notification Service"; Path = "NotificationService\CapFinLoan.Notification.API" }
 )
 
 Write-Host "Building solution once before launching services..." -ForegroundColor Yellow

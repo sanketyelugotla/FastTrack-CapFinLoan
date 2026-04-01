@@ -12,12 +12,144 @@ public class AuthService : IAuthService
     private readonly IUserRepository _userRepository;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
     private readonly IEventPublisher _eventPublisher;
+    private readonly IOtpRepository _otpRepository;
 
-    public AuthService(IUserRepository userRepository, IJwtTokenGenerator jwtTokenGenerator, IEventPublisher eventPublisher)
+    public AuthService(IUserRepository userRepository, IJwtTokenGenerator jwtTokenGenerator, IEventPublisher eventPublisher, IOtpRepository otpRepository)
     {
         _userRepository = userRepository;
         _jwtTokenGenerator = jwtTokenGenerator;
         _eventPublisher = eventPublisher;
+        _otpRepository = otpRepository;
+    }
+
+    public async Task<OtpSendResponse> SendSignupOtpAsync(string email, CancellationToken cancellationToken = default)
+    {
+        var normalizedEmail = email.Trim().ToLowerInvariant();
+
+        if (await _userRepository.ExistsByEmailAsync(normalizedEmail, cancellationToken))
+        {
+            throw new InvalidOperationException("An account already exists with this email.");
+        }
+
+        // Generate OTP (10 minutes validity)
+        var otp = await _otpRepository.GenerateOtpAsync(normalizedEmail, expiryMinutes: 10, cancellationToken);
+
+        // Publish event to send OTP email
+        await _eventPublisher.PublishAsync(new OtpSendEvent
+        {
+            Email = normalizedEmail,
+            OtpCode = otp.OtpCode,
+            ExpiresAtUtc = otp.ExpiresAtUtc,
+            SentAtUtc = DateTime.UtcNow
+        }, cancellationToken);
+
+        return new OtpSendResponse
+        {
+            Success = true,
+            Message = "OTP sent to your email. Please verify within 10 minutes.",
+            Email = normalizedEmail,
+            ExpiryMinutes = 10
+        };
+    }
+
+    public async Task<AuthResponse> VerifyOtpAndSignupAsync(OtpVerificationRequest request, CancellationToken cancellationToken = default)
+    {
+        var email = request.Email.Trim().ToLowerInvariant();
+
+        // Verify OTP
+        if (!await _otpRepository.VerifyOtpAsync(email, request.OtpCode.Trim(), cancellationToken))
+        {
+            throw new InvalidOperationException("Invalid or expired OTP.");
+        }
+
+        // Create user
+        var user = new ApplicationUser
+        {
+            UserName = email,
+            Email = email,
+            PhoneNumber = request.Phone.Trim(),
+            Name = request.Name.Trim(),
+            IsActive = true,
+            CreatedAtUtc = DateTime.UtcNow,
+            UpdatedAtUtc = DateTime.UtcNow
+        };
+
+        await _userRepository.CreateAsync(user, request.Password, cancellationToken);
+        await _userRepository.AddToRoleAsync(user, RoleNames.Applicant, cancellationToken);
+
+        var userRoles = await _userRepository.GetRolesAsync(user, cancellationToken);
+        var primaryRole = userRoles.FirstOrDefault() ?? RoleNames.Applicant;
+
+        // Publish welcome email event
+        await _eventPublisher.PublishAsync(new UserRegisteredEvent
+        {
+            UserId = user.Id,
+            Email = user.Email!,
+            FullName = user.Name,
+            Role = primaryRole,
+            RegisteredAtUtc = user.CreatedAtUtc
+        }, cancellationToken);
+
+        var (token, expiresAtUtc) = await _jwtTokenGenerator.GenerateTokenAsync(user, userRoles);
+        return new AuthResponse
+        {
+            Token = token,
+            ExpiresAtUtc = expiresAtUtc,
+            Role = primaryRole,
+            UserId = user.Id,
+            Name = user.Name,
+            Email = user.Email!
+        };
+    }
+
+    public async Task<AuthResponse> VerifyOtpAndSignupAdminAsync(OtpVerificationRequest request, CancellationToken cancellationToken = default)
+    {
+        var email = request.Email.Trim().ToLowerInvariant();
+
+        // Verify OTP
+        if (!await _otpRepository.VerifyOtpAsync(email, request.OtpCode.Trim(), cancellationToken))
+        {
+            throw new InvalidOperationException("Invalid or expired OTP.");
+        }
+
+        // Create admin user
+        var user = new ApplicationUser
+        {
+            UserName = email,
+            Email = email,
+            PhoneNumber = request.Phone.Trim(),
+            Name = request.Name.Trim(),
+            IsActive = true,
+            CreatedAtUtc = DateTime.UtcNow,
+            UpdatedAtUtc = DateTime.UtcNow
+        };
+
+        await _userRepository.CreateAsync(user, request.Password, cancellationToken);
+        await _userRepository.AddToRoleAsync(user, RoleNames.Admin, cancellationToken);
+
+        var userRoles = await _userRepository.GetRolesAsync(user, cancellationToken);
+        var primaryRole = userRoles.FirstOrDefault() ?? RoleNames.Admin;
+
+        // Publish welcome email event
+        await _eventPublisher.PublishAsync(new UserRegisteredEvent
+        {
+            UserId = user.Id,
+            Email = user.Email!,
+            FullName = user.Name,
+            Role = primaryRole,
+            RegisteredAtUtc = user.CreatedAtUtc
+        }, cancellationToken);
+
+        var (token, expiresAtUtc) = await _jwtTokenGenerator.GenerateTokenAsync(user, userRoles);
+        return new AuthResponse
+        {
+            Token = token,
+            ExpiresAtUtc = expiresAtUtc,
+            Role = primaryRole,
+            UserId = user.Id,
+            Name = user.Name,
+            Email = user.Email!
+        };
     }
 
     public async Task<AuthResponse> SignupAsync(SignupRequest request, CancellationToken cancellationToken = default)

@@ -38,6 +38,7 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
 .AddEntityFrameworkStores<AuthDbContext>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IOtpRepository, OtpRepository>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<CapFinLoan.Auth.Application.Interfaces.IEventPublisher, CapFinLoan.Auth.Infrastructure.Messaging.RabbitMqEventPublisher>();
