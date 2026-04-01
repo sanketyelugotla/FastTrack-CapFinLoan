@@ -1,8 +1,9 @@
-using System.Net;
-using System.Net.Mail;
 using CapFinLoan.Notification.Application.Interfaces;
+using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MimeKit;
 
 namespace CapFinLoan.Notification.Infrastructure.Email;
 
@@ -25,22 +26,29 @@ public class SmtpEmailSender : IEmailSender
             return;
         }
 
-        using var message = new MailMessage
-        {
-            Subject = subject,
-            Body = htmlBody,
-            IsBodyHtml = true,
-            From = new MailAddress(_options.FromAddress, _options.FromName)
-        };
-        message.To.Add(new MailAddress(toEmail));
+        _logger.LogInformation("Sending email via MailKit: SMTP Host={SmtpHost}, Port={Port}, Username={Username}",
+            _options.SmtpHost, _options.Port, _options.Username);
 
-        using var smtpClient = new SmtpClient(_options.SmtpHost, _options.Port)
-        {
-            EnableSsl = true,
-            Credentials = new NetworkCredential(_options.Username, _options.Password)
-        };
+        var email = new MimeMessage();
+        email.From.Add(new MailboxAddress(_options.FromName, _options.FromAddress));
+        email.To.Add(MailboxAddress.Parse(toEmail));
+        email.Subject = subject;
+        email.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = htmlBody };
 
-        await smtpClient.SendMailAsync(message, cancellationToken);
-        _logger.LogInformation("Notification email sent to {Recipient} with subject {Subject}", toEmail, subject);
+        using var smtp = new SmtpClient();
+        try
+        {
+            // Auto: tries STARTTLS on 587, SSL on 465
+            await smtp.ConnectAsync(_options.SmtpHost, _options.Port, SecureSocketOptions.Auto, cancellationToken);
+            await smtp.AuthenticateAsync(_options.Username, _options.Password, cancellationToken);
+            await smtp.SendAsync(email, cancellationToken);
+            await smtp.DisconnectAsync(true, cancellationToken);
+            _logger.LogInformation("Email sent successfully to {Recipient}", toEmail);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send email to {Recipient}: {Error}", toEmail, ex.Message);
+            throw;
+        }
     }
 }
