@@ -19,6 +19,21 @@ export interface AuthResponse {
   email: string;
 }
 
+export interface OtpVerificationRequest {
+  email: string;
+  otpCode: string;
+  name: string;
+  phone: string;
+  password: string;
+}
+
+export interface OtpSendResponse {
+  success: boolean;
+  message: string;
+  email: string;
+  expiryMinutes: number;
+}
+
 export interface UserSummary {
   id: string;
   name: string;

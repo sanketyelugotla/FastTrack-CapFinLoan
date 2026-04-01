@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { AuthResponse, LoginRequest, SignupRequest } from '../models/auth.models';
+import { AuthResponse, LoginRequest, OtpSendResponse, OtpVerificationRequest, SignupRequest } from '../models/auth.models';
 
 interface StoredUser {
   userId: string;
@@ -60,6 +60,22 @@ export class AuthService {
 
   signupAdmin(request: SignupRequest) {
     return this.http.post<AuthResponse>(`${this.apiUrl}/signup-admin`, request).pipe(
+      tap(res => this.storeUser(res))
+    );
+  }
+
+  sendSignupOtp(email: string) {
+    return this.http.post<OtpSendResponse>(`${this.apiUrl}/send-otp?email=${encodeURIComponent(email)}`, {});
+  }
+
+  verifyOtpAndSignup(request: OtpVerificationRequest) {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/verify-otp-signup`, request).pipe(
+      tap(res => this.storeUser(res))
+    );
+  }
+
+  verifyOtpAndSignupAdmin(request: OtpVerificationRequest) {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/verify-otp-signup-admin`, request).pipe(
       tap(res => this.storeUser(res))
     );
   }
