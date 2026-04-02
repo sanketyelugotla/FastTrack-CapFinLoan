@@ -6,6 +6,7 @@ using CapFinLoan.Auth.Domain.Entities;
 using CapFinLoan.Messaging.Contracts.Events;
 using Google.Apis.Auth;
 using Google.Apis.Util;
+using Microsoft.Extensions.Configuration;
 
 namespace CapFinLoan.Auth.Application.Services;
 
@@ -21,13 +22,15 @@ public class AuthService : IAuthService
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
     private readonly IEventPublisher _eventPublisher;
     private readonly IOtpRepository _otpRepository;
+    private readonly IConfiguration _configuration;
 
-    public AuthService(IUserRepository userRepository, IJwtTokenGenerator jwtTokenGenerator, IEventPublisher eventPublisher, IOtpRepository otpRepository)
+    public AuthService(IUserRepository userRepository, IJwtTokenGenerator jwtTokenGenerator, IEventPublisher eventPublisher, IOtpRepository otpRepository, IConfiguration configuration)
     {
         _userRepository = userRepository;
         _jwtTokenGenerator = jwtTokenGenerator;
         _eventPublisher = eventPublisher;
         _otpRepository = otpRepository;
+        _configuration = configuration;
     }
 
     public async Task<OtpSendResponse> SendSignupOtpAsync(string email, CancellationToken cancellationToken = default)
@@ -294,9 +297,13 @@ public class AuthService : IAuthService
         GoogleJsonWebSignature.Payload payload;
         try
         {
+            var clientId = _configuration["Google:ClientId"];
+            if (string.IsNullOrEmpty(clientId))
+                throw new UnauthorizedAccessException("Google Client ID is not configured on the server.");
+
             var settings = new GoogleJsonWebSignature.ValidationSettings()
             {
-                Audience = new[] { "142690176573-hkifvq2c70vd5qoi884vmpmjr6a1uag4.apps.googleusercontent.com" },
+                Audience = new[] { clientId },
                 Clock = new TolerantClock()
             };
             payload = await GoogleJsonWebSignature.ValidateAsync(idToken, settings);

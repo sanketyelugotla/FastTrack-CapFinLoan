@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { environment } from '../../../environments/environment';
 
 declare var google: any;
 
@@ -49,7 +50,7 @@ export class SignupComponent implements OnDestroy {
     }
 
     google.accounts.id.initialize({
-      client_id: '142690176573-hkifvq2c70vd5qoi884vmpmjr6a1uag4.apps.googleusercontent.com',
+      client_id: environment.googleClientId,
       callback: this.handleGoogleCredentialResponse.bind(this)
     });
 
