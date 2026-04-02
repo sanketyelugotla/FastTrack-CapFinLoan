@@ -58,6 +58,12 @@ export class AuthService {
     );
   }
 
+  loginWithGoogle(idToken: string) {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/google-login`, { idToken }).pipe(
+      tap(res => this.storeUser(res))
+    );
+  }
+
   signupAdmin(request: SignupRequest) {
     return this.http.post<AuthResponse>(`${this.apiUrl}/signup-admin`, request).pipe(
       tap(res => this.storeUser(res))

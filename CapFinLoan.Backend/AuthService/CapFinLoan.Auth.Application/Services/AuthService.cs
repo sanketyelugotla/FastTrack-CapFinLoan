@@ -4,8 +4,16 @@ using CapFinLoan.Auth.Application.Interfaces;
 using CapFinLoan.Auth.Domain.Constants;
 using CapFinLoan.Auth.Domain.Entities;
 using CapFinLoan.Messaging.Contracts.Events;
+using Google.Apis.Auth;
+using Google.Apis.Util;
 
 namespace CapFinLoan.Auth.Application.Services;
+
+public class TolerantClock : IClock
+{
+    public DateTime Now => DateTime.Now.AddMinutes(5);
+    public DateTime UtcNow => DateTime.UtcNow.AddMinutes(5);
+}
 
 public class AuthService : IAuthService
 {
@@ -270,6 +278,76 @@ public class AuthService : IAuthService
         var primaryRole = userRoles.FirstOrDefault() ?? "UNKNOWN";
 
         var (token, expiresAtUtc) = await _jwtTokenGenerator.GenerateTokenAsync(user, userRoles);
+        return new AuthResponse
+        {
+            Token = token,
+            ExpiresAtUtc = expiresAtUtc,
+            Role = primaryRole,
+            UserId = user.Id,
+            Name = user.Name,
+            Email = user.Email!
+        };
+    }
+
+    public async Task<AuthResponse> LoginWithGoogleAsync(string idToken, CancellationToken cancellationToken = default)
+    {
+        GoogleJsonWebSignature.Payload payload;
+        try
+        {
+            var settings = new GoogleJsonWebSignature.ValidationSettings()
+            {
+                Audience = new[] { "142690176573-hkifvq2c70vd5qoi884vmpmjr6a1uag4.apps.googleusercontent.com" },
+                Clock = new TolerantClock()
+            };
+            payload = await GoogleJsonWebSignature.ValidateAsync(idToken, settings);
+        }
+        catch (InvalidJwtException ex)
+        {
+            throw new UnauthorizedAccessException($"Invalid Google token: {ex.Message}", ex);
+        }
+
+        var email = payload.Email.Trim().ToLowerInvariant();
+        var user = await _userRepository.GetByEmailAsync(email, cancellationToken);
+        string primaryRole;
+
+        if (user is null)
+        {
+            user = new ApplicationUser
+            {
+                UserName = email,
+                Email = email,
+                Name = payload.Name ?? "Google User",
+                IsActive = true,
+                CreatedAtUtc = DateTime.UtcNow,
+                UpdatedAtUtc = DateTime.UtcNow
+            };
+
+            await _userRepository.CreateAsync(user, Guid.NewGuid().ToString() + "Aa1!", cancellationToken);
+            await _userRepository.AddToRoleAsync(user, RoleNames.Applicant, cancellationToken);
+            primaryRole = RoleNames.Applicant;
+
+            await _eventPublisher.PublishAsync(new UserRegisteredEvent
+            {
+                UserId = user.Id,
+                Email = user.Email!,
+                FullName = user.Name,
+                Role = primaryRole,
+                RegisteredAtUtc = user.CreatedAtUtc
+            }, cancellationToken);
+        }
+        else
+        {
+            if (!user.IsActive)
+            {
+                throw new UnauthorizedAccessException("User is deactivated.");
+            }
+            var dbRoles = await _userRepository.GetRolesAsync(user, cancellationToken);
+            primaryRole = dbRoles.FirstOrDefault() ?? RoleNames.Applicant;
+        }
+
+        var userRoles = await _userRepository.GetRolesAsync(user, cancellationToken);
+        var (token, expiresAtUtc) = await _jwtTokenGenerator.GenerateTokenAsync(user, userRoles);
+        
         return new AuthResponse
         {
             Token = token,
