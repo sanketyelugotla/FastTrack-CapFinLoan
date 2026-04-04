@@ -30,6 +30,7 @@ export const routes: Routes = [
       { path: 'applications/:id', loadComponent: () => import('./pages/applicant/application-detail/application-detail.component').then(m => m.ApplicationDetailComponent) },
       { path: 'applications/:id/status', loadComponent: () => import('./pages/applicant/track-status/track-status.component').then(m => m.TrackStatusComponent) },
       { path: 'applications/:id/documents', loadComponent: () => import('./pages/applicant/documents/documents.component').then(m => m.DocumentsComponent) },
+      { path: 'documents', loadComponent: () => import('./pages/applicant/my-documents/my-documents.component').then(m => m.MyDocumentsComponent) },
       { path: 'profile', loadComponent: () => import('./pages/applicant/profile/profile.component').then(m => m.ProfileComponent) },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
@@ -43,6 +44,7 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', redirectTo: 'queue', pathMatch: 'full' },
       { path: 'queue', loadComponent: () => import('./pages/admin/queue/queue.component').then(m => m.AdminQueueComponent) },
+      { path: 'documents', loadComponent: () => import('./pages/admin/documents/admin-documents.component').then(m => m.AdminDocumentsComponent) },
       { path: 'applications/:id', loadComponent: () => import('./pages/admin/application-review/application-review.component').then(m => m.ApplicationReviewComponent) },
       { path: 'reports', loadComponent: () => import('./pages/admin/reports/reports.component').then(m => m.AdminReportsComponent) },
       { path: 'users', loadComponent: () => import('./pages/admin/users/users.component').then(m => m.AdminUsersComponent) },

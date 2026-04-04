@@ -1,0 +1,159 @@
+<div class="px-8 max-w-screen-2xl mx-auto pb-12 animate-fade-in-up">
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mt-6 mb-8">
+    <div>
+      <h1 class="text-3xl font-extrabold font-headline text-[var(--color-primary)]">Document Queue</h1>
+      <p class="text-[var(--color-on-surface-variant)] text-sm font-body mt-1">
+        Review and verify user-uploaded KYC documents.
+        @if (pendingCount > 0) {
+          <span class="ml-2 bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full text-xs font-bold">{{ pendingCount }} pending</span>
+        }
+      </p>
+    </div>
+
+    <!-- Filters -->
+    <div class="flex items-center gap-3 flex-wrap">
+      <div class="relative">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-outline)] text-sm">search</span>
+        <input
+          type="text"
+          [(ngModel)]="searchQuery"
+          (input)="applyFilters()"
+          class="pl-9 pr-4 py-2 rounded-lg bg-[var(--color-surface-container-low)] text-sm focus:ring-2 focus:ring-[var(--color-primary)] border-0 font-body"
+          placeholder="Search documents..."
+        />
+      </div>
+      <select
+        [(ngModel)]="statusFilter"
+        (ngModelChange)="applyFilters()"
+        class="px-4 py-2 rounded-lg bg-[var(--color-surface-container-low)] text-sm border-0 focus:ring-2 focus:ring-[var(--color-primary)] font-body"
+      >
+        @for (s of statusFilters; track s) {
+          <option [value]="s">{{ s === 'ReuploadRequired' ? 'Re-upload Required' : s }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  @if (error()) {
+    <div class="p-3 mb-6 rounded-lg bg-red-50 text-red-700 border border-red-200 text-sm font-medium flex items-center gap-2">
+      <span class="material-symbols-outlined text-sm">error</span>
+      {{ error() }}
+    </div>
+  }
+
+  @if (successMessage()) {
+    <div class="p-3 mb-6 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm font-medium flex items-center gap-2 animate-fade-in">
+      <span class="material-symbols-outlined text-sm">check_circle</span>
+      {{ successMessage() }}
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="flex items-center justify-center py-20">
+      <span class="w-10 h-10 border-4 border-[var(--color-primary-fixed)] border-t-[var(--color-primary)] rounded-full animate-spin"></span>
+    </div>
+  } @else if (filteredDocuments().length === 0) {
+    <div class="text-center py-20 text-[var(--color-on-surface-variant)]">
+      <span class="material-symbols-outlined text-5xl mb-3 opacity-40">folder_off</span>
+      <p class="text-lg font-bold">No documents found</p>
+      <p class="text-sm">Try adjusting your filters.</p>
+    </div>
+  } @else {
+    <!-- Documents Table -->
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-[var(--color-outline-variant)]/20 shadow-sm overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="bg-[var(--color-surface-container-low)] text-[var(--color-on-surface-variant)]">
+              <th class="px-6 py-4 text-left text-[10px] uppercase font-bold tracking-wider font-label">Document Type</th>
+              <th class="px-6 py-4 text-left text-[10px] uppercase font-bold tracking-wider font-label">File Name</th>
+              <th class="px-6 py-4 text-left text-[10px] uppercase font-bold tracking-wider font-label">Uploaded</th>
+              <th class="px-6 py-4 text-left text-[10px] uppercase font-bold tracking-wider font-label">Status</th>
+              <th class="px-6 py-4 text-right text-[10px] uppercase font-bold tracking-wider font-label">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[var(--color-surface-container-low)]">
+            @for (doc of filteredDocuments(); track doc.id) {
+              <tr class="hover:bg-[var(--color-surface-container-lowest)] transition-colors">
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-[var(--color-primary-fixed)] text-[var(--color-primary)] flex items-center justify-center rounded-lg">
+                      <span class="material-symbols-outlined text-sm">description</span>
+                    </div>
+                    <span class="font-bold text-sm text-[var(--color-on-surface)] font-label">{{ doc.documentType }}</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 text-sm text-[var(--color-on-surface)] font-body truncate max-w-[200px]">{{ doc.fileName }}</td>
+                <td class="px-6 py-4 text-xs text-[var(--color-on-surface-variant)] font-body">{{ doc.uploadedAtUtc || doc.createdAtUtc | date: 'mediumDate' }}</td>
+                <td class="px-6 py-4">
+                  <span
+                    class="text-[10px] px-2 py-0.5 rounded-full font-bold font-label border"
+                    [class]="getStatusClass(doc.status)"
+                  >
+                    {{ doc.status === 'ReuploadRequired' ? 'RE-UPLOAD' : doc.status.toUpperCase() }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-right">
+                  @if (doc.status !== 'Verified') {
+                    <div class="flex items-center justify-end gap-2">
+                      <button
+                        (click)="verifyDocument(doc.id)"
+                        [disabled]="actionInProgress()"
+                        class="px-3 py-1.5 text-xs font-bold bg-[var(--color-secondary)] text-white rounded-lg hover:opacity-90 transition-opacity cursor-pointer font-label disabled:opacity-60"
+                      >
+                        Verify
+                      </button>
+                      <button
+                        (click)="toggleRemarks(doc.id)"
+                        [disabled]="actionInProgress()"
+                        class="px-3 py-1.5 text-xs font-bold text-amber-700 bg-amber-100 rounded-lg hover:bg-amber-200 transition-colors cursor-pointer font-label disabled:opacity-60"
+                      >
+                        Re-upload
+                      </button>
+                    </div>
+                  } @else {
+                    <span class="text-xs font-bold text-green-600 font-label flex items-center justify-end gap-1">
+                      <span class="material-symbols-outlined text-sm">verified</span>
+                      Done
+                    </span>
+                  }
+                </td>
+              </tr>
+              @if (expandedDocId() === doc.id) {
+                <tr class="bg-amber-50/50">
+                  <td colspan="5" class="px-6 py-4">
+                    <div class="max-w-lg space-y-2">
+                      <p class="text-[10px] uppercase font-bold text-amber-700 tracking-wider font-label">Reason for re-upload</p>
+                      <textarea
+                        [(ngModel)]="docRemarks[doc.id]"
+                        rows="2"
+                        placeholder="e.g. Document is blurry, please upload a clearer copy..."
+                        class="w-full text-xs rounded-lg border border-amber-300 bg-white p-2 outline-none focus:ring-2 focus:ring-amber-400 resize-none font-body"
+                      ></textarea>
+                      <div class="flex gap-2">
+                        <button
+                          (click)="requestReupload(doc.id)"
+                          [disabled]="actionInProgress()"
+                          class="px-4 py-1.5 text-xs font-bold text-amber-700 bg-amber-100 border border-amber-300 rounded hover:bg-amber-200 transition-colors cursor-pointer font-label disabled:opacity-60"
+                        >
+                          Confirm
+                        </button>
+                        <button
+                          (click)="toggleRemarks(doc.id)"
+                          class="px-3 py-1.5 text-xs text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] cursor-pointer font-label"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>

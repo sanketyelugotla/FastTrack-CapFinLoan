@@ -46,6 +46,16 @@ public class InternalDocumentsController : ControllerBase
         return Ok(documents);
     }
 
+    /// <summary>
+    /// Admin: Get all documents across all applications
+    /// </summary>
+    [HttpGet("all")]
+    public async Task<IActionResult> GetAll([FromQuery] string? status, CancellationToken cancellationToken)
+    {
+        var documents = await _documentService.GetAllAsync(status, cancellationToken);
+        return Ok(documents);
+    }
+
     private Guid GetUserId()
     {
         var value = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub");

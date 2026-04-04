@@ -2,26 +2,41 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ApplicationService } from '../../../core/services/application.service';
+import { DocumentService } from '../../../core/services/document.service';
 import { SaveLoanApplicationRequest } from '../../../core/models/application.models';
+import { DocumentResponse } from '../../../core/models/document.models';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-apply-loan',
-  imports: [FormsModule],
+  imports: [FormsModule, DatePipe],
   templateUrl: './apply-loan.component.html',
   styleUrl: './apply-loan.component.css'
 })
 export class ApplyLoanComponent implements OnInit {
   private appService = inject(ApplicationService);
+  private docService = inject(DocumentService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
-  stepLabels = ['Personal', 'Employment', 'Loan', 'Review'];
+  stepLabels = ['Personal', 'Employment', 'Loan', 'Documents', 'Review'];
   currentStep = signal(0);
   saving = signal(false);
   loading = signal(false);
   error = signal('');
   draftId = signal<string | null>(null);
   profileAutoFilled = signal(false);
+
+  // Document state
+  documents = signal<DocumentResponse[]>([]);
+  docsLoading = signal(false);
+  uploadSuccess = signal('');
+  docTypes = [
+    { value: 'IdProof', label: 'ID Proof', description: 'Aadhaar, PAN, Passport, or Voter ID', icon: 'badge' },
+    { value: 'AddressProof', label: 'Address Proof', description: 'Utility bill, Aadhaar, or Passport', icon: 'home' },
+    { value: 'IncomeProof', label: 'Income Proof', description: 'Salary slips (last 3 months) or ITR', icon: 'payments' },
+    { value: 'BankStatement', label: 'Bank Statement', description: 'Last 6 months bank statement', icon: 'account_balance' }
+  ];
 
   loanPurposes = [
     'Home Loan',
@@ -53,6 +68,7 @@ export class ApplyLoanComponent implements OnInit {
           this.form.employmentDetails = { ...app.employmentDetails };
           this.form.loanDetails = { ...app.loanDetails };
           this.loading.set(false);
+          this.loadDocuments(id);
         },
         error: () => {
           this.error.set('Failed to load application details.');
@@ -63,6 +79,64 @@ export class ApplyLoanComponent implements OnInit {
       // Auto-fill from saved profile data
       this.loadProfileData();
     }
+  }
+
+  loadDocuments(appId: string) {
+    this.docsLoading.set(true);
+    this.docService.getByApplicationId(appId).subscribe({
+      next: docs => {
+        this.documents.set(docs);
+        this.docsLoading.set(false);
+      },
+      error: () => this.docsLoading.set(false)
+    });
+  }
+
+  getDocForType(type: string): DocumentResponse | undefined {
+    return this.documents().find(d => d.documentType === type);
+  }
+
+  getStatusClass(status: string): string {
+    switch (status) {
+      case 'Verified': return 'bg-green-100 text-green-700 border-green-300';
+      case 'ReuploadRequired': return 'bg-amber-100 text-amber-700 border-amber-300';
+      case 'UnderReview': return 'bg-blue-100 text-blue-700 border-blue-300';
+      default: return 'bg-slate-100 text-slate-600 border-slate-300';
+    }
+  }
+
+  uploadFile(event: Event, docType: string) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    const appId = this.draftId();
+    if (!file || !appId) return;
+
+    this.error.set('');
+    this.uploadSuccess.set('');
+
+    this.docService.upload(appId, docType, file).subscribe({
+      next: () => {
+        this.uploadSuccess.set(`${docType} uploaded successfully!`);
+        this.loadDocuments(appId);
+        setTimeout(() => this.uploadSuccess.set(''), 3000);
+      },
+      error: (err) => this.error.set(err.error?.message || 'Upload failed.')
+    });
+  }
+
+  replaceFile(event: Event, documentId: string, docType: string) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    const appId = this.draftId();
+    if (!file || !appId) return;
+
+    this.error.set('');
+    this.docService.replace(documentId, file, docType).subscribe({
+      next: () => {
+        this.uploadSuccess.set('Document replaced successfully!');
+        this.loadDocuments(appId);
+        setTimeout(() => this.uploadSuccess.set(''), 3000);
+      },
+      error: (err) => this.error.set(err.error?.message || 'Failed to replace document.')
+    });
   }
 
   private loadProfileData() {
@@ -108,6 +182,13 @@ export class ApplyLoanComponent implements OnInit {
     this.saving.set(true);
     this.error.set('');
 
+    // For Document step, just load docs and go to next
+    if (this.currentStep() === 3 && this.draftId()) {
+      this.loadDocuments(this.draftId()!);
+      this.currentStep.set(this.currentStep() + 1);
+      return;
+    }
+
     const action = this.draftId()
       ? this.appService.updateDraft(this.draftId()!, this.form)
       : this.appService.createDraft(this.form);
@@ -117,6 +198,9 @@ export class ApplyLoanComponent implements OnInit {
         this.draftId.set(res.id);
         this.saving.set(false);
         this.currentStep.set(this.currentStep() + 1);
+        if (this.currentStep() === 3) {
+           this.loadDocuments(res.id);
+        }
       },
       error: (err) => {
         this.saving.set(false);

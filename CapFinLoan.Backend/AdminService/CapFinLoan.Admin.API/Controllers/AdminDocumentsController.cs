@@ -46,6 +46,23 @@ public class AdminDocumentsController : ControllerBase
         return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync(cancellationToken));
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetAll([FromQuery] string? status, CancellationToken cancellationToken)
+    {
+        var client = CreateInternalClient();
+        var query = string.IsNullOrWhiteSpace(status) ? "" : $"?status={status}";
+        var response = await client.GetAsync($"/api/internal/documents/all{query}", cancellationToken);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync(cancellationToken);
+            return Content(content, "application/json");
+        }
+
+        _logger.LogError("Failed to fetch all documents from Document Service. Status: {StatusCode}", response.StatusCode);
+        return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync(cancellationToken));
+    }
+
     [HttpPut("{id:guid}/verify")]
     public async Task<IActionResult> VerifyDocument(Guid id, [FromBody] object request, CancellationToken cancellationToken)
     {

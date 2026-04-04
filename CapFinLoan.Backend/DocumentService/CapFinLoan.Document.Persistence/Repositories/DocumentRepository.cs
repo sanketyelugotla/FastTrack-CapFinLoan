@@ -35,6 +35,23 @@ public class DocumentRepository : IDocumentRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<IReadOnlyCollection<LoanDocument>> GetAllAsync(string? status = null, CancellationToken cancellationToken = default)
+    {
+        var query = _dbContext.Documents.AsQueryable();
+        
+        if (!string.IsNullOrWhiteSpace(status) && status != "All")
+        {
+            if (Enum.TryParse<DocumentStatus>(status, true, out var documentStatus))
+            {
+                query = query.Where(d => d.Status == documentStatus);
+            }
+        }
+
+        return await query
+            .OrderByDescending(d => d.CreatedAtUtc)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task AddAsync(LoanDocument document, CancellationToken cancellationToken = default)
     {
         await _dbContext.Documents.AddAsync(document, cancellationToken);

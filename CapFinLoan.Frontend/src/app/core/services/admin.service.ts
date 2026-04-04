@@ -40,6 +40,11 @@ export class AdminService {
     return this.http.put<DocumentResponse>(`${this.baseUrl}/admin/documents/${id}/verify`, request);
   }
 
+  getAllDocuments(status?: string) {
+    const params = status && status !== 'All' ? `?status=${status}` : '';
+    return this.http.get<DocumentResponse[]>(`${this.baseUrl}/admin/documents${params}`);
+  }
+
   getUsers() {
     return this.http.get<UserSummary[]>(`${this.baseUrl}/admin/users`);
   }

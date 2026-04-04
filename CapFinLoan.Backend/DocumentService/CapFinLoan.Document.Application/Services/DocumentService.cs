@@ -108,6 +108,12 @@ public class DocumentService : IDocumentService
         return documents.Select(MapToResponse).ToArray();
     }
 
+    public async Task<IReadOnlyCollection<DocumentResponse>> GetAllAsync(string? status = null, CancellationToken cancellationToken = default)
+    {
+        var documents = await _documentRepository.GetAllAsync(status, cancellationToken);
+        return documents.Select(MapToResponse).ToArray();
+    }
+
     public async Task<DocumentResponse> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var document = await _documentRepository.GetByIdAsync(id, cancellationToken)

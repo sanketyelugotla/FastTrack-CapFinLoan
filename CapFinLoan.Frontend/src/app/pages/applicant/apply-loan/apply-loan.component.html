@@ -27,7 +27,7 @@
       <!-- Progress Line -->
       <div
         class="absolute top-1/2 left-0 h-0.5 bg-[var(--color-secondary)] -translate-y-1/2 -z-10 transition-all duration-300"
-        [style.width]="(currentStep() / 3) * 100 + '%'"
+        [style.width]="(currentStep() / 4) * 100 + '%'"
       ></div>
 
       @for (s of stepLabels; track s; let i = $index) {
@@ -95,7 +95,9 @@
                 ? 'work'
                 : currentStep() === 2
                   ? 'account_balance'
-                  : 'fact_check'
+                  : currentStep() === 3
+                    ? 'folder_open'
+                    : 'fact_check'
           }}</span>
         </div>
         <div>
@@ -107,7 +109,9 @@
                   ? 'Employment Details'
                   : currentStep() === 2
                     ? 'Loan Details'
-                    : 'Review & Submit'
+                    : currentStep() === 3
+                      ? 'Upload Documents'
+                      : 'Review & Submit'
             }}
           </h2>
           <p class="text-sm text-[var(--color-on-surface-variant)]">
@@ -118,7 +122,9 @@
                   ? 'Provide information about your current job.'
                   : currentStep() === 2
                     ? 'Specify your desired loan amount and terms.'
-                    : 'Please verify all details before submitting.'
+                    : currentStep() === 3
+                      ? 'Upload necessary KYC and income documents.'
+                      : 'Please verify all details before submitting.'
             }}
           </p>
         </div>
@@ -398,7 +404,67 @@
         }
 
         @if (currentStep() === 3) {
-          <!-- Step 4: Review -->
+          <!-- Step 4: Documents -->
+          <div class="space-y-6">
+            <p class="text-sm text-[var(--color-on-surface-variant)] pb-2 border-b border-[var(--color-surface-container-low)]">
+              Upload the required documents below to support your loan application. You can always replace them later.
+            </p>
+
+            @if (docsLoading()) {
+              <div class="flex justify-center py-10">
+                <span class="material-symbols-outlined animate-spin text-[var(--color-primary)] text-3xl">sync</span>
+              </div>
+            } @else {
+              @if (uploadSuccess()) {
+                <div class="p-3 bg-green-50 text-green-700 rounded-lg text-sm mb-4 border border-green-200">
+                  <span class="material-symbols-outlined text-sm align-middle mr-1">check_circle</span>
+                  {{ uploadSuccess() }}
+                </div>
+              }
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                @for (docType of docTypes; track docType.value) {
+                  @let doc = getDocForType(docType.value);
+                  <div class="border border-[var(--color-outline-variant)]/20 shadow-sm rounded-xl p-4 bg-white dark:bg-slate-900 group hover:shadow-md transition-shadow">
+                    <div class="flex items-start gap-4">
+                      <div class="w-10 h-10 bg-[var(--color-primary-fixed)] text-[var(--color-primary)] rounded-lg flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined">{{ docType.icon }}</span>
+                      </div>
+                      <div class="flex-1">
+                        <h4 class="font-bold text-[var(--color-primary)] text-sm font-headline">{{ docType.label }}</h4>
+                        <p class="text-xs text-[var(--color-on-surface-variant)] font-body mb-3">{{ docType.description }}</p>
+
+                        @if (doc) {
+                          <div class="bg-[var(--color-surface-container-low)] p-3 rounded-lg">
+                            <div class="flex justify-between items-start mb-2">
+                              <span class="text-xs font-semibold truncate max-w-[120px]">{{ doc.fileName }}</span>
+                              <span class="text-[10px] px-2 py-0.5 rounded-full font-bold border" [class]="getStatusClass(doc.status)">
+                                {{ doc.status === 'ReuploadRequired' ? 'RE-UPLOAD' : doc.status.toUpperCase() }}
+                              </span>
+                            </div>
+                            <label class="w-full text-center block text-xs font-bold text-[var(--color-primary)] bg-white border border-[var(--color-primary)]/20 py-2 rounded cursor-pointer hover:bg-slate-50 transition-colors">
+                              Replace
+                              <input type="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png" (change)="replaceFile($event, doc.id, docType.value)" />
+                            </label>
+                          </div>
+                        } @else {
+                          <label class="w-full text-center block text-xs font-bold text-white bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] py-2 rounded shadow-sm hover:scale-[1.02] active:scale-95 cursor-pointer transition-all">
+                            <span class="material-symbols-outlined text-[14px] align-middle mr-1">upload</span>
+                            Upload
+                            <input type="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png" (change)="uploadFile($event, docType.value)" />
+                          </label>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+
+        @if (currentStep() === 4) {
+          <!-- Step 5: Review -->
           <div class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div class="bg-[var(--color-surface-container-low)] rounded-lg p-5">
@@ -543,7 +609,7 @@
                 Back
               </button>
             }
-            @if (currentStep() < 3) {
+            @if (currentStep() < 4) {
               <button
                 type="button"
                 (click)="saveDraftAndNext()"
@@ -557,7 +623,7 @@
           </div>
 
           <div class="order-1 sm:order-2 w-full sm:w-auto">
-            @if (currentStep() < 3) {
+            @if (currentStep() < 4) {
               <button
                 type="button"
                 (click)="saveDraftAndNext()"

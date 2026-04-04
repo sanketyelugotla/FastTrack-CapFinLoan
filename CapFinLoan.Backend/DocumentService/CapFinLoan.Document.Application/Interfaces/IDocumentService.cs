@@ -11,4 +11,5 @@ public interface IDocumentService
     Task<IReadOnlyCollection<DocumentResponse>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
     Task<DocumentResponse> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<DocumentResponse> VerifyAsync(Guid documentId, Guid adminUserId, bool isVerified, string? remarks, CancellationToken cancellationToken = default);
+    Task<IReadOnlyCollection<DocumentResponse>> GetAllAsync(string? status = null, CancellationToken cancellationToken = default);
 }
