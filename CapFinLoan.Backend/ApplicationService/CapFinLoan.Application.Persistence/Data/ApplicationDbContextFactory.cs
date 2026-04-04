@@ -8,7 +8,7 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
     public ApplicationDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-        optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=CapFinLoanDb;Integrated Security=True;TrustServerCertificate=True");
+        optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=CapFinLoan_ApplicationDb;Integrated Security=True;TrustServerCertificate=True");
         return new ApplicationDbContext(optionsBuilder.Options);
     }
 }

@@ -47,7 +47,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Docker
       ASPNETCORE_URLS: http://+:8080
-      ConnectionStrings__CapFinLoanDb: "Server=sqlserver,1433;Database=CapFinLoanDb;User Id=sa;Password=CapFinLoan@12345;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True"
+      ConnectionStrings__CapFinLoanDb: "Server=sqlserver,1433;Database=CapFinLoan_AuthDb;User Id=sa;Password=CapFinLoan@12345;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True"
       RabbitMQ__Host: rabbitmq
       RabbitMQ__Username: guest
       RabbitMQ__Password: guest
@@ -80,7 +80,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Docker
       ASPNETCORE_URLS: http://+:8080
-      ConnectionStrings__CapFinLoanDb: "Server=sqlserver,1433;Database=CapFinLoanDb;User Id=sa;Password=CapFinLoan@12345;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True"
+      ConnectionStrings__CapFinLoanDb: "Server=sqlserver,1433;Database=CapFinLoan_ApplicationDb;User Id=sa;Password=CapFinLoan@12345;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True"
       RabbitMQ__Host: rabbitmq
       RabbitMQ__Username: guest
       RabbitMQ__Password: guest
@@ -112,7 +112,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Docker
       ASPNETCORE_URLS: http://+:8080
-      ConnectionStrings__CapFinLoanDb: "Server=sqlserver,1433;Database=CapFinLoanDb;User Id=sa;Password=CapFinLoan@12345;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True"
+      ConnectionStrings__CapFinLoanDb: "Server=sqlserver,1433;Database=CapFinLoan_DocumentDb;User Id=sa;Password=CapFinLoan@12345;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True"
       RabbitMQ__Host: rabbitmq
       RabbitMQ__Username: guest
       RabbitMQ__Password: guest
@@ -146,7 +146,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Docker
       ASPNETCORE_URLS: http://+:8080
-      ConnectionStrings__CapFinLoanDb: "Server=sqlserver,1433;Database=CapFinLoanDb;User Id=sa;Password=CapFinLoan@12345;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True"
+      ConnectionStrings__CapFinLoanDb: "Server=sqlserver,1433;Database=CapFinLoan_AdminDb;User Id=sa;Password=CapFinLoan@12345;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True"
       RabbitMQ__Host: rabbitmq
       RabbitMQ__Username: guest
       RabbitMQ__Password: guest

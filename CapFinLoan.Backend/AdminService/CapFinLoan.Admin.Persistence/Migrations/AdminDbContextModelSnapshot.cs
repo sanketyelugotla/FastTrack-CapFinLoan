@@ -17,7 +17,7 @@ namespace CapFinLoan.Admin.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("core")
+                .HasDefaultSchema("admin")
                 .HasAnnotation("ProductVersion", "10.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
@@ -57,7 +57,7 @@ namespace CapFinLoan.Admin.Persistence.Migrations
 
                     b.HasIndex("LoanApplicationId");
 
-                    b.ToTable("ApplicationStatusHistories", "core");
+                    b.ToTable("ApplicationStatusHistories", "admin");
                 });
 
             modelBuilder.Entity("CapFinLoan.Admin.Domain.Entities.Decision", b =>
@@ -95,7 +95,7 @@ namespace CapFinLoan.Admin.Persistence.Migrations
 
                     b.HasIndex("LoanApplicationId");
 
-                    b.ToTable("Decisions", "core");
+                    b.ToTable("Decisions", "admin");
                 });
 
             modelBuilder.Entity("CapFinLoan.Admin.Domain.Entities.LoanApplication", b =>
@@ -216,7 +216,7 @@ namespace CapFinLoan.Admin.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("LoanApplications", "core");
+                    b.ToTable("LoanApplications", "admin");
                 });
 
             modelBuilder.Entity("CapFinLoan.Admin.Domain.Entities.ApplicationStatusHistory", b =>

@@ -15,7 +15,7 @@ public class AdminDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultSchema("core");
+        modelBuilder.HasDefaultSchema("admin");
 
         modelBuilder.Entity<LoanApplication>(entity =>
         {
