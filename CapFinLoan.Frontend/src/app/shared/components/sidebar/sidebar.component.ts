@@ -18,6 +18,7 @@ export class SidebarComponent {
   navItems = computed(() => this.role() === 'ADMIN'
     ? [
         { label: 'Queue', path: '/admin/queue', exact: true, icon: 'format_list_bulleted' },
+        { label: 'Documents', path: '/admin/documents', exact: true, icon: 'folder_open' },
         { label: 'Users', path: '/admin/users', exact: false, icon: 'group' },
         { label: 'Reports', path: '/admin/reports', exact: true, icon: 'analytics' }
       ]
@@ -25,6 +26,7 @@ export class SidebarComponent {
         { label: 'Dashboard', path: '/applicant/dashboard', exact: true, icon: 'dashboard' },
         { label: 'Apply Loan', path: '/applicant/apply', exact: true, icon: 'account_balance' },
         { label: 'My Applications', path: '/applicant/applications', exact: false, icon: 'description' },
+        { label: 'My Documents', path: '/applicant/documents', exact: true, icon: 'folder_open' },
         { label: 'Profile', path: '/applicant/profile', exact: true, icon: 'person' }
       ]
   );

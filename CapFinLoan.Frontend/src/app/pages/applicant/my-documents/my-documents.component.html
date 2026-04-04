@@ -1,0 +1,116 @@
+<div class="max-w-4xl mx-auto px-6 py-12 animate-fade-in-up">
+  <div class="mb-10">
+    <h1 class="font-headline text-3xl font-extrabold text-[var(--color-primary)] tracking-tight mb-2">
+      My Documents
+    </h1>
+    <p class="text-[var(--color-on-surface-variant)] font-body">
+      Upload and manage your KYC documents. Verified documents can be attached to any loan application.
+    </p>
+  </div>
+
+  @if (error()) {
+    <div class="p-3 mb-6 rounded-lg bg-[var(--color-error-container)] text-[var(--color-on-error-container)] text-sm font-medium flex items-center gap-2">
+      <span class="material-symbols-outlined text-sm">error</span>
+      {{ error() }}
+    </div>
+  }
+
+  @if (uploadSuccess()) {
+    <div class="p-3 mb-6 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm font-medium flex items-center gap-2 animate-fade-in">
+      <span class="material-symbols-outlined text-sm">check_circle</span>
+      {{ uploadSuccess() }}
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="flex items-center justify-center py-20">
+      <span class="w-10 h-10 border-4 border-[var(--color-primary-fixed)] border-t-[var(--color-primary)] rounded-full animate-spin"></span>
+    </div>
+  } @else {
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      @for (docType of docTypes; track docType.value) {
+        @let doc = getDocForType(docType.value);
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-[var(--color-outline-variant)]/20 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+          <!-- Card Header -->
+          <div class="flex items-center gap-3 p-5 border-b border-[var(--color-surface-container-low)]">
+            <div class="w-10 h-10 bg-[var(--color-primary-fixed)] text-[var(--color-primary)] flex items-center justify-center rounded-lg">
+              <span class="material-symbols-outlined">{{ docType.icon }}</span>
+            </div>
+            <div class="flex-1">
+              <h3 class="font-bold text-[var(--color-primary)] text-sm font-headline">{{ docType.label }}</h3>
+              <p class="text-xs text-[var(--color-on-surface-variant)]">{{ docType.description }}</p>
+            </div>
+            @if (doc) {
+              <span
+                class="text-[10px] px-2 py-0.5 rounded-full font-bold font-label border"
+                [class]="getStatusClass(doc.status)"
+              >
+                {{ doc.status === 'ReuploadRequired' ? 'RE-UPLOAD' : doc.status.toUpperCase() }}
+              </span>
+            }
+          </div>
+
+          <!-- Card Body -->
+          <div class="p-5">
+            @if (doc) {
+              <div class="space-y-3">
+                <div class="flex items-center gap-2 text-sm text-[var(--color-on-surface)]">
+                  <span class="material-symbols-outlined text-sm text-[var(--color-outline)]">description</span>
+                  <span class="truncate">{{ doc.fileName }}</span>
+                </div>
+                <div class="flex items-center gap-2 text-xs text-[var(--color-on-surface-variant)]">
+                  <span class="material-symbols-outlined text-sm">calendar_today</span>
+                  Uploaded: {{ doc.uploadedAtUtc || doc.createdAtUtc | date: 'mediumDate' }}
+                </div>
+
+                @if (doc.remarks) {
+                  <div class="rounded-lg bg-amber-50 border border-amber-200 p-2.5 text-xs text-amber-800 flex items-start gap-1.5">
+                    <span class="material-symbols-outlined text-[13px] shrink-0 mt-0.5">info</span>
+                    <span>{{ doc.remarks }}</span>
+                  </div>
+                }
+
+                @if (doc.status !== 'Verified') {
+                  <label class="w-full flex items-center justify-center gap-2 py-2.5 text-xs font-bold text-[var(--color-primary)] bg-[var(--color-surface-container-low)] hover:bg-[var(--color-surface-container-high)] rounded-lg cursor-pointer transition-colors font-label">
+                    <span class="material-symbols-outlined text-sm">upload</span>
+                    {{ doc.status === 'ReuploadRequired' ? 'Re-upload' : 'Replace' }}
+                    <input type="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png" (change)="replaceFile($event, doc.id, docType.value)" />
+                  </label>
+                } @else {
+                  <div class="flex items-center justify-center gap-2 py-2.5 text-xs font-bold text-green-600 bg-green-50 rounded-lg font-label">
+                    <span class="material-symbols-outlined text-sm">verified</span>
+                    Verified & Ready to Use
+                  </div>
+                }
+              </div>
+            } @else {
+              <!-- No document uploaded -->
+              <div class="text-center py-4">
+                <span class="material-symbols-outlined text-4xl text-[var(--color-outline-variant)]/40 mb-2">cloud_upload</span>
+                <p class="text-sm text-[var(--color-on-surface-variant)] mb-4">No document uploaded</p>
+                <label class="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-bold text-white bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] rounded-lg cursor-pointer shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all font-label">
+                  <span class="material-symbols-outlined text-sm">upload</span>
+                  Upload Document
+                  <input type="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png" (change)="uploadFile($event, docType.value)" />
+                </label>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Info Banner -->
+    <div class="mt-8 bg-[var(--color-surface-container-low)] rounded-xl p-5 flex items-start gap-4">
+      <span class="material-symbols-outlined text-[var(--color-primary)]">info</span>
+      <div class="text-sm text-[var(--color-on-surface-variant)] font-body">
+        <p class="font-semibold text-[var(--color-primary)] mb-1">How it works</p>
+        <ul class="list-disc list-inside space-y-1">
+          <li>Upload your KYC documents here — they'll be reviewed by an admin.</li>
+          <li>Once verified, you can attach them directly when applying for a loan.</li>
+          <li>Accepted formats: PDF, JPG, PNG (max 5MB).</li>
+        </ul>
+      </div>
+    </div>
+  }
+</div>
