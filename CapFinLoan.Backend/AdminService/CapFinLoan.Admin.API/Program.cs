@@ -28,6 +28,8 @@ builder.Services.AddMassTransit(x =>
 {
     x.AddConsumer<ApplicationSubmittedConsumer>();
     x.AddConsumer<DocumentVerifiedConsumer>();
+    x.AddConsumer<StatusSyncFailedConsumer>();
+    x.AddConsumer<NotificationFailedConsumer>();
 
     x.UsingRabbitMq((context, cfg) =>
     {
