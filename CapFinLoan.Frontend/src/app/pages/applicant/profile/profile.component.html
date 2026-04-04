@@ -4,7 +4,7 @@
       <h1 class="text-3xl font-extrabold font-headline text-[var(--color-primary)]">
         My Profile
       </h1>
-      <p class="text-[var(--color-on-surface-variant)] text-sm font-body mt-1">Manage your personal settings and contact information.</p>
+      <p class="text-[var(--color-on-surface-variant)] text-sm font-body mt-1">Manage your personal and employment details. This data auto-fills loan applications.</p>
     </div>
     
     @if (!isEditing) {
@@ -17,7 +17,7 @@
 
   @if (successMessage) {
     <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-2 animate-fade-in font-label text-sm font-medium">
-      <span class="material-symbols-outlined">check_circle</span>
+      <span class="material-symbols-outlined">auto_awesome</span>
       {{ successMessage }}
     </div>
   }
@@ -39,7 +39,7 @@
       <div class="flex items-center justify-between border-b border-[var(--color-outline-variant)]/15 pb-8 mb-8">
         <div>
           <h2 class="text-2xl font-bold text-[var(--color-primary)] font-headline">
-            {{ profileForm.get('name')?.value || auth.currentUser()?.name }}
+            {{ profileForm.get('firstName')?.value }} {{ profileForm.get('lastName')?.value }}
           </h2>
           <div class="flex items-center gap-3 mt-2 text-sm text-[var(--color-on-surface-variant)] font-body">
             <span class="badge badge-draft mr-2">{{ auth.currentUser()?.role }}</span>
@@ -48,71 +48,211 @@
         </div>
       </div>
 
-      <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6">
-          <!-- Full Name -->
-          <div>
-            <label class="input-label">Full Name</label>
-            @if (isEditing) {
-              <input type="text" formControlName="name" class="input-field" placeholder="Enter your full name">
-              @if (profileForm.get('name')?.invalid && profileForm.get('name')?.touched) {
-                <p class="error-text">Please enter a valid name (min 2 characters).</p>
+      <!-- Section Tabs -->
+      <div class="flex gap-1 mb-8 bg-[var(--color-surface-container-low)] rounded-lg p-1">
+        <button
+          type="button"
+          (click)="activeSection = 'personal'"
+          class="flex-1 py-2.5 px-4 rounded-md text-sm font-bold font-label transition-all flex items-center justify-center gap-2"
+          [class]="activeSection === 'personal' ? 'bg-white shadow-sm text-[var(--color-primary)]' : 'text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)]'"
+        >
+          <span class="material-symbols-outlined text-sm">person</span>
+          Personal Information
+        </button>
+        <button
+          type="button"
+          (click)="activeSection = 'employment'"
+          class="flex-1 py-2.5 px-4 rounded-md text-sm font-bold font-label transition-all flex items-center justify-center gap-2"
+          [class]="activeSection === 'employment' ? 'bg-white shadow-sm text-[var(--color-primary)]' : 'text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)]'"
+        >
+          <span class="material-symbols-outlined text-sm">work</span>
+          Employment Details
+        </button>
+      </div>
+
+      <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+        <!-- Personal Information Section -->
+        @if (activeSection === 'personal') {
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 animate-fade-in">
+            <div>
+              <label class="input-label">First Name</label>
+              @if (isEditing) {
+                <input type="text" formControlName="firstName" class="input-field" placeholder="Enter first name">
+              } @else {
+                <p class="font-medium text-[var(--color-on-surface)] bg-[var(--color-surface-container-low)] px-4 py-3 rounded-lg">{{ profileForm.get('firstName')?.value || 'Not provided' }}</p>
               }
-            } @else {
-              <p class="font-medium text-[var(--color-on-surface)] bg-[var(--color-surface-container-low)] px-4 py-3 rounded-lg">{{ profileForm.get('name')?.value }}</p>
-            }
-          </div>
-
-          <!-- Email -->
-          <div>
-            <label class="input-label">Registered Email</label>
-            <div class="relative">
-              <input type="email" formControlName="email" class="input-field bg-slate-50 text-slate-500 cursor-not-allowed" [class.opacity-70]="!isEditing">
-              <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-outline)]/50">lock</span>
             </div>
-            <p class="text-[11px] text-[var(--color-outline)] mt-1 ml-1">Email cannot be changed directly for security reasons.</p>
-          </div>
 
-          <!-- Phone Number -->
-          <div>
-            <label class="input-label">Phone Number</label>
-            @if (isEditing) {
+            <div>
+              <label class="input-label">Last Name</label>
+              @if (isEditing) {
+                <input type="text" formControlName="lastName" class="input-field" placeholder="Enter last name">
+              } @else {
+                <p class="font-medium text-[var(--color-on-surface)] bg-[var(--color-surface-container-low)] px-4 py-3 rounded-lg">{{ profileForm.get('lastName')?.value || 'Not provided' }}</p>
+              }
+            </div>
+
+            <div>
+              <label class="input-label">Registered Email</label>
               <div class="relative">
-                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-outline)]">call</span>
-                <input type="tel" formControlName="phone" class="input-field pl-10" placeholder="+1 (555) 000-0000">
+                <input type="email" formControlName="email" class="input-field bg-slate-50 text-slate-500 cursor-not-allowed" [class.opacity-70]="!isEditing">
+                <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-outline)]/50">lock</span>
               </div>
-            } @else {
-              <p class="font-medium text-[var(--color-on-surface)] bg-[var(--color-surface-container-low)] px-4 py-3 rounded-lg flex items-center gap-2">
-                <span class="material-symbols-outlined text-[18px] text-[var(--color-outline)]">call</span>
-                {{ profileForm.get('phone')?.value || 'Not provided' }}
-              </p>
-            }
-          </div>
+              <p class="text-[11px] text-[var(--color-outline)] mt-1 ml-1">Email cannot be changed for security reasons.</p>
+            </div>
 
-          <!-- User ID (Readonly) -->
-          <div>
-            <label class="input-label">Account UID</label>
-            <p class="font-mono text-xs text-[var(--color-on-surface)] bg-[var(--color-surface-container-low)] px-4 py-3 rounded-lg tracking-wider border border-[var(--color-outline-variant)]/20 shadow-inner break-all">
-              {{ auth.currentUser()?.userId }}
-            </p>
-          </div>
+            <div>
+              <label class="input-label">Phone Number</label>
+              @if (isEditing) {
+                <input type="tel" formControlName="phone" class="input-field" placeholder="+91 98765 43210">
+              } @else {
+                <p class="font-medium text-[var(--color-on-surface)] bg-[var(--color-surface-container-low)] px-4 py-3 rounded-lg flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[18px] text-[var(--color-outline)]">call</span>
+                  {{ profileForm.get('phone')?.value || 'Not provided' }}
+                </p>
+              }
+            </div>
 
-          <!-- Address -->
-          <div class="md:col-span-2">
-            <label class="input-label">Primary Address</label>
-            @if (isEditing) {
-              <div class="relative">
-                <span class="material-symbols-outlined absolute left-3 top-3 text-[var(--color-outline)]">location_on</span>
-                <textarea formControlName="address" class="input-field pl-10 min-h-[100px] resize-y" placeholder="Enter your full residential address..."></textarea>
+            <div>
+              <label class="input-label">Date of Birth</label>
+              @if (isEditing) {
+                <input type="date" formControlName="dateOfBirth" class="input-field">
+              } @else {
+                <p class="font-medium text-[var(--color-on-surface)] bg-[var(--color-surface-container-low)] px-4 py-3 rounded-lg">{{ profileForm.get('dateOfBirth')?.value || 'Not provided' }}</p>
+              }
+            </div>
+
+            <div>
+              <label class="input-label">Gender</label>
+              @if (isEditing) {
+                <select formControlName="gender" class="input-field">
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              } @else {
+                <p class="font-medium text-[var(--color-on-surface)] bg-[var(--color-surface-container-low)] px-4 py-3 rounded-lg">{{ profileForm.get('gender')?.value || 'Not provided' }}</p>
+              }
+            </div>
+
+            <div class="md:col-span-2">
+              <label class="input-label">Address Line 1</label>
+              @if (isEditing) {
+                <input type="text" formControlName="addressLine1" class="input-field" placeholder="Street address">
+              } @else {
+                <p class="font-medium text-[var(--color-on-surface)] bg-[var(--color-surface-container-low)] px-4 py-3 rounded-lg">{{ profileForm.get('addressLine1')?.value || 'Not provided' }}</p>
+              }
+            </div>
+
+            <div class="md:col-span-2">
+              <label class="input-label">Address Line 2</label>
+              @if (isEditing) {
+                <input type="text" formControlName="addressLine2" class="input-field" placeholder="Suite, floor, etc.">
+              } @else {
+                <p class="font-medium text-[var(--color-on-surface)] bg-[var(--color-surface-container-low)] px-4 py-3 rounded-lg">{{ profileForm.get('addressLine2')?.value || '—' }}</p>
+              }
+            </div>
+
+            <div>
+              <label class="input-label">City</label>
+              @if (isEditing) {
+                <input type="text" formControlName="city" class="input-field" placeholder="Mumbai">
+              } @else {
+                <p class="font-medium text-[var(--color-on-surface)] bg-[var(--color-surface-container-low)] px-4 py-3 rounded-lg">{{ profileForm.get('city')?.value || 'Not provided' }}</p>
+              }
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="input-label">State</label>
+                @if (isEditing) {
+                  <input type="text" formControlName="state" class="input-field" placeholder="Maharashtra">
+                } @else {
+                  <p class="font-medium text-[var(--color-on-surface)] bg-[var(--color-surface-container-low)] px-4 py-3 rounded-lg">{{ profileForm.get('state')?.value || '—' }}</p>
+                }
               </div>
-            } @else {
-              <p class="font-medium text-[var(--color-on-surface)] bg-[var(--color-surface-container-low)] px-4 py-3 rounded-lg flex gap-2 min-h-[80px]">
-                <span class="material-symbols-outlined text-[18px] text-[var(--color-outline)]">location_on</span>
-                {{ profileForm.get('address')?.value || 'No physical address on record.' }}
-              </p>
-            }
+              <div>
+                <label class="input-label">Pin Code</label>
+                @if (isEditing) {
+                  <input type="text" formControlName="postalCode" class="input-field" placeholder="400001">
+                } @else {
+                  <p class="font-medium text-[var(--color-on-surface)] bg-[var(--color-surface-container-low)] px-4 py-3 rounded-lg">{{ profileForm.get('postalCode')?.value || '—' }}</p>
+                }
+              </div>
+            </div>
           </div>
-        </div>
+        }
+
+        <!-- Employment Details Section -->
+        @if (activeSection === 'employment') {
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 animate-fade-in">
+            <div>
+              <label class="input-label">Employer Name</label>
+              @if (isEditing) {
+                <input type="text" formControlName="employerName" class="input-field" placeholder="Company name">
+              } @else {
+                <p class="font-medium text-[var(--color-on-surface)] bg-[var(--color-surface-container-low)] px-4 py-3 rounded-lg">{{ profileForm.get('employerName')?.value || 'Not provided' }}</p>
+              }
+            </div>
+
+            <div>
+              <label class="input-label">Employment Type</label>
+              @if (isEditing) {
+                <select formControlName="employmentType" class="input-field">
+                  <option value="">Select Type</option>
+                  <option value="Salaried">Salaried</option>
+                  <option value="SelfEmployed">Self Employed</option>
+                  <option value="Business">Business</option>
+                </select>
+              } @else {
+                <p class="font-medium text-[var(--color-on-surface)] bg-[var(--color-surface-container-low)] px-4 py-3 rounded-lg">{{ profileForm.get('employmentType')?.value || 'Not provided' }}</p>
+              }
+            </div>
+
+            <div>
+              <label class="input-label">Monthly Income (₹)</label>
+              @if (isEditing) {
+                <div class="relative">
+                  <span class="absolute left-4 top-3 text-[var(--color-outline-variant)]">₹</span>
+                  <input type="number" formControlName="monthlyIncome" class="input-field pl-8" placeholder="50000">
+                </div>
+              } @else {
+                <p class="font-medium text-[var(--color-on-surface)] bg-[var(--color-surface-container-low)] px-4 py-3 rounded-lg">
+                  ₹{{ profileForm.get('monthlyIncome')?.value || 0 | number }}
+                </p>
+              }
+            </div>
+
+            <div>
+              <label class="input-label">Annual Income (₹)</label>
+              @if (isEditing) {
+                <div class="relative">
+                  <span class="absolute left-4 top-3 text-[var(--color-outline-variant)]">₹</span>
+                  <input type="number" formControlName="annualIncome" class="input-field pl-8" placeholder="600000">
+                </div>
+              } @else {
+                <p class="font-medium text-[var(--color-on-surface)] bg-[var(--color-surface-container-low)] px-4 py-3 rounded-lg">
+                  ₹{{ profileForm.get('annualIncome')?.value || 0 | number }}
+                </p>
+              }
+            </div>
+
+            <div>
+              <label class="input-label">Existing EMI / Debt Payments (₹)</label>
+              @if (isEditing) {
+                <div class="relative">
+                  <span class="absolute left-4 top-3 text-[var(--color-outline-variant)]">₹</span>
+                  <input type="number" formControlName="existingEmiAmount" class="input-field pl-8" placeholder="0">
+                </div>
+              } @else {
+                <p class="font-medium text-[var(--color-on-surface)] bg-[var(--color-surface-container-low)] px-4 py-3 rounded-lg">
+                  ₹{{ profileForm.get('existingEmiAmount')?.value || 0 | number }}
+                </p>
+              }
+            </div>
+          </div>
+        }
 
         <!-- Action Buttons -->
         @if (isEditing) {
@@ -128,16 +268,15 @@
     </div>
   </div>
 
-  <!-- Security Section -->
+  <!-- Info Cards -->
   <div class="mt-8 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-[var(--color-outline-variant)]/20 p-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
     <div class="flex gap-4 items-start">
-      <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 shrink-0">
-        <span class="material-symbols-outlined">shield_locked</span>
+      <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 shrink-0">
+        <span class="material-symbols-outlined">auto_awesome</span>
       </div>
       <div>
-        <h3 class="font-headline font-bold text-lg text-[var(--color-primary)]">Security Checkup</h3>
-        <p class="text-sm text-[var(--color-on-surface-variant)] mt-1 font-body text-balance">Review your login events and active sessions. Ensure two-factor authentication is enabled.</p>
-        <button class="mt-3 text-[var(--color-primary)] font-bold text-xs uppercase tracking-widest hover:underline flex items-center gap-1">Manage Security <span class="material-symbols-outlined text-[14px]">arrow_forward</span></button>
+        <h3 class="font-headline font-bold text-lg text-[var(--color-primary)]">Auto-Fill</h3>
+        <p class="text-sm text-[var(--color-on-surface-variant)] mt-1 font-body text-balance">Your profile data is used to auto-fill loan application forms, saving you time on every application.</p>
       </div>
     </div>
     
@@ -147,8 +286,7 @@
       </div>
       <div>
         <h3 class="font-headline font-bold text-lg text-[var(--color-primary)]">KYC Status</h3>
-        <p class="text-sm text-[var(--color-on-surface-variant)] mt-1 font-body text-balance">Your primary identification documents are verified. You do not need to upload them again.</p>
-        <button class="mt-3 text-[var(--color-primary)] font-bold text-xs uppercase tracking-widest hover:underline flex items-center gap-1">View Details <span class="material-symbols-outlined text-[14px]">arrow_forward</span></button>
+        <p class="text-sm text-[var(--color-on-surface-variant)] mt-1 font-body text-balance">Upload your KYC documents in the Documents tab. Verified documents can be attached to any loan application.</p>
       </div>
     </div>
   </div>

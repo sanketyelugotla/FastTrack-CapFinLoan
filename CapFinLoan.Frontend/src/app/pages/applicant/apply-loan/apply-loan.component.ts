@@ -21,11 +21,25 @@ export class ApplyLoanComponent implements OnInit {
   loading = signal(false);
   error = signal('');
   draftId = signal<string | null>(null);
+  profileAutoFilled = signal(false);
+
+  loanPurposes = [
+    'Home Loan',
+    'Education Loan',
+    'Personal Loan',
+    'Vehicle Loan',
+    'Business Loan',
+    'Medical Loan',
+    'Debt Consolidation',
+    'Agriculture Loan',
+    'Gold Loan',
+    'Other'
+  ];
 
   form: SaveLoanApplicationRequest = {
-    personalDetails: { firstName: 'Sanket', lastName: 'Yelugotla', dateOfBirth: '2005-06-02', gender: 'Male', email: 'sanket@gmail.com', phone: '9550572255', addressLine1: 'Sardar Pg', addressLine2: 'Law gate', city: 'Phagwara', state: 'Punjab', postalCode: '144411' },
-    employmentDetails: { employerName: 'Sanket Yelugotla', employmentType: 'Salaried', monthlyIncome: 50000, annualIncome: 600000, existingEmiAmount: 10000 },
-    loanDetails: { requestedAmount: 100000, requestedTenureMonths: 12, loanPurpose: 'Personel', remarks: 'Nothing' }
+    personalDetails: { firstName: '', lastName: '', dateOfBirth: null, gender: '', email: '', phone: '', addressLine1: '', addressLine2: '', city: '', state: '', postalCode: '' },
+    employmentDetails: { employerName: '', employmentType: '', monthlyIncome: null, annualIncome: null, existingEmiAmount: 0 },
+    loanDetails: { requestedAmount: 0, requestedTenureMonths: 0, loanPurpose: '', remarks: '' }
   };
 
   ngOnInit() {
@@ -45,7 +59,49 @@ export class ApplyLoanComponent implements OnInit {
           this.loading.set(false);
         }
       });
+    } else {
+      // Auto-fill from saved profile data
+      this.loadProfileData();
     }
+  }
+
+  private loadProfileData() {
+    const saved = localStorage.getItem('capfinloan_profile');
+    if (!saved) return;
+
+    try {
+      const profile = JSON.parse(saved);
+      let filled = false;
+
+      if (profile.personalDetails) {
+        const p = profile.personalDetails;
+        if (p.firstName) { this.form.personalDetails.firstName = p.firstName; filled = true; }
+        if (p.lastName) { this.form.personalDetails.lastName = p.lastName; filled = true; }
+        if (p.dateOfBirth) { this.form.personalDetails.dateOfBirth = p.dateOfBirth; filled = true; }
+        if (p.gender) { this.form.personalDetails.gender = p.gender; filled = true; }
+        if (p.email) { this.form.personalDetails.email = p.email; filled = true; }
+        if (p.phone) { this.form.personalDetails.phone = p.phone; filled = true; }
+        if (p.addressLine1) { this.form.personalDetails.addressLine1 = p.addressLine1; filled = true; }
+        if (p.addressLine2) { this.form.personalDetails.addressLine2 = p.addressLine2; filled = true; }
+        if (p.city) { this.form.personalDetails.city = p.city; filled = true; }
+        if (p.state) { this.form.personalDetails.state = p.state; filled = true; }
+        if (p.postalCode) { this.form.personalDetails.postalCode = p.postalCode; filled = true; }
+      }
+
+      if (profile.employmentDetails) {
+        const e = profile.employmentDetails;
+        if (e.employerName) { this.form.employmentDetails.employerName = e.employerName; filled = true; }
+        if (e.employmentType) { this.form.employmentDetails.employmentType = e.employmentType; filled = true; }
+        if (e.monthlyIncome) { this.form.employmentDetails.monthlyIncome = e.monthlyIncome; filled = true; }
+        if (e.annualIncome) { this.form.employmentDetails.annualIncome = e.annualIncome; filled = true; }
+        if (e.existingEmiAmount !== undefined) { this.form.employmentDetails.existingEmiAmount = e.existingEmiAmount; filled = true; }
+      }
+
+      if (filled) {
+        this.profileAutoFilled.set(true);
+        setTimeout(() => this.profileAutoFilled.set(false), 5000);
+      }
+    } catch { /* ignore corrupt data */ }
   }
 
   saveDraftAndNext() {
