@@ -83,11 +83,12 @@ public class AdminLoanApplicationService : IAdminLoanApplicationService
             AdminUserId = reviewerUserId,
             DecisionStatus = targetStatus,
             Remarks = request.Remarks.Trim(),
-            // Approved decisions default to requested amount unless future workflow captures a custom sanction amount.
             SanctionAmount = string.Equals(targetStatus, ApplicationStatuses.Approved, StringComparison.OrdinalIgnoreCase)
-                ? application.RequestedAmount
+                ? (request.SanctionAmount ?? application.RequestedAmount)
                 : null,
-            InterestRate = null,
+            InterestRate = string.Equals(targetStatus, ApplicationStatuses.Approved, StringComparison.OrdinalIgnoreCase)
+                ? request.InterestRate
+                : null,
             DecisionAtUtc = now
         });
 

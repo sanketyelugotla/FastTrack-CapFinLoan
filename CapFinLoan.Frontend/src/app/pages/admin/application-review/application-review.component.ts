@@ -25,6 +25,8 @@ export class ApplicationReviewComponent implements OnInit {
   actionError = signal('');
   actionSuccess = signal('');
   remarks = '';
+  interestRate: number | null = null;
+  sanctionAmount: number | null = null;
 
   // Per-document inline reupload state
   reuploadExpandedDocId = signal<string | null>(null);
@@ -91,10 +93,25 @@ export class ApplicationReviewComponent implements OnInit {
     this.actionInProgress.set(true);
     this.actionError.set('');
     const id = this.app()!.id;
-    this.adminService.updateStatus(id, { targetStatus: status, remarks: this.remarks.trim() }).subscribe({
+    const request: any = { targetStatus: status, remarks: this.remarks.trim() };
+
+    // Include interest rate and sanction amount when approving
+    if (this.normalizeStatus(status) === 'approved') {
+      if (!this.interestRate || this.interestRate <= 0) {
+        this.actionError.set('Please specify an interest rate before approving.');
+        this.actionInProgress.set(false);
+        return;
+      }
+      request.interestRate = this.interestRate;
+      request.sanctionAmount = this.sanctionAmount || this.app()!.requestedAmount;
+    }
+
+    this.adminService.updateStatus(id, request).subscribe({
       next: a => {
         this.app.set(a);
         this.remarks = '';
+        this.interestRate = null;
+        this.sanctionAmount = null;
         this.setActionMessage(`Application moved to ${a.status}.`);
         this.actionInProgress.set(false);
       },

@@ -63,4 +63,6 @@ export interface AdminApplicationDetail {
 export interface ReviewLoanApplicationRequest {
   targetStatus: string;
   remarks: string;
+  interestRate?: number | null;
+  sanctionAmount?: number | null;
 }

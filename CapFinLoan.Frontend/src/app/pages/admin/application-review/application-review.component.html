@@ -386,6 +386,46 @@
               }
             </div>
 
+            <!-- Interest Rate & Sanction Amount (for Approval) -->
+            <div class="border-t border-[var(--color-surface-variant)]/30 pt-6 mt-6">
+              <p
+                class="text-[10px] uppercase font-bold text-[var(--color-outline-variant)] tracking-widest font-label mb-3"
+              >
+                Sanctioning Details (Required for Approval)
+              </p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="space-y-2">
+                  <label class="text-sm font-semibold text-[var(--color-primary)] font-label">Interest Rate (%)</label>
+                  <div class="relative">
+                    <input
+                      type="number"
+                      [(ngModel)]="interestRate"
+                      class="w-full px-4 py-3 rounded-lg border-0 bg-[var(--color-surface-container-low)] focus:ring-2 focus:ring-[var(--color-primary)] transition-all font-body text-sm"
+                      placeholder="e.g. 8.5"
+                      min="0.1"
+                      max="50"
+                      step="0.1"
+                    />
+                    <span class="absolute right-4 top-3 text-[var(--color-outline-variant)] text-sm">%</span>
+                  </div>
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm font-semibold text-[var(--color-primary)] font-label">Sanction Amount (₹)</label>
+                  <div class="relative">
+                    <span class="absolute left-4 top-3 text-[var(--color-outline-variant)]">₹</span>
+                    <input
+                      type="number"
+                      [(ngModel)]="sanctionAmount"
+                      class="w-full pl-8 pr-4 py-3 rounded-lg border-0 bg-[var(--color-surface-container-low)] focus:ring-2 focus:ring-[var(--color-primary)] transition-all font-body text-sm"
+                      [placeholder]="'Defaults to ₹' + (a.requestedAmount | number)"
+                      min="1000"
+                    />
+                  </div>
+                  <p class="text-[11px] text-[var(--color-on-surface-variant)]">Leave blank to sanction the full requested amount.</p>
+                </div>
+              </div>
+            </div>
+
             <div
               class="mt-10 pt-8 border-t border-[var(--color-surface-variant)]/30 flex flex-col md:flex-row items-center justify-between gap-4"
             >
