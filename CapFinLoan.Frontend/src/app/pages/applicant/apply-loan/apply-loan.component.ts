@@ -215,9 +215,9 @@ export class ApplyLoanComponent implements OnInit {
     this.saving.set(true);
     this.error.set('');
 
-    // For Document step, just load docs and go to next
     if (this.currentStep() === 3 && this.draftId()) {
       this.loadDocuments(this.draftId()!);
+      this.saving.set(false);
       this.currentStep.set(this.currentStep() + 1);
       return;
     }

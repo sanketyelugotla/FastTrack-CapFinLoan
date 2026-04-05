@@ -163,4 +163,20 @@ export class ApplicationReviewComponent implements OnInit {
   requestReupload() {
     this.updateStatus('DocsPending');
   }
+
+  downloadDocument(doc: DocumentResponse) {
+    this.adminService.downloadDocument(doc.id).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = doc.fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      },
+      error: () => this.actionError.set('Failed to download document.')
+    });
+  }
 }

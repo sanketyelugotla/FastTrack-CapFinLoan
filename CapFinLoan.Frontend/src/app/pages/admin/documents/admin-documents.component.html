@@ -95,8 +95,15 @@
                   </span>
                 </td>
                 <td class="px-6 py-4 text-right">
-                  @if (doc.status !== 'Verified') {
-                    <div class="flex items-center justify-end gap-2">
+                  <div class="flex items-center justify-end gap-2">
+                    <button
+                      (click)="downloadDocument(doc)"
+                      class="px-2 py-1.5 text-[var(--color-primary)] hover:bg-[var(--color-surface-container-low)] rounded-lg transition-colors cursor-pointer mr-2"
+                      title="View Document"
+                    >
+                      <span class="material-symbols-outlined text-[18px]">visibility</span>
+                    </button>
+                    @if (doc.status !== 'Verified') {
                       <button
                         (click)="verifyDocument(doc.id)"
                         [disabled]="actionInProgress()"
@@ -111,13 +118,13 @@
                       >
                         Re-upload
                       </button>
-                    </div>
-                  } @else {
-                    <span class="text-xs font-bold text-green-600 font-label flex items-center justify-end gap-1">
-                      <span class="material-symbols-outlined text-sm">verified</span>
-                      Done
-                    </span>
-                  }
+                    } @else {
+                      <span class="text-xs font-bold text-green-600 font-label flex items-center justify-end gap-1">
+                        <span class="material-symbols-outlined text-sm">verified</span>
+                        Done
+                      </span>
+                    }
+                  </div>
                 </td>
               </tr>
               @if (expandedDocId() === doc.id) {

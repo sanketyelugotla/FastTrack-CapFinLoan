@@ -168,7 +168,10 @@ public class DocumentService : IDocumentService
             ContentType = originalDocument.ContentType,
             FileSizeBytes = originalDocument.FileSizeBytes,
             DocumentType = originalDocument.DocumentType,
-            Status = DocumentStatus.Pending,
+            Status = originalDocument.Status,
+            VerifiedAtUtc = originalDocument.VerifiedAtUtc,
+            VerifiedByUserId = originalDocument.VerifiedByUserId,
+            Remarks = originalDocument.Remarks,
             CreatedAtUtc = DateTime.UtcNow,
             UpdatedAtUtc = DateTime.UtcNow
         };

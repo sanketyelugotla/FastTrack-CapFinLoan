@@ -186,27 +186,36 @@
                       </p>
                     </div>
                   </div>
-                  @if (doc.status === 'Verified') {
-                    <span
-                      class="bg-[var(--color-tertiary-container)] text-[var(--color-on-tertiary-container)] text-[10px] px-2 py-0.5 rounded-full font-bold font-label"
-                      >VERIFIED</span
+                  <div class="flex flex-col items-end gap-2">
+                    @if (doc.status === 'Verified') {
+                      <span
+                        class="bg-[var(--color-tertiary-container)] text-[var(--color-on-tertiary-container)] text-[10px] px-2 py-0.5 rounded-full font-bold font-label"
+                        >VERIFIED</span
+                      >
+                    } @else if (doc.status === 'ReuploadRequired') {
+                      <span
+                        class="bg-amber-100 border border-amber-400 text-amber-700 text-[10px] px-2 py-0.5 rounded-full font-bold font-label"
+                        >RE-UPLOAD</span
+                      >
+                    } @else if (doc.status === 'UnderReview') {
+                      <span
+                        class="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded-full font-bold font-label"
+                        >REVIEWING</span
+                      >
+                    } @else {
+                      <span
+                        class="bg-[var(--color-surface-container-highest)] text-[var(--color-on-surface-variant)] text-[10px] px-2 py-0.5 rounded-full font-bold font-label"
+                        >PENDING</span
+                      >
+                    }
+                    <button
+                      (click)="downloadDocument(doc)"
+                      class="text-xs flex items-center gap-1 font-bold text-[var(--color-primary)] hover:underline cursor-pointer"
                     >
-                  } @else if (doc.status === 'ReuploadRequired') {
-                    <span
-                      class="bg-amber-100 border border-amber-400 text-amber-700 text-[10px] px-2 py-0.5 rounded-full font-bold font-label"
-                      >RE-UPLOAD</span
-                    >
-                  } @else if (doc.status === 'UnderReview') {
-                    <span
-                      class="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded-full font-bold font-label"
-                      >REVIEWING</span
-                    >
-                  } @else {
-                    <span
-                      class="bg-[var(--color-surface-container-highest)] text-[var(--color-on-surface-variant)] text-[10px] px-2 py-0.5 rounded-full font-bold font-label"
-                      >PENDING</span
-                    >
-                  }
+                      <span class="material-symbols-outlined text-[14px]">download</span>
+                      Download
+                    </button>
+                  </div>
                 </div>
                 @if (doc.remarks) {
                   <div

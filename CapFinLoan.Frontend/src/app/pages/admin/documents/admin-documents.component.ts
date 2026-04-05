@@ -119,6 +119,22 @@ export class AdminDocumentsComponent implements OnInit {
     });
   }
 
+  downloadDocument(doc: DocumentResponse) {
+    this.adminService.downloadDocument(doc.id).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = doc.fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      },
+      error: () => this.error.set('Failed to download document.')
+    });
+  }
+
   get pendingCount(): number {
     return this.documents().filter(d => d.status === 'Pending').length;
   }
