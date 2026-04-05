@@ -61,8 +61,8 @@ export class MyDocumentsComponent implements OnInit {
     this.error.set('');
     this.uploadSuccess.set('');
 
-    // Upload without applicationId — standalone KYC document
-    this.docService.upload('', docType, file).subscribe({
+    // Upload without applicationId — standalone KYC document (use Guid.Empty equivalent)
+    this.docService.upload('00000000-0000-0000-0000-000000000000', docType, file).subscribe({
       next: () => {
         this.uploadSuccess.set(`${docType} uploaded successfully!`);
         this.loadDocuments();

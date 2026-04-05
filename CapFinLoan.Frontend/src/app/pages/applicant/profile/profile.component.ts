@@ -1,10 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CommonModule, DecimalPipe, DatePipe } from '@angular/common';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-profile',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule, DecimalPipe, DatePipe],
   templateUrl: './profile.component.html'
 })
 export class ProfileComponent implements OnInit {

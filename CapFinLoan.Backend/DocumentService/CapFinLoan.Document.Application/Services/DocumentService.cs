@@ -150,6 +150,49 @@ public class DocumentService : IDocumentService
         return MapToResponse(document);
     }
 
+    public async Task<DocumentResponse> LinkAsync(Guid userId, Guid documentId, Guid targetApplicationId, CancellationToken cancellationToken = default)
+    {
+        var originalDocument = await _documentRepository.GetByIdAsync(documentId, cancellationToken)
+                               ?? throw new KeyNotFoundException("Original document not found.");
+
+        if (originalDocument.UserId != userId)
+            throw new UnauthorizedAccessException("You are not allowed to link this document.");
+
+        // Create a new document entity pointing to the exact same stored file
+        var newDocument = new LoanDocument
+        {
+            ApplicationId = targetApplicationId,
+            UserId = userId,
+            FileName = originalDocument.FileName,
+            StoredFileName = originalDocument.StoredFileName,
+            ContentType = originalDocument.ContentType,
+            FileSizeBytes = originalDocument.FileSizeBytes,
+            DocumentType = originalDocument.DocumentType,
+            Status = DocumentStatus.Pending,
+            CreatedAtUtc = DateTime.UtcNow,
+            UpdatedAtUtc = DateTime.UtcNow
+        };
+
+        await _documentRepository.AddAsync(newDocument, cancellationToken);
+        return MapToResponse(newDocument);
+    }
+
+    public async Task<(Stream Stream, string ContentType, string FileName)> DownloadAsync(Guid documentId, Guid? userId, bool isAdmin, CancellationToken cancellationToken = default)
+    {
+        var document = await _documentRepository.GetByIdAsync(documentId, cancellationToken)
+                       ?? throw new KeyNotFoundException("Document not found.");
+
+        if (!isAdmin && document.UserId != userId)
+        {
+            throw new UnauthorizedAccessException("You are not authorized to download this document.");
+        }
+
+        var stream = await _fileStorageService.GetFileStreamAsync(document.StoredFileName, cancellationToken)
+                     ?? throw new KeyNotFoundException("Physical file not found in storage.");
+
+        return (stream, document.ContentType, document.FileName);
+    }
+
     private static DocumentResponse MapToResponse(LoanDocument document)
     {
         return new DocumentResponse

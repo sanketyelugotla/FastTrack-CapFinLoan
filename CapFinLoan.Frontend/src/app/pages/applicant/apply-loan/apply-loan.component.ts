@@ -29,6 +29,7 @@ export class ApplyLoanComponent implements OnInit {
 
   // Document state
   documents = signal<DocumentResponse[]>([]);
+  genericDocuments = signal<DocumentResponse[]>([]);
   docsLoading = signal(false);
   uploadSuccess = signal('');
   docTypes = [
@@ -58,6 +59,13 @@ export class ApplyLoanComponent implements OnInit {
   };
 
   ngOnInit() {
+    this.docService.getMyDocuments().subscribe({
+      next: docs => {
+        // filter standalone docs where applicationId is empty guid
+        this.genericDocuments.set(docs.filter(d => d.applicationId === '00000000-0000-0000-0000-000000000000'));
+      }
+    });
+
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.draftId.set(id);
@@ -136,6 +144,31 @@ export class ApplyLoanComponent implements OnInit {
         setTimeout(() => this.uploadSuccess.set(''), 3000);
       },
       error: (err) => this.error.set(err.error?.message || 'Failed to replace document.')
+    });
+  }
+
+  getGenericDocForType(type: string): DocumentResponse | undefined {
+    return this.genericDocuments().find(d => d.documentType === type);
+  }
+
+  linkExistingDoc(sourceDocId: string, docType: string) {
+    const appId = this.draftId();
+    if (!appId) return;
+
+    this.error.set('');
+    this.uploadSuccess.set('');
+    this.docsLoading.set(true);
+
+    this.docService.linkDocument(sourceDocId, appId).subscribe({
+      next: () => {
+        this.uploadSuccess.set(`${docType} linked successfully!`);
+        this.loadDocuments(appId);
+        setTimeout(() => this.uploadSuccess.set(''), 3000);
+      },
+      error: (err) => {
+        this.error.set(err.error?.message || 'Linking failed.');
+        this.docsLoading.set(false);
+      }
     });
   }
 

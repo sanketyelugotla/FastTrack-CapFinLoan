@@ -45,6 +45,10 @@ export class AdminService {
     return this.http.get<DocumentResponse[]>(`${this.baseUrl}/admin/documents${params}`);
   }
 
+  downloadDocument(id: string) {
+    return this.http.get(`${this.baseUrl}/admin/documents/${id}/download`, { responseType: 'blob' });
+  }
+
   getUsers() {
     return this.http.get<UserSummary[]>(`${this.baseUrl}/admin/users`);
   }

@@ -2,6 +2,7 @@ using CapFinLoan.Document.Application.Interfaces;
 using CapFinLoan.Document.Domain.Entities;
 using CapFinLoan.Document.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
+using CapFinLoan.Document.Domain.Constants;
 
 namespace CapFinLoan.Document.Persistence.Repositories;
 

@@ -107,6 +107,53 @@ public class DocumentsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Link an already uploaded Document to a target Application without re-uploading file bytes.
+    /// </summary>
+    [HttpPost("{id:guid}/link")]
+    [Authorize(Roles = RoleNames.Applicant)]
+    public async Task<IActionResult> Link(
+        Guid id,
+        [FromBody] CapFinLoan.Document.Application.Contracts.Requests.LinkDocumentRequest request,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await _documentService.LinkAsync(GetUserId(), id, request.ApplicationId, cancellationToken);
+            return Ok(result);
+        }
+        catch (KeyNotFoundException exception)
+        {
+            return NotFound(new { message = exception.Message });
+        }
+        catch (UnauthorizedAccessException exception)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = exception.Message });
+        }
+    }
+
+    /// <summary>
+    /// Download/View the document contents.
+    /// </summary>
+    [HttpGet("{id:guid}/download")]
+    [Authorize(Roles = RoleNames.Applicant)]
+    public async Task<IActionResult> Download(Guid id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var (stream, contentType, fileName) = await _documentService.DownloadAsync(id, GetUserId(), isAdmin: false, cancellationToken);
+            return File(stream, contentType, fileName);
+        }
+        catch (KeyNotFoundException exception)
+        {
+            return NotFound(new { message = exception.Message });
+        }
+        catch (UnauthorizedAccessException exception)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = exception.Message });
+        }
+    }
+
     private Guid GetUserId()
     {
         var value = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub");

@@ -448,11 +448,31 @@
                             </label>
                           </div>
                         } @else {
-                          <label class="w-full text-center block text-xs font-bold text-white bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] py-2 rounded shadow-sm hover:scale-[1.02] active:scale-95 cursor-pointer transition-all">
-                            <span class="material-symbols-outlined text-[14px] align-middle mr-1">upload</span>
-                            Upload
-                            <input type="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png" (change)="uploadFile($event, docType.value)" />
-                          </label>
+                          @let genericDoc = getGenericDocForType(docType.value);
+                          @if (genericDoc) {
+                            <div class="space-y-2">
+                              <button type="button" (click)="linkExistingDoc(genericDoc.id, docType.value)" class="w-full flex items-center justify-center gap-2 text-xs font-bold text-[var(--color-primary)] bg-[var(--color-surface-container-low)] border border-[var(--color-primary)]/20 py-2 rounded shadow-sm hover:bg-[var(--color-surface-container-high)] transition-all">
+                                <span class="material-symbols-outlined text-[14px]">link</span>
+                                Use Existing ({{ genericDoc.fileName }})
+                              </button>
+                              <div class="relative flex items-center py-1">
+                                <div class="flex-grow border-t border-[var(--color-outline-variant)]/30"></div>
+                                <span class="mx-2 text-[10px] text-[var(--color-outline-variant)] uppercase">or</span>
+                                <div class="flex-grow border-t border-[var(--color-outline-variant)]/30"></div>
+                              </div>
+                              <label class="w-full text-center block text-xs font-bold text-white bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] py-2 rounded shadow-sm hover:scale-[1.02] active:scale-95 cursor-pointer transition-all">
+                                <span class="material-symbols-outlined text-[14px] align-middle mr-1">upload</span>
+                                Upload New
+                                <input type="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png" (change)="uploadFile($event, docType.value)" />
+                              </label>
+                            </div>
+                          } @else {
+                            <label class="w-full text-center block text-xs font-bold text-white bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] py-2 rounded shadow-sm hover:scale-[1.02] active:scale-95 cursor-pointer transition-all">
+                              <span class="material-symbols-outlined text-[14px] align-middle mr-1">upload</span>
+                              Upload
+                              <input type="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png" (change)="uploadFile($event, docType.value)" />
+                            </label>
+                          }
                         }
                       </div>
                     </div>

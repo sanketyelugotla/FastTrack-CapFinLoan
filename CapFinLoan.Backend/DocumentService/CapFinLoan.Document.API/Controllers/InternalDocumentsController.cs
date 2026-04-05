@@ -56,6 +56,23 @@ public class InternalDocumentsController : ControllerBase
         return Ok(documents);
     }
 
+    /// <summary>
+    /// Admin: Download/View the document contents.
+    /// </summary>
+    [HttpGet("{id:guid}/download")]
+    public async Task<IActionResult> Download(Guid id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var (stream, contentType, fileName) = await _documentService.DownloadAsync(id, null, isAdmin: true, cancellationToken);
+            return File(stream, contentType, fileName);
+        }
+        catch (KeyNotFoundException exception)
+        {
+            return NotFound(new { message = exception.Message });
+        }
+    }
+
     private Guid GetUserId()
     {
         var value = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub");

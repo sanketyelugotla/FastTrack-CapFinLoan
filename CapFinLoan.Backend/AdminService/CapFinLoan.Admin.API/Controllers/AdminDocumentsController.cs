@@ -63,6 +63,26 @@ public class AdminDocumentsController : ControllerBase
         return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync(cancellationToken));
     }
 
+    [HttpGet("{id:guid}/download")]
+    public async Task<IActionResult> Download(Guid id, CancellationToken cancellationToken)
+    {
+        var client = CreateInternalClient();
+        var response = await client.GetAsync($"/api/internal/documents/{id}/download", HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+            var contentType = response.Content.Headers.ContentType?.ToString() ?? "application/octet-stream";
+            var contentDisposition = response.Content.Headers.ContentDisposition;
+            var fileName = contentDisposition?.FileNameStar ?? contentDisposition?.FileName?.Trim('"') ?? "document";
+
+            return File(stream, contentType, fileName);
+        }
+
+        _logger.LogError("Failed to download document {DocumentId} from Document Service. Status: {StatusCode}", id, response.StatusCode);
+        return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync(cancellationToken));
+    }
+
     [HttpPut("{id:guid}/verify")]
     public async Task<IActionResult> VerifyDocument(Guid id, [FromBody] object request, CancellationToken cancellationToken)
     {

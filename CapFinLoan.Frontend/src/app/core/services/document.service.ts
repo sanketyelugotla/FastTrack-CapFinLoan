@@ -25,6 +25,16 @@ export class DocumentService {
     return this.http.put<DocumentResponse>(`${this.apiUrl}/${documentId}`, formData);
   }
 
+  linkDocument(sourceDocumentId: string, targetApplicationId: string) {
+    return this.http.post<DocumentResponse>(`${this.apiUrl}/${sourceDocumentId}/link`, {
+      applicationId: targetApplicationId
+    });
+  }
+
+  download(documentId: string) {
+    return this.http.get(`${this.apiUrl}/${documentId}/download`, { responseType: 'blob' });
+  }
+
   getByApplicationId(applicationId: string) {
     return this.http.get<DocumentResponse[]>(`${this.apiUrl}/application/${applicationId}`);
   }
