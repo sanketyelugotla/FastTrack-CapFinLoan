@@ -119,6 +119,17 @@ export class AdminDocumentsComponent implements OnInit {
     });
   }
 
+  viewDocument(doc: DocumentResponse) {
+    this.adminService.downloadDocument(doc.id).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        setTimeout(() => window.URL.revokeObjectURL(url), 10000);
+      },
+      error: () => this.error.set('Failed to view document.')
+    });
+  }
+
   downloadDocument(doc: DocumentResponse) {
     this.adminService.downloadDocument(doc.id).subscribe({
       next: (blob) => {

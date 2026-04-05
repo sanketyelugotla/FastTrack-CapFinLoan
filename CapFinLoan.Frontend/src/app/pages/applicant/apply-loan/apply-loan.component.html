@@ -78,6 +78,13 @@
       </div>
     }
 
+    @if (isReadOnly()) {
+      <div class="p-4 mb-6 rounded-xl bg-amber-50 border border-amber-300 text-amber-800 text-sm font-medium flex items-center gap-3">
+        <span class="material-symbols-outlined text-xl shrink-0" style="font-variation-settings: 'FILL' 1;">lock</span>
+        <span>This application is <strong>{{ appStatus() }}</strong> and can no longer be edited. Document uploads are disabled.</span>
+      </div>
+    }
+
     <!-- Application Form Card -->
     <div
       class="bg-white dark:bg-slate-900 rounded-xl p-8 md:p-12 shadow-sm border border-slate-200/50 dark:border-slate-800"
@@ -442,36 +449,44 @@
                                 {{ doc.status === 'ReuploadRequired' ? 'RE-UPLOAD' : doc.status.toUpperCase() }}
                               </span>
                             </div>
-                            <label class="w-full text-center block text-xs font-bold text-[var(--color-primary)] bg-white border border-[var(--color-primary)]/20 py-2 rounded cursor-pointer hover:bg-slate-50 transition-colors">
-                              Replace
-                              <input type="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png" (change)="replaceFile($event, doc.id, docType.value)" />
-                            </label>
+                            @if (!isReadOnly()) {
+                              <label class="w-full text-center block text-xs font-bold text-[var(--color-primary)] bg-white border border-[var(--color-primary)]/20 py-2 rounded cursor-pointer hover:bg-slate-50 transition-colors">
+                                Replace
+                                <input type="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png" (change)="replaceFile($event, doc.id, docType.value)" />
+                              </label>
+                            } @else {
+                              <p class="text-center text-xs text-[var(--color-on-surface-variant)] italic py-1">Read-only</p>
+                            }
                           </div>
                         } @else {
-                          @let genericDoc = getGenericDocForType(docType.value);
-                          @if (genericDoc) {
-                            <div class="space-y-2">
-                              <button type="button" (click)="linkExistingDoc(genericDoc.id, docType.value)" class="w-full flex items-center justify-center gap-2 text-xs font-bold text-[var(--color-primary)] bg-[var(--color-surface-container-low)] border border-[var(--color-primary)]/20 py-2 rounded shadow-sm hover:bg-[var(--color-surface-container-high)] transition-all">
-                                <span class="material-symbols-outlined text-[14px]">link</span>
-                                Use Existing ({{ genericDoc.fileName }})
-                              </button>
-                              <div class="relative flex items-center py-1">
-                                <div class="flex-grow border-t border-[var(--color-outline-variant)]/30"></div>
-                                <span class="mx-2 text-[10px] text-[var(--color-outline-variant)] uppercase">or</span>
-                                <div class="flex-grow border-t border-[var(--color-outline-variant)]/30"></div>
+                          @if (!isReadOnly()) {
+                            @let genericDoc = getGenericDocForType(docType.value);
+                            @if (genericDoc) {
+                              <div class="space-y-2">
+                                <button type="button" (click)="linkExistingDoc(genericDoc.id, docType.value)" class="w-full flex items-center justify-center gap-2 text-xs font-bold text-[var(--color-primary)] bg-[var(--color-surface-container-low)] border border-[var(--color-primary)]/20 py-2 rounded shadow-sm hover:bg-[var(--color-surface-container-high)] transition-all">
+                                  <span class="material-symbols-outlined text-[14px]">link</span>
+                                  Use Existing ({{ genericDoc.fileName }})
+                                </button>
+                                <div class="relative flex items-center py-1">
+                                  <div class="flex-grow border-t border-[var(--color-outline-variant)]/30"></div>
+                                  <span class="mx-2 text-[10px] text-[var(--color-outline-variant)] uppercase">or</span>
+                                  <div class="flex-grow border-t border-[var(--color-outline-variant)]/30"></div>
+                                </div>
+                                <label class="w-full text-center block text-xs font-bold text-white bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] py-2 rounded shadow-sm hover:scale-[1.02] active:scale-95 cursor-pointer transition-all">
+                                  <span class="material-symbols-outlined text-[14px] align-middle mr-1">upload</span>
+                                  Upload New
+                                  <input type="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png" (change)="uploadFile($event, docType.value)" />
+                                </label>
                               </div>
+                            } @else {
                               <label class="w-full text-center block text-xs font-bold text-white bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] py-2 rounded shadow-sm hover:scale-[1.02] active:scale-95 cursor-pointer transition-all">
                                 <span class="material-symbols-outlined text-[14px] align-middle mr-1">upload</span>
-                                Upload New
+                                Upload
                                 <input type="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png" (change)="uploadFile($event, docType.value)" />
                               </label>
-                            </div>
+                            }
                           } @else {
-                            <label class="w-full text-center block text-xs font-bold text-white bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] py-2 rounded shadow-sm hover:scale-[1.02] active:scale-95 cursor-pointer transition-all">
-                              <span class="material-symbols-outlined text-[14px] align-middle mr-1">upload</span>
-                              Upload
-                              <input type="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png" (change)="uploadFile($event, docType.value)" />
-                            </label>
+                            <p class="text-center text-xs text-[var(--color-on-surface-variant)] italic py-2">No document uploaded</p>
                           }
                         }
                       </div>
@@ -629,7 +644,7 @@
                 Back
               </button>
             }
-            @if (currentStep() < 4) {
+            @if (currentStep() < 4 && !isReadOnly()) {
               <button
                 type="button"
                 (click)="saveDraftAndNext()"
@@ -646,14 +661,14 @@
             @if (currentStep() < 4) {
               <button
                 type="button"
-                (click)="saveDraftAndNext()"
+                (click)="isReadOnly() ? currentStep.set(currentStep() + 1) : saveDraftAndNext()"
                 [disabled]="saving()"
                 class="w-full sm:w-auto bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] text-white px-10 py-3 rounded-lg font-bold shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all font-label flex items-center justify-center gap-2 disabled:opacity-50 disabled:scale-100"
               >
-                {{ saving() ? 'Saving...' : 'Next Step' }}
+                {{ saving() ? 'Saving...' : 'Next' }}
                 <span class="material-symbols-outlined">arrow_forward</span>
               </button>
-            } @else {
+            } @else if (!isReadOnly()) {
               <button
                 type="button"
                 (click)="submitApplication()"

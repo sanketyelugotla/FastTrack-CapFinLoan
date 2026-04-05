@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, computed } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ApplicationService } from '../../../core/services/application.service';
@@ -25,7 +25,14 @@ export class ApplyLoanComponent implements OnInit {
   loading = signal(false);
   error = signal('');
   draftId = signal<string | null>(null);
+  appStatus = signal<string>('Draft');
   profileAutoFilled = signal(false);
+
+  /** True when the loaded application is no longer editable */
+  isReadOnly = computed(() => {
+    const s = this.appStatus();
+    return s !== 'Draft';
+  });
 
   // Document state
   documents = signal<DocumentResponse[]>([]);
@@ -61,7 +68,6 @@ export class ApplyLoanComponent implements OnInit {
   ngOnInit() {
     this.docService.getMyDocuments().subscribe({
       next: docs => {
-        // filter standalone docs where applicationId is empty guid
         this.genericDocuments.set(docs.filter(d => d.applicationId === '00000000-0000-0000-0000-000000000000'));
       }
     });
@@ -75,6 +81,7 @@ export class ApplyLoanComponent implements OnInit {
           this.form.personalDetails = { ...app.personalDetails };
           this.form.employmentDetails = { ...app.employmentDetails };
           this.form.loanDetails = { ...app.loanDetails };
+          this.appStatus.set(app.status);
           this.loading.set(false);
           this.loadDocuments(id);
         },
@@ -84,7 +91,6 @@ export class ApplyLoanComponent implements OnInit {
         }
       });
     } else {
-      // Auto-fill from saved profile data
       this.loadProfileData();
     }
   }
@@ -113,7 +119,55 @@ export class ApplyLoanComponent implements OnInit {
     }
   }
 
+  // ─── Validation ────────────────────────────────────────────────────────────
+
+  /** Returns an error string if the current step is invalid, empty string if OK */
+  validateStep(): string {
+    const p = this.form.personalDetails;
+    const e = this.form.employmentDetails;
+    const l = this.form.loanDetails;
+
+    switch (this.currentStep()) {
+      case 0: {
+        if (!p.firstName?.trim()) return 'First name is required.';
+        if (!p.lastName?.trim()) return 'Last name is required.';
+        if (!p.email?.trim()) return 'Email address is required.';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p.email)) return 'Please enter a valid email address.';
+        if (!p.phone?.trim()) return 'Phone number is required.';
+        if (!p.dateOfBirth) return 'Date of birth is required.';
+        if (!p.gender) return 'Gender is required.';
+        if (!p.addressLine1?.trim()) return 'Address line 1 is required.';
+        if (!p.city?.trim()) return 'City is required.';
+        if (!p.state?.trim()) return 'State is required.';
+        if (!p.postalCode?.trim()) return 'Postal code is required.';
+        return '';
+      }
+      case 1: {
+        if (!e.employerName?.trim()) return 'Employer name is required.';
+        if (!e.employmentType) return 'Employment type is required.';
+        if (!e.monthlyIncome || e.monthlyIncome <= 0) return 'Monthly income must be greater than 0.';
+        if (!e.annualIncome || e.annualIncome <= 0) return 'Annual income must be greater than 0.';
+        if (e.existingEmiAmount !== undefined && e.existingEmiAmount < 0) return 'Existing EMI cannot be negative.';
+        if (e.monthlyIncome <= (e.existingEmiAmount ?? 0)) return 'Monthly income must be greater than existing EMI obligations.';
+        return '';
+      }
+      case 2: {
+        if (!l.loanPurpose) return 'Loan purpose is required.';
+        if (!l.requestedAmount || l.requestedAmount < 10000) return 'Requested amount must be at least ₹10,000.';
+        if (l.requestedAmount > 5000000) return 'Requested amount cannot exceed ₹50,00,000.';
+        if (!l.requestedTenureMonths || l.requestedTenureMonths < 6) return 'Loan tenure must be at least 6 months.';
+        if (l.requestedTenureMonths > 360) return 'Loan tenure cannot exceed 360 months.';
+        return '';
+      }
+      default:
+        return '';
+    }
+  }
+
+  // ─── Upload ────────────────────────────────────────────────────────────────
+
   uploadFile(event: Event, docType: string) {
+    if (this.isReadOnly()) return;
     const file = (event.target as HTMLInputElement).files?.[0];
     const appId = this.draftId();
     if (!file || !appId) return;
@@ -132,6 +186,7 @@ export class ApplyLoanComponent implements OnInit {
   }
 
   replaceFile(event: Event, documentId: string, docType: string) {
+    if (this.isReadOnly()) return;
     const file = (event.target as HTMLInputElement).files?.[0];
     const appId = this.draftId();
     if (!file || !appId) return;
@@ -152,6 +207,7 @@ export class ApplyLoanComponent implements OnInit {
   }
 
   linkExistingDoc(sourceDocId: string, docType: string) {
+    if (this.isReadOnly()) return;
     const appId = this.draftId();
     if (!appId) return;
 
@@ -211,9 +267,19 @@ export class ApplyLoanComponent implements OnInit {
     } catch { /* ignore corrupt data */ }
   }
 
+  // ─── Navigation ────────────────────────────────────────────────────────────
+
   saveDraftAndNext() {
-    this.saving.set(true);
     this.error.set('');
+
+    // Validate current step before calling the API
+    const validationError = this.validateStep();
+    if (validationError) {
+      this.error.set(validationError);
+      return;
+    }
+
+    this.saving.set(true);
 
     if (this.currentStep() === 3 && this.draftId()) {
       this.loadDocuments(this.draftId()!);
@@ -247,7 +313,6 @@ export class ApplyLoanComponent implements OnInit {
     this.saving.set(true);
     this.error.set('');
 
-    // Save final draft then submit
     this.appService.updateDraft(this.draftId()!, this.form).subscribe({
       next: () => {
         this.appService.submit(this.draftId()!).subscribe({
@@ -257,7 +322,7 @@ export class ApplyLoanComponent implements OnInit {
           },
           error: (err) => {
             this.saving.set(false);
-            this.error.set(err.error?.message || 'Submission failed.');
+            this.error.set(err.error?.message || 'Submission failed. Please check all required fields.');
           }
         });
       },

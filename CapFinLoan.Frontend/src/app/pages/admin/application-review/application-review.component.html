@@ -208,13 +208,22 @@
                         >PENDING</span
                       >
                     }
-                    <button
-                      (click)="downloadDocument(doc)"
-                      class="text-xs flex items-center gap-1 font-bold text-[var(--color-primary)] hover:underline cursor-pointer"
-                    >
-                      <span class="material-symbols-outlined text-[14px]">download</span>
-                      Download
-                    </button>
+                    <div class="flex items-center gap-3">
+                      <button
+                        (click)="viewDocument(doc)"
+                        class="text-xs flex items-center gap-1 font-bold text-[var(--color-primary)] hover:underline cursor-pointer"
+                      >
+                        <span class="material-symbols-outlined text-[14px]">visibility</span>
+                        View
+                      </button>
+                      <button
+                        (click)="downloadDocument(doc)"
+                        class="text-xs flex items-center gap-1 font-bold text-[var(--color-primary)] hover:underline cursor-pointer"
+                      >
+                        <span class="material-symbols-outlined text-[14px]">download</span>
+                        Download
+                      </button>
+                    </div>
                   </div>
                 </div>
                 @if (doc.remarks) {

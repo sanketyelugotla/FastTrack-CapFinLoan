@@ -97,11 +97,18 @@
                 <td class="px-6 py-4 text-right">
                   <div class="flex items-center justify-end gap-2">
                     <button
-                      (click)="downloadDocument(doc)"
-                      class="px-2 py-1.5 text-[var(--color-primary)] hover:bg-[var(--color-surface-container-low)] rounded-lg transition-colors cursor-pointer mr-2"
+                      (click)="viewDocument(doc)"
+                      class="px-2 py-1.5 text-[var(--color-primary)] hover:bg-[var(--color-surface-container-low)] rounded-lg transition-colors cursor-pointer mr-0"
                       title="View Document"
                     >
                       <span class="material-symbols-outlined text-[18px]">visibility</span>
+                    </button>
+                    <button
+                      (click)="downloadDocument(doc)"
+                      class="px-2 py-1.5 text-[var(--color-primary)] hover:bg-[var(--color-surface-container-low)] rounded-lg transition-colors cursor-pointer mr-2"
+                      title="Download Document"
+                    >
+                      <span class="material-symbols-outlined text-[18px]">download</span>
                     </button>
                     @if (doc.status !== 'Verified') {
                       <button

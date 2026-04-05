@@ -128,6 +128,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker"))
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<CapFinLoan.Admin.API.Middleware.GlobalExceptionHandlerMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

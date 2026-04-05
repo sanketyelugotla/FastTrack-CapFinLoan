@@ -110,6 +110,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+app.UseMiddleware<CapFinLoan.Auth.API.Middleware.GlobalExceptionHandlerMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
