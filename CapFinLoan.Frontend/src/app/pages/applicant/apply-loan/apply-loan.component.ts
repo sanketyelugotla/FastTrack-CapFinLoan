@@ -9,7 +9,7 @@ import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-apply-loan',
-  imports: [FormsModule, DatePipe],
+  imports: [FormsModule],
   templateUrl: './apply-loan.component.html',
   styleUrl: './apply-loan.component.css'
 })

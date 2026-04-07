@@ -1,79 +1,102 @@
 <nav
-  class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-[var(--color-outline-variant)]/20"
+  class="fixed top-0 left-0 right-0 z-50 bg-[color:rgba(0,23,54,0.88)] backdrop-blur-2xl border-b border-white/8 text-white transition-[box-shadow,background-color] duration-300"
+  [class.shadow-[0_18px_40px_rgba(0,23,54,0.28)]]="isScrolled"
 >
   <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-    <!-- Logo -->
-    <a routerLink="/" class="flex items-center gap-2.5 no-underline">
+    <a routerLink="/" class="flex items-center gap-3 no-underline group">
       <div
-        class="w-9 h-9 rounded-lg bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] flex items-center justify-center"
+        class="w-10 h-10 rounded-2xl bg-white/10 border border-white/10 backdrop-blur-md flex items-center justify-center group-hover:scale-105 transition-transform duration-300"
       >
-        <span class="text-white font-bold text-sm font-[var(--font-heading)]">CF</span>
+        <span class="text-sm font-extrabold font-[var(--font-headline)] text-white">CF</span>
       </div>
-      <span class="text-lg font-bold font-[var(--font-heading)] text-[var(--color-primary)]"
+      <span class="text-2xl font-extrabold font-[var(--font-headline)] text-white tracking-tight"
         >CapFinLoan</span
       >
     </a>
 
-    <!-- Center Links (public) -->
     @if (!auth.isLoggedIn()) {
-      <div class="hidden md:flex items-center gap-8">
+      <div class="hidden lg:flex items-center gap-10">
         <a
-          routerLink="/"
-          class="text-sm font-medium text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-colors"
+          href="#hero"
+          class="text-sm font-semibold text-white hover:text-white transition-colors tracking-wide"
           >Home</a
         >
         <a
           href="#features"
-          class="text-sm font-medium text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-colors"
+          class="text-sm font-semibold text-white/70 hover:text-white transition-colors tracking-wide"
           >Features</a
         >
         <a
-          href="#how-it-works"
-          class="text-sm font-medium text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-colors"
-          >How It Works</a
+          href="#services"
+          class="text-sm font-semibold text-white/70 hover:text-white transition-colors tracking-wide"
+          >Services</a
+        >
+        <a
+          href="#faqs"
+          class="text-sm font-semibold text-white/70 hover:text-white transition-colors tracking-wide"
+          >FAQs</a
         >
       </div>
     }
 
-    <!-- Auth Buttons / User Menu -->
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-6">
       @if (auth.isLoggedIn()) {
         @if (auth.isApplicant()) {
           <a
             routerLink="/applicant/dashboard"
-            routerLinkActive="text-[var(--color-primary)]"
-            class="text-sm font-medium text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-colors hidden md:block"
+            routerLinkActive="!text-white"
+            class="hidden md:block text-sm font-semibold text-white/70 hover:text-white transition-colors"
             >Dashboard</a
           >
           <a
             routerLink="/applicant/applications"
-            routerLinkActive="text-[var(--color-primary)]"
-            class="text-sm font-medium text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-colors hidden md:block"
+            routerLinkActive="!text-white"
+            class="hidden md:block text-sm font-semibold text-white/70 hover:text-white transition-colors"
             >My Applications</a
           >
-          <a routerLink="/applicant/apply" class="btn-primary btn-sm hidden md:inline-flex"
+          <a
+            routerLink="/applicant/apply"
+            class="hidden md:inline-flex px-6 py-2.5 rounded-full bg-white/10 hover:bg-white text-white hover:text-[var(--color-primary)] transition-all duration-300 font-bold text-sm"
             >Apply Now</a
           >
         }
-        <div
-          class="flex items-center gap-3 ml-4 pl-4 border-l border-[var(--color-outline-variant)]/30"
-        >
+        <div class="flex items-center gap-4 pl-6 border-l border-white/10">
           <div class="hidden sm:block text-right">
-            <p class="text-sm font-semibold text-[var(--color-on-surface)] leading-tight">
-              {{ auth.currentUser()?.name }}
+            <p class="text-sm font-bold text-white">{{ auth.currentUser()?.name }}</p>
+            <p
+              class="text-[10px] uppercase tracking-widest text-[var(--color-secondary-fixed)] font-bold"
+            >
+              {{ auth.currentUser()?.role }}
             </p>
-            <p class="text-xs text-[var(--color-outline)]">{{ auth.currentUser()?.role }}</p>
           </div>
           <button
             (click)="auth.logout()"
-            class="btn-ghost btn-sm text-[var(--color-error)] hover:bg-[var(--color-error-container)]"
+            class="w-10 h-10 rounded-full bg-white/5 hover:bg-[var(--color-secondary)] text-white flex items-center justify-center transition-colors"
           >
-            Logout
+            <span class="material-symbols-outlined text-[18px]">logout</span>
           </button>
         </div>
       } @else {
-        <a routerLink="/login" class="btn-ghost btn-sm">Sign In</a>
-        <a routerLink="/signup" class="btn-primary btn-sm">Get Started</a>
+        <div class="flex items-center gap-6">
+          <div
+            class="hidden sm:flex items-center gap-2 border border-white/10 rounded-full px-4 py-1.5 bg-white/5 backdrop-blur-md"
+          >
+            <div class="w-2 h-2 rounded-full bg-[var(--color-secondary-fixed)] animate-pulse"></div>
+            <span class="text-[10px] font-bold uppercase tracking-widest text-white/80"
+              >Available 24/7</span
+            >
+          </div>
+          <a
+            routerLink="/login"
+            class="text-white hover:text-white font-bold text-sm transition-colors tracking-wide"
+            >Sign In</a
+          >
+          <a
+            routerLink="/signup"
+            class="px-7 py-2.5 rounded-full bg-[var(--color-secondary-container)] hover:bg-white text-[var(--color-primary)] shadow-[0_0_20px_rgba(172,237,218,0.3)] hover:shadow-xl font-extrabold text-sm transition-all duration-300 transform"
+            >Get Started</a
+          >
+        </div>
       }
     </div>
   </div>

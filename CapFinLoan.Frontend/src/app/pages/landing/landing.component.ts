@@ -9,16 +9,17 @@ import { RouterLink } from '@angular/router';
 })
 export class LandingComponent {
   stats = [
-    { value: '?50Cr+', label: 'Loans Disbursed' },
+    { value: '₹50Cr+', label: 'Loans Disbursed' },
     { value: '10,000+', label: 'Happy Customers' },
     { value: '98%', label: 'Approval Rate' },
     { value: '24hrs', label: 'Avg. Processing' }
   ];
 
   features = [
-    { icon: '?', title: 'Lightning-Fast Approval', description: 'Get your loan approved within 24 hours with our AI-powered verification system. No more waiting in long queues.' },
-    { icon: '??', title: 'Competitive Rates', description: 'Industry-leading interest rates starting from 8.5% p.a. with zero hidden charges and transparent fee structures.' },
-    { icon: '??', title: 'Flexible Tenure', description: 'Choose repayment periods from 6 to 60 months. Customize your EMI to fit your monthly budget perfectly.' }
+    { icon: 'bolt', title: 'Lightning-Fast Approval', description: 'Get your loan approved within 24 hours with our AI-powered verification system. No more waiting in long queues.' },
+    { icon: 'chart', title: 'Competitive Rates', description: 'Industry-leading interest rates starting from 8.5% p.a. with zero hidden charges and transparent fee structures.' },
+    { icon: 'calendar', title: 'Flexible Tenure', description: 'Choose repayment periods from 6 to 60 months. Customize your EMI to fit your monthly budget perfectly.' },
+    { icon: 'shield', title: 'Bank-Grade Security', description: 'Your personal and financial data is protected by enterprise-level encryption and strict privacy policies.' }
   ];
 
   steps = [
@@ -29,9 +30,10 @@ export class LandingComponent {
   ];
 
   products = [
-    { icon: '??', title: 'Personal Loan', description: 'For weddings, travel, medical emergencies, or any personal need. Quick disbursal with minimal documentation.', rate: '8.5% p.a.' },
-    { icon: '??', title: 'Business Loan', description: 'Fuel your business growth with working capital, equipment financing, or expansion funding.', rate: '10.5% p.a.' },
-    { icon: '??', title: 'Home Loan', description: 'Make your dream home a reality with affordable home loans and long tenure options.', rate: '7.5% p.a.' }
+    { icon: 'user', title: 'Personal Loan', description: 'For weddings, travel, medical emergencies, or any personal need. Quick disbursal with minimal documentation.', rate: '8.5% p.a.' },
+    { icon: 'briefcase', title: 'Business Loan', description: 'Fuel your business growth with working capital, equipment financing, or expansion funding.', rate: '10.5% p.a.' },
+    { icon: 'home', title: 'Home Loan', description: 'Make your dream home a reality with affordable home loans and long tenure options.', rate: '7.5% p.a.' },
+    { icon: 'car', title: 'Auto Loan', description: 'Finance your next vehicle with flexible rates. Fast approvals and completely transparent terms.', rate: '8.0% p.a.' }
   ];
 
   testimonials = [

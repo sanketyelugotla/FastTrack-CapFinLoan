@@ -1,174 +1,234 @@
-<div class="min-h-screen flex">
-  <!-- Left – Branding -->
-  <div
-    class="hidden lg:flex flex-1 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] items-center justify-center p-12"
+<div class="h-screen flex flex-col lg:flex-row bg-[var(--color-surface)] relative overflow-hidden">
+  <a
+    routerLink="/"
+    class="fixed top-8 left-8 z-50 w-12 h-12 rounded-full bg-[var(--color-secondary)] text-white flex items-center justify-center shadow-[0_10px_20px_rgba(41,105,91,0.3)] hover:scale-110 hover:shadow-[0_15px_30px_rgba(41,105,91,0.4)] transition-all duration-300 group"
+    aria-label="Back to landing page"
   >
-    <div class="max-w-md text-center">
-      <div
-        class="w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center mx-auto mb-8"
-      >
-        <span class="text-4xl">🚀</span>
+    <span
+      class="material-symbols-outlined text-[24px] transform group-hover:-translate-x-0.5 transition-transform"
+      >arrow_back</span
+    >
+  </a>
+
+  <div
+    class="hidden lg:flex flex-1 relative bg-primary overflow-hidden items-center justify-center p-20"
+  >
+    <div
+      class="absolute top-0 left-0 w-[50vw] h-[50vw] bg-primary-fixed/10 blur-[130px] rounded-full mt-[-20vw] ml-[-10vw] pointer-events-none"
+    ></div>
+    <div
+      class="absolute bottom-0 right-0 w-[40vw] h-[40vw] bg-secondary/12 blur-[130px] rounded-full mb-[-15vw] mr-[-10vw] pointer-events-none"
+    ></div>
+
+    <div class="relative z-10 w-full max-w-lg text-center">
+      <div class="mb-20 perspective-1000 relative group cursor-pointer">
+        <div
+          class="bg-white/10 backdrop-blur-3xl border border-white/20 rounded-[32px] p-8 text-left shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] transition-all duration-700 ease-out transform-gpu rotate-x-6 rotate-y-[12deg] group-hover:rotate-x-0 group-hover:rotate-y-0 group-hover:scale-105 group-hover:shadow-[0_80px_150px_-30px_rgba(0,0,0,0.6)] animate-float"
+        >
+          <div class="flex items-center justify-between mb-12">
+            <div
+              class="w-10 h-10 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center"
+            >
+              <span class="text-sm font-black text-white">CF</span>
+            </div>
+            <div
+              class="px-3 py-1 rounded-full bg-secondary-container/20 text-secondary-container text-[10px] font-black uppercase tracking-widest"
+            >
+              Active
+            </div>
+          </div>
+          <div>
+            <p class="text-white/40 text-[10px] font-black uppercase tracking-widest mb-2">
+              Loan Eligibility
+            </p>
+            <h3 class="text-4xl font-black text-white font-[var(--font-heading)] mb-8">
+              ₹50,00,000
+            </h3>
+            <div class="space-y-4">
+              <div
+                class="flex justify-between items-center text-[10px] font-bold uppercase tracking-wider"
+              >
+                <span class="text-white/40">Profile Strength</span>
+                <span class="text-secondary-container">Excellent</span>
+              </div>
+              <div class="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+                <div
+                  class="w-[92%] h-full bg-secondary shadow-[0_0_10px_rgba(41,105,91,0.45)]"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <h2 class="text-3xl font-extrabold font-[var(--font-heading)] text-white mb-4">
-        Start Your Journey
+
+      <h2 class="text-4xl font-black text-white font-[var(--font-heading)] mb-6 tracking-tight">
+        Your Financial Future,<br /><span class="text-secondary-container">Starts right here.</span>
       </h2>
-      <p class="text-white/60 leading-relaxed">
-        Create an account in minutes and apply for your first loan. No paperwork, no hassle.
+      <p class="text-white/50 text-lg font-medium leading-relaxed mb-12">
+        Create an account in minutes and move through verification, approval, and disbursal in one
+        streamlined journey.
       </p>
+
+      <div class="grid grid-cols-2 gap-8 pt-8 border-t border-white/5">
+        <div class="text-left">
+          <p class="text-white font-bold text-sm mb-1">Fast Verification</p>
+          <p class="text-white/30 text-xs">AI-powered document checks</p>
+        </div>
+        <div class="text-left">
+          <p class="text-white font-bold text-sm mb-1">Zero Paperwork</p>
+          <p class="text-white/30 text-xs">100% digital experience</p>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Right – Form -->
-  <div class="flex-1 flex items-center justify-center px-6 py-12 bg-white">
+  <div class="flex-1 flex items-center justify-center px-8 py-6 lg:py-10 z-10 min-h-0">
     <div class="w-full max-w-md animate-fade-in-up">
-      <a routerLink="/" class="flex items-center gap-2.5 mb-10">
+      <a routerLink="/" class="flex items-center gap-4 mb-10 no-underline group">
         <div
-          class="w-9 h-9 rounded-lg bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] flex items-center justify-center"
+          class="w-9 h-9 rounded-2xl bg-linear-to-br from-primary to-primary-container flex items-center justify-center shadow-[0_8px_18px_rgba(0,23,54,0.18)] group-hover:scale-105 transition-transform duration-300"
         >
-          <span class="text-white font-bold text-sm">CF</span>
+          <span class="text-sm font-black text-white">CF</span>
         </div>
-        <span class="text-lg font-bold font-[var(--font-heading)] text-[var(--color-primary)]"
+        <span class="text-xl font-black font-[var(--font-heading)] text-primary tracking-tight"
           >CapFinLoan</span
         >
       </a>
 
-      <!-- Step indicator -->
+      <div class="mb-8">
+        <h1 class="text-3xl font-black font-[var(--font-heading)] text-primary mb-2 tracking-tight">
+          @if (step() === 'email') {
+            Create Account
+          } @else if (step() === 'otp') {
+            Verify Email
+          } @else {
+            Complete Profile
+          }
+        </h1>
+        <p class="text-on-surface-variant font-medium text-sm">
+          @if (step() === 'email') {
+            Join us today and receive a verification code to continue.
+          } @else if (step() === 'otp') {
+            Enter the verification code sent to {{ email }}.
+          } @else {
+            Final step: add your details and create your account.
+          }
+        </p>
+      </div>
+
       <div class="flex items-center gap-2 mb-8">
         @for (s of ['email', 'otp', 'details']; track s; let i = $index) {
           <div class="flex items-center gap-2">
             <div
-              class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors"
+              class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-colors"
               [class]="
-                step() === s ||
-                (i === 0 && step() === 'email') ||
-                (i === 1 && step() === 'otp') ||
-                (i === 2 && step() === 'details')
-                  ? 'bg-[var(--color-primary)] text-white'
+                step() === s
+                  ? 'bg-primary text-white'
                   : i < ['email', 'otp', 'details'].indexOf(step())
-                    ? 'bg-[var(--color-primary-container)] text-[var(--color-primary)]'
-                    : 'bg-gray-100 text-gray-400'
+                    ? 'bg-secondary-container text-primary'
+                    : 'bg-surface-container-high text-outline'
               "
             >
               {{ i + 1 }}
             </div>
             @if (i < 2) {
-              <div class="h-px w-8 bg-gray-200"></div>
+              <div class="h-px w-10 bg-outline-variant"></div>
             }
           </div>
         }
-        <span class="ml-2 text-xs text-[var(--color-on-surface-variant)]">
-          @if (step() === 'email') {
-            Verify Email
-          } @else if (step() === 'otp') {
-            Enter OTP
-          } @else {
-            Your Details
-          }
-        </span>
       </div>
-
-      <h1
-        class="text-2xl font-extrabold font-[var(--font-heading)] text-[var(--color-primary)] mb-1"
-      >
-        @if (step() === 'email') {
-          Create Account
-        } @else if (step() === 'otp') {
-          Check Your Email
-        } @else {
-          Complete Your Profile
-        }
-      </h1>
-      <p class="text-sm text-[var(--color-on-surface-variant)] mb-8">
-        @if (step() === 'email') {
-          Enter your email to receive a verification code.
-        } @else if (step() === 'otp') {
-          We sent a 6-digit code to <strong>{{ email }}</strong
-          >.
-        } @else {
-          Almost there — fill in the rest of your details.
-        }
-      </p>
 
       @if (error()) {
         <div
-          class="p-3 mb-6 rounded-lg bg-[var(--color-error-container)] text-[var(--color-on-error-container)] text-sm"
+          class="p-4 mb-6 rounded-2xl bg-error-container border border-error/10 text-on-error-container text-sm font-bold flex items-center gap-3 animate-shake"
         >
+          <span class="material-symbols-outlined text-[20px]">error</span>
           {{ error() }}
         </div>
       }
 
       @if (info()) {
-        <div class="p-3 mb-6 rounded-lg bg-green-50 text-green-700 border border-green-200 text-sm">
+        <div
+          class="p-4 mb-6 rounded-2xl bg-secondary-container/30 text-secondary-light border border-secondary-container text-sm font-bold flex items-center gap-3"
+        >
+          <span class="material-symbols-outlined text-[20px]">info</span>
           {{ info() }}
         </div>
       }
 
-      <!-- ── Step 1: Email ── -->
       @if (step() === 'email') {
-
         <div class="mb-6 flex justify-center">
           <div id="google-btn-container"></div>
         </div>
 
         <div class="flex items-center gap-3 mb-6">
-          <div class="h-px bg-slate-200 flex-1"></div>
-          <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">or sign up with email</span>
-          <div class="h-px bg-slate-200 flex-1"></div>
+          <div class="h-px bg-outline-variant flex-1"></div>
+          <span class="text-xs text-outline font-bold uppercase tracking-wider"
+            >Or sign up with email</span
+          >
+          <div class="h-px bg-outline-variant flex-1"></div>
         </div>
 
-        <form (ngSubmit)="sendOtp()" class="space-y-4">
-          <div>
-            <label class="input-label" for="email">Email Address</label>
+        <form (ngSubmit)="sendOtp()" class="space-y-5">
+          <div class="space-y-2">
+            <label
+              class="text-xs font-black uppercase tracking-[0.15em] text-primary/45 ml-1"
+              for="email"
+              >Email Address</label
+            >
             <input
               id="email"
               type="email"
-              class="input-field"
-              placeholder="you&#64;example.com"
+              class="w-full bg-white border-2 border-outline-variant/50 rounded-2xl px-5 py-4 text-primary font-bold focus:border-secondary focus:ring-0 outline-none transition-all placeholder:text-outline/40"
+              placeholder="you@example.com"
               [(ngModel)]="email"
               name="email"
               required
             />
           </div>
 
-          <!-- Role toggle -->
-          <div class="flex items-center gap-3 pt-1">
+          <div class="flex items-center gap-3 py-2">
             <label class="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" [(ngModel)]="isAdmin" name="isAdmin" class="sr-only peer" />
               <div
-                class="w-9 h-5 bg-[var(--color-outline-variant)] peer-focus:ring-2 peer-focus:ring-[var(--color-primary-fixed)] rounded-full peer peer-checked:bg-[var(--color-primary)] after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full"
+                class="w-8 h-4 bg-surface-container-high peer-focus:ring-2 peer-focus:ring-secondary-container/40 rounded-full peer peer-checked:bg-secondary after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:after:translate-x-4"
               ></div>
             </label>
-            <span class="text-sm text-[var(--color-on-surface-variant)]"
-              >Sign up as Admin (demo)</span
+            <span class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant"
+              >Sign up as Admin</span
             >
           </div>
 
           <button
             type="submit"
-            class="btn-primary w-full !py-3 text-base"
+            class="w-full py-4 rounded-2xl bg-primary text-white font-black text-base transition-all hover:bg-primary-container hover:shadow-[0_20px_40px_-10px_rgba(0,23,54,0.35)] transform hover:-translate-y-1 active:scale-[0.98] mt-4 flex items-center justify-center gap-3 group"
             [disabled]="loading() || !email"
           >
             @if (loading()) {
               <span
-                class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"
+                class="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin"
               ></span>
               Sending OTP...
             } @else {
               Send Verification Code
+              <span class="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
             }
           </button>
         </form>
       }
 
-      <!-- ── Step 2: OTP ── -->
       @if (step() === 'otp') {
-        <form (ngSubmit)="proceedToDetails()" class="space-y-4">
-          <div>
-            <label class="input-label" for="otpCode">6-Digit OTP Code</label>
+        <form (ngSubmit)="proceedToDetails()" class="space-y-5">
+          <div class="space-y-2">
+            <label
+              class="text-xs font-black uppercase tracking-[0.15em] text-primary/45 ml-1"
+              for="otpCode"
+              >6-Digit OTP Code</label
+            >
             <input
               id="otpCode"
               type="text"
-              class="input-field text-center tracking-[0.5em] text-2xl font-bold"
+              class="w-full bg-white border-2 border-outline-variant/50 rounded-2xl px-5 py-4 text-primary font-black text-center tracking-[0.5em] text-2xl focus:border-secondary focus:ring-0 outline-none transition-all placeholder:text-outline/40"
               placeholder="000000"
               [(ngModel)]="otpCode"
               name="otpCode"
@@ -180,23 +240,23 @@
           </div>
 
           @if (otpSecondsLeft() > 0) {
-            <p class="text-sm text-center text-[var(--color-on-surface-variant)]">
-              Expires in
-              <span class="font-semibold text-[var(--color-primary)]">{{ otpTimeLabel }}</span>
+            <p class="text-sm text-center text-on-surface-variant">
+              Expires in <span class="font-semibold text-primary">{{ otpTimeLabel }}</span>
             </p>
           }
 
           <button
             type="submit"
-            class="btn-primary w-full !py-3 text-base"
+            class="w-full py-4 rounded-2xl bg-primary text-white font-black text-base transition-all hover:bg-primary-container hover:shadow-[0_20px_40px_-10px_rgba(0,23,54,0.35)] transform hover:-translate-y-1 active:scale-[0.98] flex items-center justify-center gap-3 group"
             [disabled]="otpCode.length !== 6 || otpSecondsLeft() <= 0"
           >
             Verify & Continue
+            <span class="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
           </button>
 
           <button
             type="button"
-            class="w-full !py-2.5 text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-colors"
+            class="w-full py-3 text-sm text-on-surface-variant hover:text-primary transition-colors font-bold"
             (click)="goBack()"
           >
             ← Back / Resend OTP
@@ -204,51 +264,69 @@
         </form>
       }
 
-      <!-- ── Step 3: Details ── -->
       @if (step() === 'details') {
         <form (ngSubmit)="completeSignup()" class="space-y-4">
-          <div>
-            <label class="input-label" for="name">Full Name</label>
+          <div class="space-y-1.5">
+            <label
+              class="text-[10px] font-black uppercase tracking-[0.15em] text-primary/45 ml-1"
+              for="name"
+              >Full Name</label
+            >
             <input
               id="name"
               type="text"
-              class="input-field"
+              class="w-full bg-white border-2 border-outline-variant/50 rounded-xl px-4 py-3 text-primary font-bold focus:border-secondary focus:ring-0 outline-none transition-all placeholder:text-outline/40 text-sm"
               placeholder="John Doe"
               [(ngModel)]="name"
               name="name"
               required
             />
           </div>
-          <div>
-            <label class="input-label" for="phone">Phone Number</label>
+
+          <div class="space-y-1.5">
+            <label
+              class="text-[10px] font-black uppercase tracking-[0.15em] text-primary/45 ml-1"
+              for="phone"
+              >Phone Number</label
+            >
             <input
               id="phone"
               type="tel"
-              class="input-field"
-              placeholder="+91 9876543210"
+              class="w-full bg-white border-2 border-outline-variant/50 rounded-xl px-4 py-3 text-primary font-bold focus:border-secondary focus:ring-0 outline-none transition-all placeholder:text-outline/40 text-sm"
+              placeholder="+91 98765 43210"
               [(ngModel)]="phone"
               name="phone"
               required
             />
           </div>
-          <div>
-            <label class="input-label" for="password">Password</label>
+
+          <div class="space-y-1.5">
+            <label
+              class="text-[10px] font-black uppercase tracking-[0.15em] text-primary/45 ml-1"
+              for="password"
+              >Password</label
+            >
             <input
               id="password"
               type="password"
-              class="input-field"
-              placeholder="Min 8 chars, uppercase, number, symbol"
+              class="w-full bg-white border-2 border-outline-variant/50 rounded-xl px-4 py-3 text-primary font-bold focus:border-secondary focus:ring-0 outline-none transition-all placeholder:text-outline/40 text-sm"
+              placeholder="••••••••"
               [(ngModel)]="password"
               name="password"
               required
             />
           </div>
-          <div>
-            <label class="input-label" for="confirmPassword">Confirm Password</label>
+
+          <div class="space-y-1.5">
+            <label
+              class="text-[10px] font-black uppercase tracking-[0.15em] text-primary/45 ml-1"
+              for="confirmPassword"
+              >Confirm Password</label
+            >
             <input
               id="confirmPassword"
               type="password"
-              class="input-field"
+              class="w-full bg-white border-2 border-outline-variant/50 rounded-xl px-4 py-3 text-primary font-bold focus:border-secondary focus:ring-0 outline-none transition-all placeholder:text-outline/40 text-sm"
               placeholder="Re-enter password"
               [(ngModel)]="confirmPassword"
               name="confirmPassword"
@@ -258,22 +336,23 @@
 
           <button
             type="submit"
-            class="btn-primary w-full !py-3 text-base"
+            class="w-full py-4 rounded-xl bg-primary text-white font-black text-base transition-all hover:bg-primary-container hover:shadow-[0_20px_40px_-10px_rgba(0,23,54,0.35)] transform hover:-translate-y-1 active:scale-[0.98] mt-4 flex items-center justify-center gap-3 group"
             [disabled]="loading() || !name || !phone || !password || !confirmPassword"
           >
             @if (loading()) {
               <span
-                class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"
+                class="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin"
               ></span>
-              Creating Account...
+              Creating...
             } @else {
               Create Account
+              <span class="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
             }
           </button>
 
           <button
             type="button"
-            class="w-full !py-2.5 text-sm text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-colors"
+            class="w-full py-3 text-sm text-on-surface-variant hover:text-primary transition-colors font-bold"
             (click)="goBack()"
           >
             ← Back
@@ -281,12 +360,12 @@
         </form>
       }
 
-      <p class="text-sm text-center text-[var(--color-on-surface-variant)] mt-8">
-        Already have an account?
-        <a routerLink="/login" class="font-semibold text-[var(--color-primary)] hover:underline"
-          >Sign in</a
-        >
-      </p>
+      <div class="mt-8 pt-6 border-t border-outline-variant text-center">
+        <p class="text-xs font-bold text-on-surface-variant">
+          Already have an account?
+          <a routerLink="/login" class="text-secondary hover:underline ml-1">Sign in here</a>
+        </p>
+      </div>
     </div>
   </div>
 </div>

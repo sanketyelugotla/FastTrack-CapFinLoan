@@ -1,136 +1,206 @@
-<!-- ══════════ HERO ══════════ -->
 <section
-  class="relative overflow-hidden bg-gradient-to-br from-[var(--color-primary)] via-[var(--color-primary-container)] to-[#003D7A] text-white"
+  id="hero"
+  class="relative bg-[var(--color-primary)] text-white w-full min-h-[93vh] flex items-center overflow-hidden"
 >
-  <!-- Subtle pattern overlay -->
   <div
-    class="absolute inset-0 opacity-[0.04]"
-    style="
-      background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0);
-      background-size: 40px 40px;
-    "
+    class="absolute top-0 right-0 w-[50vw] h-[50vw] bg-[var(--color-primary-fixed)]/10 blur-[120px] rounded-full mt-[-20vw] mr-[-20vw] pointer-events-none"
+  ></div>
+  <div
+    class="absolute bottom-0 left-0 w-[40vw] h-[40vw] bg-[var(--color-secondary)]/12 blur-[120px] rounded-full mb-[-20vw] ml-[-20vw] pointer-events-none"
   ></div>
 
-  <div class="relative max-w-7xl mx-auto px-6 py-24 md:py-32">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-      <!-- Left -->
+  <div class="relative w-full max-w-7xl mx-auto px-6 z-10 flex flex-col justify-center">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
       <div class="animate-fade-in-up">
         <div
-          class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 text-xs font-medium text-white/80 mb-6 backdrop-blur-sm"
+          class="inline-flex items-center gap-2 mb-4 bg-white/5 border border-white/10 rounded-full px-4 py-1 backdrop-blur-md mb-12"
         >
-          <span class="w-2 h-2 rounded-full bg-[var(--color-tertiary-fixed)] animate-pulse"></span>
-          Trusted by 10,000+ customers across India
+          <div class="flex gap-1 text-[var(--color-secondary-container)] text-sm">
+            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          </div>
+          <span class="text-sm font-medium text-white/90 ml-1 tracking-wide"
+            >Rated 5.0 by 10,000+ Customers</span
+          >
         </div>
+
         <h1
-          class="text-4xl md:text-5xl lg:text-6xl font-extrabold font-[var(--font-heading)] leading-[1.1] text-white mb-6"
+          class="text-5xl md:text-6xl lg:text-7xl font-extrabold font-[var(--font-heading)] leading-[1.1] tracking-tight text-white"
         >
-          Smart Lending,<br /><span class="text-[var(--color-primary-fixed-dim)]">Simplified.</span>
+          Smart Lending,<br />
+          <span class="text-[var(--color-secondary-container)] inline-flex flex-col">
+            Simplified.
+            <svg
+              class="mt-1 w-full h-[6px] text-[var(--color-secondary-container)] opacity-80"
+              viewBox="0 0 100 10"
+              preserveAspectRatio="none"
+            >
+              <path
+                stroke="currentColor"
+                stroke-width="6"
+                fill="transparent"
+                d="M0,5 Q50,-2 100,5"
+                stroke-linecap="round"
+              />
+            </svg>
+          </span>
         </h1>
-        <p class="text-lg text-white/70 leading-relaxed max-w-lg mb-8">
+
+        <p class="text-xl text-white/60 leading-relaxed max-w-lg mb-12 font-medium">
           Experience lightning-fast loan approvals with competitive rates, transparent processes,
-          and a fully digital journey — from application to disbursement.
+          and a fully digital journey.
         </p>
-        <div class="flex flex-wrap gap-4">
-          <a
-            routerLink="/signup"
-            class="btn-primary !bg-white !text-[var(--color-primary)] hover:!bg-white/90 !shadow-lg"
+
+        <a
+          routerLink="/signup"
+          class="mt-12 group relative inline-flex items-center justify-center px-10 py-4 font-bold text-[var(--color-primary)] bg-white rounded-full overflow-hidden transition-all hover:scale-105 shadow-[0_10px_40px_-10px_rgba(255,255,255,0.35)]"
+        >
+          <span class="relative z-10 w-full text-lg tracking-wide">Get Started</span>
+          <div
+            class="absolute inset-0 h-full w-0 bg-[var(--color-secondary-container)] transition-all duration-300 ease-out group-hover:w-full z-0"
+          ></div>
+          <span
+            class="absolute right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+            >→</span
           >
-            Apply Now →
-          </a>
-          <a href="#how-it-works" class="btn-outline"> Learn More </a>
-        </div>
+        </a>
       </div>
 
-      <!-- Right – Abstract visual -->
-      <div class="hidden lg:flex justify-center animate-fade-in-up" style="animation-delay: 200ms">
-        <div class="relative">
-          <!-- Floating cards -->
+      <div
+        class="hidden lg:flex justify-center items-center animate-fade-in-up h-130 w-full max-w-200 -mr-8"
+        style="animation-delay: 200ms"
+      >
+        <div class="flex items-center justify-center w-full h-full">
           <div
-            class="w-80 h-48 rounded-2xl bg-white/10 backdrop-blur-md p-6 border border-white/10"
+            class="z-10 w-[82%] rounded-[40px] border border-white/10 bg-white/10 backdrop-blur-3xl p-8 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.45)]"
           >
-            <div class="flex items-center justify-between mb-4">
-              <span class="text-sm font-medium text-white/60">Loan Status</span>
-              <span class="badge badge-approved text-xs">Approved</span>
-            </div>
-            <p class="text-3xl font-bold font-[var(--font-heading)] mb-1">₹5,00,000</p>
-            <p class="text-sm text-white/50">Personal Loan · 36 months</p>
-            <div class="mt-4 h-2 rounded-full bg-white/10 overflow-hidden">
+            <div class="flex items-center justify-between mb-10">
+              <div>
+                <p class="text-white/40 text-[10px] font-black uppercase tracking-widest">
+                  Available Credit
+                </p>
+                <h3 class="text-4xl text-white mt-2">₹25,00,000</h3>
+              </div>
               <div
-                class="h-full w-3/4 rounded-full bg-gradient-to-r from-[var(--color-tertiary-fixed)] to-[var(--color-secondary-container)]"
-              ></div>
+                class="px-3 py-1 rounded-full bg-[var(--color-secondary-container)]/15 text-[var(--color-secondary-container)] text-[10px] font-black uppercase tracking-widest border border-[var(--color-secondary-container)]/20"
+              >
+                Fast Track
+              </div>
             </div>
-          </div>
-          <div
-            class="absolute -bottom-8 -right-8 w-52 h-32 rounded-xl bg-white/10 backdrop-blur-md p-4 border border-white/10"
-          >
-            <p class="text-xs text-white/50 mb-1">Processing Time</p>
-            <p class="text-2xl font-bold font-[var(--font-heading)]">
-              24<span class="text-sm font-normal text-white/60 ml-1">hrs</span>
-            </p>
-            <p class="text-xs text-[var(--color-tertiary-fixed)] mt-2">✓ Instant verification</p>
+
+            <div class="space-y-4 mb-8">
+              <div
+                class="flex items-center justify-between text-[10px] uppercase tracking-[0.2em] text-white/45 font-bold"
+              >
+                <span>Approval Readiness</span>
+                <span class="text-[var(--color-secondary-container)]">92%</span>
+              </div>
+              <div class="h-2 rounded-full bg-white/10 overflow-hidden">
+                <div
+                  class="h-full w-[92%] rounded-full bg-gradient-to-r from-[var(--color-secondary)] to-[var(--color-secondary-container)]"
+                ></div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div class="rounded-2xl border border-white/8 bg-white/6 p-4">
+                <p class="text-[10px] uppercase tracking-[0.18em] text-white/40 font-black">
+                  Decision Window
+                </p>
+                <p class="mt-3 text-2xl font-black text-white">24 hrs</p>
+              </div>
+              <div class="rounded-2xl border border-white/8 bg-white/6 p-4">
+                <p class="text-[10px] uppercase tracking-[0.18em] text-white/40 font-black">
+                  Profile Strength
+                </p>
+                <p class="mt-3 text-2xl font-black text-white">Excellent</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- Wave divider -->
-  <div class="relative h-16">
-    <svg class="absolute bottom-0 w-full" viewBox="0 0 1440 60" fill="none">
-      <path
-        d="M0 60V20C240 50 480 0 720 20C960 40 1200 10 1440 30V60H0Z"
-        fill="var(--color-surface)"
-      />
-    </svg>
-  </div>
 </section>
 
-<!-- ══════════ STATS BAR ══════════ -->
-<section class="py-12 bg-[var(--color-surface)]">
+<div class="w-full bg-white border-b border-[var(--color-outline-variant)] py-12 relative z-20">
   <div class="max-w-7xl mx-auto px-6">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 stagger">
-      @for (stat of stats; track stat.label) {
-        <div class="text-center animate-fade-in-up">
-          <p
-            class="text-3xl md:text-4xl font-extrabold font-[var(--font-heading)] text-[var(--color-primary)]"
-          >
-            {{ stat.value }}
-          </p>
-          <p class="text-sm text-[var(--color-outline)] mt-1">{{ stat.label }}</p>
-        </div>
-      }
+    <div class="flex flex-col lg:flex-row items-center justify-between gap-12 stagger">
+      <div
+        class="flex-shrink-0 lg:border-r-2 border-[var(--color-secondary)] lg:pr-10 text-center lg:text-left"
+      >
+        <p
+          class="text-sm font-extrabold text-[var(--color-primary)] tracking-[0.2em] uppercase leading-relaxed"
+        >
+          <span class="text-[var(--color-secondary)]">Trusted By Specialists</span><br />Across
+          India
+        </p>
+      </div>
+      <div class="flex-1 flex flex-wrap justify-between lg:justify-end gap-x-12 gap-y-8 w-full">
+        @for (stat of stats; track stat.label) {
+          <div class="text-center animate-fade-in-up">
+            <p
+              class="text-3xl font-black font-[var(--font-heading)] text-[var(--color-primary)] mb-2 tracking-tight"
+            >
+              {{ stat.value }}
+            </p>
+            <p
+              class="text-[10px] tracking-[0.15em] text-[var(--color-outline)] font-bold uppercase"
+            >
+              {{ stat.label }}
+            </p>
+          </div>
+        }
+      </div>
     </div>
   </div>
-</section>
+</div>
 
-<!-- ══════════ FEATURES ══════════ -->
-<section id="features" class="py-20 bg-[var(--color-surface-container-low)]">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="text-center mb-16">
-      <p class="text-sm font-semibold text-[var(--color-secondary)] uppercase tracking-widest mb-3">
-        Why Choose Us
+<section
+  id="features"
+  class="min-h-[93vh] py-10 bg-[var(--color-surface)] flex items-center flex-col justify-center"
+>
+  <div class="max-w-7xl mx-auto px-6 w-full">
+    <div class="text-center mb-24 relative">
+      <p
+        class="text-xs font-extrabold text-[var(--color-secondary)] tracking-[0.25em] uppercase mb-6 flex items-center justify-center gap-3"
+      >
+        <span class="w-8 h-px bg-[var(--color-secondary)]"></span> BENEFIT
+        <span class="w-8 h-px bg-[var(--color-secondary)]"></span>
       </p>
       <h2
-        class="text-3xl md:text-4xl font-extrabold font-[var(--font-heading)] text-[var(--color-primary)]"
+        class="text-5xl md:text-6xl font-extrabold font-[var(--font-heading)] text-[var(--color-primary)] tracking-tight"
       >
-        Built for Modern Borrowers
+        Why Choose CapFinLoan
       </h2>
-      <p class="mt-4 text-[var(--color-on-surface-variant)] max-w-2xl mx-auto">
-        Every feature is designed to make your lending experience seamless, transparent, and
-        stress-free.
-      </p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 stagger">
+    <div
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-12 gap-y-16 stagger items-start"
+    >
       @for (feature of features; track feature.title) {
-        <div class="card hover:shadow-lg transition-all group animate-fade-in-up">
+        <div class="animate-fade-in-up text-left">
           <div
-            class="w-12 h-12 rounded-xl bg-[var(--color-primary-fixed)] flex items-center justify-center mb-5 group-hover:scale-110 transition-transform"
+            class="w-16 h-16 rounded-2xl bg-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-center text-[var(--color-secondary)] mb-8"
           >
-            <span class="text-2xl">{{ feature.icon }}</span>
+            @switch (feature.icon) {
+              @case ('bolt') {
+                <span class="material-symbols-outlined text-[32px]">bolt</span>
+              }
+              @case ('chart') {
+                <span class="material-symbols-outlined text-[32px]">monitoring</span>
+              }
+              @case ('calendar') {
+                <span class="material-symbols-outlined text-[32px]">calendar_month</span>
+              }
+              @case ('shield') {
+                <span class="material-symbols-outlined text-[32px]">shield</span>
+              }
+            }
           </div>
-          <h3 class="text-lg font-bold text-[var(--color-primary)] mb-2">{{ feature.title }}</h3>
-          <p class="text-sm text-[var(--color-on-surface-variant)] leading-relaxed">
+          <h3 class="text-xl font-bold text-[var(--color-primary)] mb-4 tracking-tight">
+            {{ feature.title }}
+          </h3>
+          <p class="text-base text-[var(--color-on-surface-variant)] leading-relaxed font-medium">
             {{ feature.description }}
           </p>
         </div>
@@ -139,128 +209,361 @@
   </div>
 </section>
 
-<!-- ══════════ HOW IT WORKS ══════════ -->
-<section id="how-it-works" class="py-20 bg-[var(--color-surface)]">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="text-center mb-16">
-      <p class="text-sm font-semibold text-[var(--color-secondary)] uppercase tracking-widest mb-3">
-        Simple Process
-      </p>
-      <h2
-        class="text-3xl md:text-4xl font-extrabold font-[var(--font-heading)] text-[var(--color-primary)]"
-      >
-        From Application to Disbursement
-      </h2>
-      <p class="mt-4 text-[var(--color-on-surface-variant)] max-w-2xl mx-auto">
-        Our streamlined 4-step process gets you funded faster than any traditional lender.
-      </p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-      @for (step of steps; track step.number; let i = $index) {
-        <div
-          class="relative text-center animate-fade-in-up"
-          [style.animation-delay]="i * 100 + 'ms'"
+<section id="services" class="py-32 bg-white relative">
+  <div class="max-w-7xl mx-auto px-6 w-full relative">
+    <div class="flex flex-col lg:flex-row items-start gap-24">
+      <div class="flex-1 max-w-xl">
+        <p
+          class="text-xs font-extrabold text-[var(--color-secondary)] border-l-2 border-[var(--color-secondary)] pl-3 inline-block tracking-[0.2em] uppercase mb-8"
         >
-          <!-- Connector line -->
-          @if (i < steps.length - 1) {
-            <div
-              class="hidden md:block absolute top-8 left-[60%] w-[80%] h-0.5 bg-[var(--color-secondary)]/30"
-            ></div>
+          SERVICE
+        </p>
+        <h2
+          class="text-5xl md:text-6xl lg:text-7xl font-extrabold font-[var(--font-heading)] text-[var(--color-primary)] mb-8 leading-[1.1] tracking-tight"
+        >
+          Why work<br />with us.
+        </h2>
+        <p class="text-[var(--color-on-surface-variant)] text-xl mb-16 leading-relaxed font-medium">
+          Our lending specialists simplify a complex financing journey. We manage the full process
+          so you can move from application to disbursal without friction.
+        </p>
+
+        <div class="space-y-12 mt-12 w-full max-w-md">
+          @for (step of steps; track step.number; let i = $index) {
+            <div class="flex items-start gap-6 animate-fade-in-up">
+              <div class="flex-shrink-0 mt-0.5">
+                <span
+                  class="text-4xl font-extrabold font-serif text-[var(--color-primary)] opacity-15 tracking-tighter"
+                  >{{ step.number }}</span
+                >
+              </div>
+              <div>
+                <h3 class="text-[20px] font-bold text-[var(--color-primary)] mb-2">
+                  {{ step.title }}
+                </h3>
+                <p class="text-sm text-[var(--color-on-surface-variant)] font-medium leading-[1.6]">
+                  {{ step.description }}
+                </p>
+              </div>
+            </div>
           }
-          <div
-            class="relative z-10 w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] flex items-center justify-center mx-auto mb-5 shadow-lg"
-          >
-            <span class="text-white font-bold text-lg font-[var(--font-heading)]">{{
-              step.number
-            }}</span>
-          </div>
-          <h3 class="text-base font-bold text-[var(--color-primary)] mb-2">{{ step.title }}</h3>
-          <p class="text-sm text-[var(--color-on-surface-variant)]">{{ step.description }}</p>
         </div>
-      }
-    </div>
-  </div>
-</section>
+      </div>
 
-<!-- ══════════ LOAN PRODUCTS ══════════ -->
-<section class="py-20 bg-[var(--color-surface-container-low)]">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="text-center mb-16">
-      <p class="text-sm font-semibold text-[var(--color-secondary)] uppercase tracking-widest mb-3">
-        Our Products
-      </p>
-      <h2
-        class="text-3xl md:text-4xl font-extrabold font-[var(--font-heading)] text-[var(--color-primary)]"
-      >
-        Loans Tailored to Your Needs
-      </h2>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 stagger">
-      @for (product of products; track product.title) {
-        <div class="card group hover:shadow-xl transition-all animate-fade-in-up overflow-hidden">
+      <div class="flex-1 w-full hidden lg:flex justify-end px-4 sticky top-40 h-fit">
+        <div class="relative w-full max-w-[380px] lg:mr-8 xl:mr-16">
           <div
-            class="h-2 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-container)] -mx-6 -mt-6 mb-6"
-          ></div>
-          <span class="text-3xl mb-4 block">{{ product.icon }}</span>
-          <h3 class="text-lg font-bold text-[var(--color-primary)] mb-2">{{ product.title }}</h3>
-          <p class="text-sm text-[var(--color-on-surface-variant)] leading-relaxed mb-4">
-            {{ product.description }}
-          </p>
-          <div
-            class="flex items-center justify-between pt-4 border-t border-[var(--color-outline-variant)]/20"
+            class="absolute top-[-10%] left-[-35%] w-[90%] h-[85%] bg-[var(--color-primary)] rounded-[32px] z-0 shadow-[0_20px_50px_-15px_rgba(0,23,54,0.75)] overflow-hidden border border-[var(--color-primary-container)]"
           >
-            <div>
-              <p class="text-xs text-[var(--color-outline)]">Starting at</p>
-              <p class="text-lg font-bold text-[var(--color-primary)]">{{ product.rate }}</p>
+            <div class="p-8 lg:p-10 flex flex-col h-full">
+              <div>
+                <p class="text-white/30 text-[10px] font-bold uppercase tracking-[0.15em] mb-3">
+                  NEXT EMI DUE
+                </p>
+                <p class="text-3xl font-black text-white font-[var(--font-heading)] tracking-tight">
+                  ₹84,500
+                </p>
+                <div class="w-[80%] bg-white/10 h-1.5 rounded-full mt-6">
+                  <div
+                    class="w-[75%] bg-[var(--color-secondary)] h-full rounded-full shadow-[0_0_10px_rgba(41,105,91,0.45)]"
+                  ></div>
+                </div>
+                <p
+                  class="text-[9px] text-[var(--color-secondary-container)] mt-3 font-semibold uppercase tracking-wider"
+                >
+                  12 Days Remaining
+                </p>
+              </div>
+
+              <div class="mt-8 pt-8 border-t border-white/5 w-[65%] space-y-4">
+                <p class="text-white/20 text-[9px] font-bold uppercase tracking-wider mb-2">
+                  Recent Processing
+                </p>
+                <div class="flex items-center gap-3 w-full">
+                  <div
+                    class="w-2 h-2 rounded-full bg-[var(--color-primary-fixed-dim)] shadow-[0_0_8px_rgba(169,199,255,0.55)]"
+                  ></div>
+                  <div
+                    class="w-full h-1.5 bg-[var(--color-primary-fixed-dim)]/20 rounded-full overflow-hidden"
+                  >
+                    <div class="w-[80%] bg-[var(--color-primary-fixed-dim)] h-full"></div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3 w-full">
+                  <div
+                    class="w-2 h-2 rounded-full bg-[var(--color-secondary)] shadow-[0_0_8px_rgba(41,105,91,0.45)]"
+                  ></div>
+                  <div
+                    class="w-full h-1.5 bg-[var(--color-secondary)]/20 rounded-full overflow-hidden"
+                  >
+                    <div class="w-[45%] bg-[var(--color-secondary)] h-full"></div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3 w-full">
+                  <div
+                    class="w-2 h-2 rounded-full bg-[var(--color-tertiary-fixed)] shadow-[0_0_8px_rgba(163,246,156,0.45)]"
+                  ></div>
+                  <div
+                    class="w-full h-1.5 bg-[var(--color-tertiary-fixed)]/20 rounded-full overflow-hidden"
+                  >
+                    <div class="w-[60%] bg-[var(--color-tertiary-fixed)] h-full"></div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <a routerLink="/signup" class="btn-ghost btn-sm text-[var(--color-primary)]">Apply →</a>
           </div>
-        </div>
-      }
-    </div>
-  </div>
-</section>
 
-<!-- ══════════ TESTIMONIALS ══════════ -->
-<section class="py-20 bg-[var(--color-surface)]">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="text-center mb-16">
-      <p class="text-sm font-semibold text-[var(--color-secondary)] uppercase tracking-widest mb-3">
-        Testimonials
-      </p>
-      <h2
-        class="text-3xl md:text-4xl font-extrabold font-[var(--font-heading)] text-[var(--color-primary)]"
-      >
-        What Our Customers Say
-      </h2>
-    </div>
+          <div
+            class="relative w-full bg-white rounded-[32px] shadow-[0_40px_100px_-20px_rgba(0,26,59,0.18)] border border-[var(--color-outline-variant)] p-7 z-10 flex flex-col gap-7"
+          >
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <div
+                  class="w-11 h-11 rounded-full bg-[var(--color-surface-container-low)] border border-[var(--color-outline-variant)] flex items-center justify-center font-black text-[var(--color-secondary)] text-lg"
+                >
+                  AJ
+                </div>
+                <div class="space-y-1">
+                  <p class="font-bold text-[var(--color-primary)] text-sm leading-none">
+                    Alex Jones
+                  </p>
+                  <p class="text-[10px] text-[var(--color-outline)] font-semibold">Dec 14, 2026</p>
+                </div>
+              </div>
+              <div
+                class="px-4 py-1.5 rounded-full bg-[var(--color-secondary-container)]/20 text-[var(--color-secondary)] flex items-center justify-center font-bold text-[11px] tracking-wide border border-[var(--color-secondary-container)]/30"
+              >
+                Approved
+              </div>
+            </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 stagger">
-      @for (testimonial of testimonials; track testimonial.name) {
-        <div class="card animate-fade-in-up">
-          <div class="flex gap-1 mb-4">
-            @for (s of [1, 2, 3, 4, 5]; track s) {
-              <span class="text-yellow-400 text-sm">★</span>
-            }
-          </div>
-          <p class="text-sm text-[var(--color-on-surface-variant)] leading-relaxed mb-6 italic">
-            "{{ testimonial.quote }}"
-          </p>
-          <div class="flex items-center gap-3">
             <div
-              class="w-10 h-10 rounded-full bg-[var(--color-primary-fixed)] flex items-center justify-center"
+              class="w-full bg-[var(--color-surface)] rounded-2xl p-6 border border-[var(--color-outline-variant)] shadow-[inset_0_2px_10px_rgba(0,26,59,0.02)] flex flex-col relative overflow-hidden group"
             >
-              <span class="text-sm font-bold text-[var(--color-primary-container)]">{{
-                testimonial.name.charAt(0)
-              }}</span>
+              <div
+                class="absolute inset-0 z-0 bg-[linear-gradient(to_right,#E9EEF4_1px,transparent_1px),linear-gradient(to_bottom,#E9EEF4_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:linear-gradient(to_bottom,transparent,black,transparent)] opacity-40"
+              ></div>
+              <div class="relative z-10">
+                <p
+                  class="text-[11px] text-[var(--color-outline)] font-extrabold mb-1 uppercase tracking-wider"
+                >
+                  Total Disbursed
+                </p>
+                <div class="flex items-baseline gap-2 mb-6">
+                  <p
+                    class="text-[28px] font-black text-[var(--color-primary)] font-[var(--font-heading)] tracking-tight"
+                  >
+                    ₹45,00,000
+                  </p>
+                  <span
+                    class="text-[10px] font-bold text-[var(--color-secondary)] bg-[var(--color-secondary-container)]/30 px-1.5 py-0.5 rounded"
+                    >+12%</span
+                  >
+                </div>
+                <div class="flex items-end gap-[12px] w-full min-h-[70px]">
+                  <div class="flex-1 bg-[var(--color-primary-fixed)] rounded-t-md h-[40%]"></div>
+                  <div class="flex-1 bg-[var(--color-primary-fixed)] rounded-t-md h-[55%]"></div>
+                  <div class="flex-1 bg-[var(--color-primary-fixed)] rounded-t-md h-[45%]"></div>
+                  <div class="flex-1 bg-[var(--color-primary-fixed)] rounded-t-md h-[80%]"></div>
+                  <div
+                    class="flex-1 bg-gradient-to-t from-[var(--color-secondary)] to-[var(--color-secondary-container)] rounded-t-md h-[100%] shadow-[0_-8px_20px_rgba(41,105,91,0.35)] relative overflow-hidden"
+                  >
+                    <div class="absolute inset-0 bg-white/20 w-full h-[30%]"></div>
+                  </div>
+                </div>
+                <div
+                  class="flex justify-between items-center text-[9px] font-bold text-[var(--color-outline)] mt-3 uppercase border-t border-[var(--color-outline-variant)] pt-2"
+                >
+                  <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-3.5">
+              <div
+                class="flex items-center justify-between p-3.5 rounded-2xl border border-[var(--color-outline-variant)] bg-[var(--color-surface)]"
+              >
+                <div class="flex items-center gap-4 w-full">
+                  <div
+                    class="w-9 h-9 rounded-xl bg-[var(--color-secondary-container)]/40 flex items-center justify-center text-[var(--color-secondary)] shrink-0"
+                  >
+                    <span class="material-symbols-outlined text-[18px]">verified</span>
+                  </div>
+                  <div>
+                    <p class="text-xs font-bold text-[var(--color-primary)]">Identity Verified</p>
+                    <p class="text-[9px] font-semibold text-[var(--color-outline)] mt-0.5">
+                      Security check passed
+                    </p>
+                  </div>
+                </div>
+                <div
+                  class="text-[10px] font-bold text-[var(--color-secondary)] bg-[var(--color-secondary-container)]/25 px-2 py-0.5 rounded border border-[var(--color-secondary-container)]/35"
+                >
+                  Done
+                </div>
+              </div>
+              <div
+                class="flex items-center justify-between p-3.5 rounded-2xl border border-[var(--color-outline-variant)] bg-[var(--color-surface)]"
+              >
+                <div class="flex items-center gap-4 w-full">
+                  <div
+                    class="w-9 h-9 rounded-xl bg-[var(--color-primary-fixed)] flex items-center justify-center text-[var(--color-primary)] shrink-0"
+                  >
+                    <span class="material-symbols-outlined text-[18px]">sync_alt</span>
+                  </div>
+                  <div>
+                    <p class="text-xs font-bold text-[var(--color-primary)]">Fund Transfer</p>
+                    <p class="text-[9px] font-semibold text-[var(--color-outline)] mt-0.5">
+                      Processing payment...
+                    </p>
+                  </div>
+                </div>
+                <div
+                  class="text-[10px] font-bold text-[var(--color-primary)] bg-[var(--color-primary-fixed)] px-2 py-0.5 rounded border border-[var(--color-primary-fixed-dim)]"
+                >
+                  Pending
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section
+  id="faqs"
+  class="min-h-screen py-32 bg-[var(--color-surface)] flex items-center flex-col justify-center"
+>
+  <div class="max-w-4xl mx-auto px-6 w-full">
+    <div class="text-center mb-24">
+      <p
+        class="text-xs font-extrabold text-[var(--color-secondary)] border-b-2 border-[var(--color-secondary)] pb-2 inline-block tracking-[0.2em] uppercase mb-8"
+      >
+        FAQS & MORE
+      </p>
+      <h2
+        class="text-5xl md:text-6xl font-extrabold font-[var(--font-heading)] text-[var(--color-primary)] tracking-tight leading-[1.1]"
+      >
+        You've Got Questions,<br />We've Got Answers
+      </h2>
+    </div>
+
+    <div class="w-full border-t border-[var(--color-outline-variant)]">
+      @for (product of products; track product.title) {
+        <div
+          class="w-full border-b border-[var(--color-outline-variant)] py-8 group cursor-pointer hover:bg-white/40 transition-colors px-6 -mx-6 rounded-2xl"
+        >
+          <div class="flex items-center justify-between gap-6">
+            <h3
+              class="text-2xl font-bold text-[var(--color-primary)] group-hover:text-[var(--color-secondary)] transition-colors flex items-center gap-6"
+            >
+              <span
+                class="text-[var(--color-primary)] opacity-40 group-hover:opacity-100 transition-opacity"
+              >
+                @switch (product.icon) {
+                  @case ('user') {
+                    <span class="material-symbols-outlined text-[30px]">person</span>
+                  }
+                  @case ('briefcase') {
+                    <span class="material-symbols-outlined text-[30px]">work</span>
+                  }
+                  @case ('home') {
+                    <span class="material-symbols-outlined text-[30px]">home</span>
+                  }
+                  @case ('car') {
+                    <span class="material-symbols-outlined text-[30px]">directions_car</span>
+                  }
+                }
+              </span>
+              {{ product.title }}
+            </h3>
+            <div
+              class="w-10 h-10 rounded-full bg-[var(--color-secondary)]/10 text-[var(--color-secondary)] flex items-center justify-center shadow-sm group-hover:bg-[var(--color-secondary)] group-hover:text-white transition-all duration-300"
+            >
+              <span class="material-symbols-outlined text-[22px]">expand_more</span>
+            </div>
+          </div>
+          <div
+            class="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-all duration-500 ease-in-out overflow-hidden"
+          >
+            <div class="min-h-0">
+              <p
+                class="text-lg text-[var(--color-on-surface-variant)] font-medium leading-relaxed mt-6 pr-16 pl-14 opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-100"
+              >
+                {{ product.description }} Rates for this product start from
+                <span class="font-bold text-[var(--color-primary)]">{{ product.rate }}</span
+                >.
+              </p>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<section
+  class="min-h-screen py-32 bg-white flex items-center flex-col justify-center overflow-hidden"
+>
+  <div class="max-w-[90rem] mx-auto px-6 w-full">
+    <div class="text-center mb-24">
+      <h2
+        class="text-5xl md:text-6xl font-extrabold font-[var(--font-heading)] text-[var(--color-primary)] tracking-tight"
+      >
+        Hear From Our Clients
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-16 stagger px-4">
+      @for (testimonial of testimonials; track testimonial.name) {
+        <div
+          class="bg-white rounded-[32px] p-10 lg:p-12 shadow-[0_20px_50px_-12px_rgb(0,0,0,0.06)] border border-[var(--color-outline-variant)] hover:-translate-y-3 transition-transform duration-500 animate-fade-in-up flex flex-col h-full relative"
+        >
+          <div
+            class="absolute -top-6 -right-6 text-[8rem] font-serif text-[var(--color-secondary)] leading-none select-none opacity-35"
+          >
+            "
+          </div>
+          <div class="flex items-center justify-between mb-8">
+            <div class="flex gap-1.5">
+              @for (s of [1, 2, 3, 4, 5]; track s) {
+                <span class="text-[var(--color-secondary)] text-xl">★</span>
+              }
+              <span
+                class="text-sm font-extrabold text-[var(--color-primary)] ml-3 mt-1.5 opacity-80"
+                >4.8</span
+              >
+            </div>
+            <div
+              class="flex items-center gap-1.5 bg-[var(--color-surface)] border border-[var(--color-outline-variant)] px-3 py-1.5 rounded-full"
+            >
+              <span class="text-[10px] font-bold text-[var(--color-primary)] opacity-60"
+                >Verified Review</span
+              >
+            </div>
+          </div>
+
+          <p
+            class="text-lg text-[var(--color-on-surface-variant)] font-medium leading-[1.8] mb-12 flex-1 relative z-10"
+          >
+            {{ testimonial.quote }}
+          </p>
+
+          <div class="flex items-center gap-5 mt-auto">
+            <div
+              class="w-14 h-14 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] flex items-center justify-center shadow-lg"
+            >
+              <span class="text-xl font-bold text-white">{{ testimonial.name.charAt(0) }}</span>
             </div>
             <div>
-              <p class="text-sm font-semibold text-[var(--color-on-surface)]">
+              <p class="text-lg font-bold text-[var(--color-primary)] mb-0.5">
                 {{ testimonial.name }}
               </p>
-              <p class="text-xs text-[var(--color-outline)]">{{ testimonial.role }}</p>
+              <p class="text-xs text-[var(--color-outline)] font-bold uppercase tracking-[0.1em]">
+                {{ testimonial.role }}
+              </p>
             </div>
           </div>
         </div>
@@ -269,26 +572,168 @@
   </div>
 </section>
 
-<!-- ══════════ CTA ══════════ -->
-<section
-  class="py-20 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] text-white"
->
-  <div class="max-w-3xl mx-auto px-6 text-center">
-    <h2 class="text-3xl md:text-4xl font-extrabold font-[var(--font-heading)] text-white mb-4">
-      Ready to Get Started?
-    </h2>
-    <p class="text-lg text-white/70 mb-8 max-w-xl mx-auto">
-      Join thousands of satisfied customers who trust CapFinLoan for their lending needs. Apply in
-      minutes.
-    </p>
-    <div class="flex flex-wrap justify-center gap-4">
-      <a
-        routerLink="/signup"
-        class="btn-primary !bg-white !text-[var(--color-primary)] hover:!bg-white/90 !shadow-lg text-base !px-8 !py-3.5"
+<section class="bg-[var(--color-primary)] text-white overflow-hidden relative">
+  <div
+    class="absolute inset-0 opacity-35"
+    style="
+      background-image: radial-gradient(
+        circle at 1px 1px,
+        rgba(255, 255, 255, 0.1) 1px,
+        transparent 0
+      );
+      background-size: 36px 36px;
+    "
+  ></div>
+  <div
+    class="absolute bottom-0 right-0 w-[50vw] h-[50vw] bg-[var(--color-secondary)] blur-[200px] opacity-[0.08] rounded-full translate-x-1/3 translate-y-1/3"
+  ></div>
+
+  <div class="min-h-screen max-w-7xl mx-auto px-6 py-32 flex flex-col justify-center relative z-10">
+    <div class="flex flex-col lg:flex-row gap-24 items-center mb-40">
+      <div
+        class="w-full lg:w-1/2 rounded-[40px] bg-gradient-to-br from-white/10 to-transparent border border-white/10 p-1 backdrop-blur-xl relative overflow-hidden shadow-2xl"
       >
-        Create Free Account
-      </a>
-      <a routerLink="/login" class="btn-outline text-base !px-8 !py-3.5"> Sign In </a>
+        <div
+          class="w-full h-full rounded-[36px] bg-[var(--color-primary-container)]/80 px-8 py-10 lg:px-10 lg:py-12 flex flex-col justify-between"
+        >
+          <div class="flex justify-between items-start mb-12">
+            <div
+              class="w-16 h-16 rounded-2xl bg-[var(--color-secondary)] text-white flex items-center justify-center shadow-lg"
+            >
+              <span class="material-symbols-outlined text-[32px]">shield</span>
+            </div>
+            <div class="text-right">
+              <p class="text-white/40 text-[10px] font-bold uppercase tracking-widest mb-1 pb-1">
+                Status
+              </p>
+              <div
+                class="inline-flex items-center gap-2 bg-[var(--color-secondary-container)]/15 text-[var(--color-secondary-container)] font-bold px-3 py-1 rounded-full text-xs border border-[var(--color-secondary-container)]/30"
+              >
+                <div
+                  class="w-1.5 h-1.5 bg-[var(--color-secondary-container)] rounded-full animate-pulse"
+                ></div>
+                Verified
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-12">
+            <h3 class="text-white text-3xl font-extrabold font-[var(--font-heading)] mb-6">
+              The CapFin Guarantee
+            </h3>
+            <ul class="space-y-5">
+              <li class="flex items-center gap-4 text-white/80 font-medium">
+                <div
+                  class="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-[var(--color-secondary-container)] flex-shrink-0 text-xs"
+                >
+                  ✓
+                </div>
+                Price beat promise across our lending panel
+              </li>
+              <li class="flex items-center gap-4 text-white/80 font-medium">
+                <div
+                  class="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-[var(--color-secondary-container)] flex-shrink-0 text-xs"
+                >
+                  ✓
+                </div>
+                Fully transparent, zero hidden fees
+              </li>
+              <li class="flex items-center gap-4 text-white/80 font-medium">
+                <div
+                  class="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-[var(--color-secondary-container)] flex-shrink-0 text-xs"
+                >
+                  ✓
+                </div>
+                Same-day decision on qualified applications
+              </li>
+            </ul>
+          </div>
+
+          <div
+            class="bg-white/5 rounded-2xl p-6 border border-white/10 flex flex-col sm:flex-row items-start sm:items-center gap-6"
+          >
+            <div
+              class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-white font-black"
+            >
+              CF
+            </div>
+            <div>
+              <p class="text-white font-bold mb-1">100% Commitment</p>
+              <p class="text-white/50 text-sm">
+                Trusted across retail, business, and secured lending journeys
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-full lg:w-1/2">
+        <div class="flex items-center gap-4 mb-8">
+          <span class="w-12 h-0.5 bg-[var(--color-secondary)]"></span>
+          <p
+            class="text-xs font-extrabold text-[var(--color-secondary-container)] tracking-[0.25em] uppercase"
+          >
+            WHO WE ARE
+          </p>
+        </div>
+        <h2
+          class="text-5xl md:text-6xl font-extrabold font-[var(--font-heading)] mb-8 tracking-tight leading-tight text-white"
+        >
+          Our Promise to You
+        </h2>
+        <p class="text-white/60 text-xl font-medium mb-12 leading-relaxed max-w-xl">
+          We blend digital speed with lending expertise so every applicant gets a clear path, a
+          transparent offer, and a confident decision.
+        </p>
+        <a
+          routerLink="/signup"
+          class="inline-flex items-center gap-4 text-white uppercase text-lg font-bold tracking-[0.1em] transition-colors group"
+          >Get a Free Quote
+          <span
+            class="w-12 h-12 rounded-full border border-white/20 text-white flex items-center justify-center group-hover:bg-[var(--color-secondary)] group-hover:border-transparent group-hover:translate-x-2 transition-all shadow-xl"
+            >→</span
+          ></a
+        >
+      </div>
+    </div>
+
+    <div
+      class="w-full rounded-[40px] bg-[#022855] p-12 md:p-24 relative overflow-hidden shadow-[0_30px_60px_-15px_rgba(41,105,91,0.45)]"
+    >
+      <div
+        class="absolute -top-12 -right-12 text-[12vw] font-black text-black/10 select-none whitespace-nowrap leading-none transform -rotate-12 pointer-events-none"
+      >
+        CAPFIN
+      </div>
+      <div
+        class="absolute -bottom-12 left-12 text-[12vw] font-black text-white/10 select-none whitespace-nowrap leading-none transform -rotate-12 pointer-events-none"
+      >
+        RATES
+      </div>
+
+      <div
+        class="relative z-10 w-full flex flex-col lg:flex-row items-center justify-between gap-12"
+      >
+        <div>
+          <h2
+            class="text-5xl md:text-7xl font-[var(--font-heading)] text-white mb-4 tracking-tight leading-none"
+          >
+            Access Better<br />Rates Today
+          </h2>
+        </div>
+        <div
+          class="flex flex-col sm:flex-row items-center gap-6 lg:gap-8 justify-center lg:justify-end w-full lg:w-auto mt-8 lg:mt-0"
+        >
+          <a
+            routerLink="/signup"
+            class="bg-white text-[var(--color-secondary)] font-black px-12 py-5 rounded-2xl hover:scale-105 hover:shadow-xl transition-all duration-300 text-lg tracking-wide uppercase inline-flex items-center gap-3 w-full sm:w-auto justify-center"
+            >Get Started <span>→</span></a
+          >
+          <p class="text-white font-semibold text-lg tracking-wide shrink-0">
+            Call us: <span class="font-extrabold text-2xl ml-2">9550572255</span>
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 </section>

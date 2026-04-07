@@ -5,7 +5,7 @@ import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-profile',
-  imports: [ReactiveFormsModule, CommonModule, DecimalPipe, DatePipe],
+  imports: [ReactiveFormsModule, CommonModule, DecimalPipe],
   templateUrl: './profile.component.html'
 })
 export class ProfileComponent implements OnInit {

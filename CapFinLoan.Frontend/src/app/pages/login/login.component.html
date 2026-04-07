@@ -1,119 +1,192 @@
-<div class="min-h-screen flex">
-  <!-- Left – Form -->
-  <div class="flex-1 flex items-center justify-center px-6 py-12 bg-white">
+<div class="h-screen flex flex-col lg:flex-row bg-[var(--color-surface)] relative overflow-hidden">
+  <a
+    routerLink="/"
+    class="fixed top-8 left-8 z-50 w-12 h-12 rounded-full bg-[var(--color-secondary)] text-white flex items-center justify-center shadow-[0_10px_20px_rgba(41,105,91,0.3)] hover:scale-110 hover:shadow-[0_15px_30px_rgba(41,105,91,0.4)] transition-all duration-300 group"
+    aria-label="Back to landing page"
+  >
+    <span
+      class="material-symbols-outlined text-[24px] transform group-hover:-translate-x-0.5 transition-transform"
+      >arrow_back</span
+    >
+  </a>
+
+  <div class="flex-1 flex items-center justify-center px-8 py-6 lg:py-10 z-10 min-h-0">
     <div class="w-full max-w-md animate-fade-in-up">
-      <a routerLink="/" class="flex items-center gap-2.5 mb-10">
+      <a routerLink="/" class="flex items-center gap-4 mb-12 no-underline group">
         <div
-          class="w-9 h-9 rounded-lg bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] flex items-center justify-center"
+          class="w-10 h-10 rounded-2xl bg-linear-to-br from-primary to-primary-container flex items-center justify-center shadow-[0_8px_18px_rgba(0,23,54,0.18)] group-hover:scale-105 transition-transform duration-300"
         >
-          <span class="text-white font-bold text-sm">CF</span>
+          <span class="text-sm font-black text-white">CF</span>
         </div>
-        <span class="text-lg font-bold font-[var(--font-heading)] text-[var(--color-primary)]"
+        <span class="text-2xl font-black font-[var(--font-heading)] text-primary tracking-tight"
           >CapFinLoan</span
         >
       </a>
 
-      <h1
-        class="text-2xl font-extrabold font-[var(--font-heading)] text-[var(--color-primary)] mb-1"
-      >
-        Welcome back
-      </h1>
-      <p class="text-sm text-[var(--color-on-surface-variant)] mb-8">
-        Sign in to continue to your dashboard.
-      </p>
+      <div class="mb-10">
+        <h1 class="text-4xl font-black font-[var(--font-heading)] text-primary mb-3 tracking-tight">
+          Welcome back.
+        </h1>
+        <p class="text-on-surface-variant font-medium">
+          Log in to manage your applications and access your dashboard.
+        </p>
+      </div>
 
       @if (error()) {
         <div
-          class="p-3 mb-6 rounded-lg bg-[var(--color-error-container)] text-[var(--color-on-error-container)] text-sm"
+          class="p-4 mb-8 rounded-2xl bg-error-container border border-error/10 text-on-error-container text-sm font-bold flex items-center gap-3 animate-shake"
         >
+          <span class="material-symbols-outlined text-[20px]">error</span>
           {{ error() }}
         </div>
       }
 
-      <div class="mb-6 flex justify-center">
+      <div class="mb-8 flex justify-center">
         <div id="google-btn-container"></div>
       </div>
 
-      <div class="flex items-center gap-3 mb-6">
-        <div class="h-px bg-slate-200 flex-1"></div>
-        <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">or sign in with email</span>
-        <div class="h-px bg-slate-200 flex-1"></div>
+      <div class="flex items-center gap-3 mb-8">
+        <div class="h-px bg-outline-variant flex-1"></div>
+        <span class="text-xs text-outline font-bold uppercase tracking-wider"
+          >Or sign in with email</span
+        >
+        <div class="h-px bg-outline-variant flex-1"></div>
       </div>
 
-      <form (ngSubmit)="onSubmit()" class="space-y-5">
-        <div>
-          <label class="input-label" for="email">Email Address</label>
+      <form (ngSubmit)="onSubmit()" class="space-y-6">
+        <div class="space-y-2">
+          <label
+            class="text-xs font-black uppercase tracking-[0.15em] text-primary/45 ml-1"
+            for="email"
+            >Email Address</label
+          >
           <input
             id="email"
             type="email"
-            class="input-field"
-            placeholder="you&#64;example.com"
+            class="w-full bg-white border-2 border-outline-variant/50 rounded-2xl px-5 py-4 text-primary font-bold focus:border-secondary focus:ring-0 outline-none transition-all placeholder:text-outline/40"
+            placeholder="you@company.com"
             [(ngModel)]="email"
             name="email"
             required
           />
         </div>
-        <div>
-          <label class="input-label" for="password">Password</label>
+
+        <div class="space-y-2">
+          <div class="flex items-center justify-between ml-1">
+            <label
+              class="text-xs font-black uppercase tracking-[0.15em] text-primary/45"
+              for="password"
+              >Password</label
+            >
+          </div>
           <input
             id="password"
             type="password"
-            class="input-field"
-            placeholder="Enter your password"
+            class="w-full bg-white border-2 border-outline-variant/50 rounded-2xl px-5 py-4 text-primary font-bold focus:border-secondary focus:ring-0 outline-none transition-all placeholder:text-outline/40"
+            placeholder="••••••••"
             [(ngModel)]="password"
             name="password"
             required
           />
         </div>
-        <button type="submit" class="btn-primary w-full !py-3 text-base" [disabled]="loading()">
+
+        <button
+          type="submit"
+          class="w-full py-4 rounded-2xl bg-primary text-white font-black text-lg transition-all hover:bg-primary-container hover:shadow-[0_20px_40px_-10px_rgba(0,23,54,0.35)] transform hover:-translate-y-1 active:scale-[0.98] mt-8 group flex items-center justify-center gap-3"
+          [disabled]="loading()"
+        >
           @if (loading()) {
             <span
-              class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"
+              class="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin"
             ></span>
-            Signing in...
+            Verifying...
           } @else {
             Sign In
+            <span class="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
           }
         </button>
       </form>
 
-      <p class="text-sm text-center text-[var(--color-on-surface-variant)] mt-8">
-        Don't have an account?
-        <a routerLink="/signup" class="font-semibold text-[var(--color-primary)] hover:underline"
-          >Create one</a
-        >
-      </p>
+      <div class="mt-6 pt-4 border-t border-outline-variant text-center">
+        <p class="text-sm font-bold text-on-surface-variant">
+          New to CapFinLoan?
+          <a routerLink="/signup" class="text-secondary hover:underline ml-1">Create an account</a>
+        </p>
+      </div>
     </div>
   </div>
 
-  <!-- Right – Branding Panel -->
   <div
-    class="hidden lg:flex flex-1 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] items-center justify-center p-12"
+    class="hidden lg:flex flex-1 relative bg-primary overflow-hidden items-center justify-center p-20"
   >
-    <div class="max-w-md text-center">
-      <div
-        class="w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center mx-auto mb-8"
-      >
-        <span class="text-4xl">🏦</span>
+    <div
+      class="absolute top-0 right-0 w-[50vw] h-[50vw] bg-primary-fixed/10 blur-[130px] rounded-full mt-[-20vw] mr-[-10vw] pointer-events-none"
+    ></div>
+    <div
+      class="absolute bottom-0 left-0 w-[40vw] h-[40vw] bg-secondary/12 blur-[130px] rounded-full mb-[-15vw] ml-[-10vw] pointer-events-none"
+    ></div>
+
+    <div class="relative z-10 w-full max-w-lg text-center">
+      <div class="mb-20 perspective-1000 relative group cursor-pointer">
+        <div
+          class="bg-white/10 backdrop-blur-3xl border border-white/20 rounded-[32px] p-8 text-left shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] transition-all duration-700 ease-out transform-gpu rotate-x-6 rotate-y-[-12deg] group-hover:rotate-x-0 group-hover:rotate-y-0 group-hover:scale-105 group-hover:shadow-[0_80px_150px_-30px_rgba(0,0,0,0.6)] animate-float"
+        >
+          <div class="flex items-center justify-between mb-12">
+            <div
+              class="w-10 h-10 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center"
+            >
+              <span class="text-sm font-black text-white">CF</span>
+            </div>
+            <div class="w-8 h-8 rounded-full bg-white/20"></div>
+          </div>
+          <div>
+            <p class="text-white/40 text-[10px] font-black uppercase tracking-widest mb-2">
+              Available Credit
+            </p>
+            <h3 class="text-4xl font-black text-white font-[var(--font-heading)] mb-8">
+              ₹25,00,000
+            </h3>
+            <div class="flex items-end justify-between">
+              <div class="space-y-1">
+                <p class="text-white/20 text-[9px] font-bold uppercase tracking-wider">
+                  Account holder
+                </p>
+                <p class="text-white font-bold">ALEXANDER JONES</p>
+              </div>
+              <div class="w-16 h-1 bg-white/10 rounded-full overflow-hidden">
+                <div class="w-[70%] h-full bg-secondary"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <h2 class="text-3xl font-extrabold font-[var(--font-heading)] text-white mb-4">
-        Smart Lending, Simplified
+
+      <h2 class="text-4xl font-black text-white font-[var(--font-heading)] mb-6 tracking-tight">
+        Financial Freedom,<br /><span class="text-secondary-container">Just a tap away.</span>
       </h2>
-      <p class="text-white/60 leading-relaxed">
-        Access your loan dashboard, track applications, and manage documents — all in one place.
+      <p class="text-white/50 text-lg font-medium leading-relaxed mb-12">
+        Join thousands of borrowers managing their lending journey with speed, clarity, and
+        confidence.
       </p>
-      <div class="mt-10 grid grid-cols-3 gap-6 text-center">
+
+      <div class="flex items-center justify-center gap-12 pt-8 border-t border-white/5">
         <div>
-          <p class="text-2xl font-bold text-white">98%</p>
-          <p class="text-xs text-white/50 mt-1">Approval Rate</p>
+          <p class="text-3xl font-black text-white">98%</p>
+          <p class="text-[10px] font-extrabold uppercase tracking-widest text-secondary-container">
+            Approval
+          </p>
         </div>
         <div>
-          <p class="text-2xl font-bold text-white">24h</p>
-          <p class="text-xs text-white/50 mt-1">Processing</p>
+          <p class="text-3xl font-black text-white">24h</p>
+          <p class="text-[10px] font-extrabold uppercase tracking-widest text-secondary-container">
+            Processing
+          </p>
         </div>
         <div>
-          <p class="text-2xl font-bold text-white">10K+</p>
-          <p class="text-xs text-white/50 mt-1">Customers</p>
+          <p class="text-3xl font-black text-white">10K+</p>
+          <p class="text-[10px] font-extrabold uppercase tracking-widest text-secondary-container">
+            Customers
+          </p>
         </div>
       </div>
     </div>
