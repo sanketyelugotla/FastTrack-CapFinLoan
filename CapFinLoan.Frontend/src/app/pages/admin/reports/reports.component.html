@@ -148,9 +148,10 @@
               {{ rejectionRate() }}%
             </h3>
             <span
-              class="text-error font-bold text-xs bg-error-container px-2 py-1 rounded-full flex items-center gap-1"
+              class="text-error font-bold text-xs bg-red-50 border border-red-200 px-2 py-1 rounded-full flex items-center gap-1"
             >
-              Total: {{ d.rejectedCount }}
+              <span class="material-symbols-outlined text-[14px]">trending_down</span>
+              {{ rejectionRate() }}%
             </span>
           </div>
         </div>

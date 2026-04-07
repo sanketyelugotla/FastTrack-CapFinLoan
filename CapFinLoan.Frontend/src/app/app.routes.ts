@@ -13,8 +13,8 @@ export const routes: Routes = [
   },
 
   // ── Auth Pages (no layout wrapper) ──
-  { path: 'login', loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent) },
-  { path: 'signup', loadComponent: () => import('./pages/signup/signup.component').then(m => m.SignupComponent) },
+  { path: 'login', loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent), data: { animation: 'LoginPage' } },
+  { path: 'signup', loadComponent: () => import('./pages/signup/signup.component').then(m => m.SignupComponent), data: { animation: 'SignupPage' } },
 
   // ── Applicant Routes ──
   {

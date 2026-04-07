@@ -1,197 +1,152 @@
 <div class="animate-fade-in-up">
-  <!-- Welcome & Primary Action Section -->
-  <section class="mb-10 flex flex-col md:flex-row justify-between items-end gap-6">
+  <!-- Welcome & Primary Action -->
+  <section class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
     <div>
-      <h1
-        class="font-headline font-extrabold text-4xl text-[var(--color-primary)] tracking-tight mb-2"
-      >
+      <h1 class="font-headline font-extrabold text-2xl text-[var(--color-primary)] tracking-tight mb-1">
         Welcome back, {{ firstName() }}
       </h1>
-      <p class="text-[var(--color-on-surface-variant)] max-w-xl font-body">
-        Track your ongoing loan applications and manage every financing milestone from one clear
-        workspace.
+      <p class="text-[var(--color-on-surface-variant)] text-sm font-body">
+        Track your ongoing loan applications and manage every financing milestone.
       </p>
     </div>
     <a
       routerLink="/applicant/apply"
-      class="bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] text-white px-8 py-4 rounded-xl font-bold shadow-lg hover:opacity-90 active:scale-95 transition-all flex items-center gap-2 cursor-pointer font-label"
+      class="bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] text-white px-5 py-2.5 rounded-lg font-bold shadow-md hover:opacity-90 active:scale-95 transition-all flex items-center gap-2 cursor-pointer font-label text-sm shrink-0"
     >
-      <span class="material-symbols-outlined text-sm">add_circle</span>
-      Start New Application
+      <span class="material-symbols-outlined text-[18px]">add_circle</span>
+      New Application
     </a>
   </section>
 
-  <!-- KPI Grid -->
-  <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-    <!-- Active Applications Card -->
-    <div
-      class="bg-white dark:bg-slate-900 p-8 rounded-xl flex flex-col justify-between shadow-sm border border-slate-200/50"
-    >
-      <div>
-        <span
-          class="text-[var(--color-secondary)] font-bold text-xs uppercase tracking-widest mb-4 block font-label"
-          >Current Activity</span
-        >
-        <h3 class="font-headline text-5xl font-extrabold text-[var(--color-primary)] mb-2">
+  <!-- Compact KPI Row -->
+  <section class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+    <!-- Active Applications -->
+    <div class="bg-white dark:bg-slate-900 p-6 rounded-xl transition-all hover:shadow-lg group shadow-sm border border-slate-200/50">
+      <div class="flex justify-between items-start mb-4">
+        <div class="p-3 bg-[var(--color-primary)]/10 rounded-lg text-[var(--color-primary)]">
+          <span class="material-symbols-outlined">description</span>
+        </div>
+        <span class="text-xs font-bold text-[var(--color-secondary)] uppercase tracking-wider font-label flex items-center gap-1">
+          <span class="material-symbols-outlined text-[16px]">trending_up</span> Active
+        </span>
+      </div>
+      <div class="space-y-1">
+        <p class="text-[var(--color-on-surface-variant)] text-sm font-medium font-body uppercase tracking-widest font-label">Applications</p>
+        <p class="text-4xl font-headline font-extrabold text-[var(--color-primary)]">
           {{ applications().length | number: '2.0-0' }}
-        </h3>
-      </div>
-      <div class="flex items-center justify-between">
-        <p class="text-[var(--color-on-surface-variant)] font-medium font-body text-sm">
-          Applications on record
         </p>
-        <span class="material-symbols-outlined text-[var(--color-secondary)]">trending_up</span>
       </div>
     </div>
 
-    <!-- Notifications Card -->
-    <div
-      class="bg-white dark:bg-slate-900 p-8 rounded-xl flex flex-col justify-between shadow-sm border border-slate-200/50"
-    >
-      <div>
-        <span
-          class="text-[var(--color-on-primary-container)] font-bold text-xs uppercase tracking-widest mb-4 block font-label"
-          >Alerts & Actions</span
-        >
-        <h3 class="font-headline text-5xl font-extrabold text-[var(--color-primary)] mb-2">
+    <!-- Pending Reviews -->
+    <div class="bg-white dark:bg-slate-900 p-6 rounded-xl transition-all hover:shadow-lg group shadow-sm border border-slate-200/50">
+      <div class="flex justify-between items-start mb-4">
+        <div class="p-3 bg-amber-500/10 rounded-lg text-amber-500">
+          <span class="material-symbols-outlined">notifications_active</span>
+        </div>
+        <span class="text-xs font-bold text-amber-500 uppercase tracking-wider font-label flex items-center gap-1">
+          <span class="material-symbols-outlined text-[16px]">schedule</span> Needs Action
+        </span>
+      </div>
+      <div class="space-y-1">
+        <p class="text-[var(--color-on-surface-variant)] text-sm font-medium font-body uppercase tracking-widest font-label">Pending Review</p>
+        <p class="text-4xl font-headline font-extrabold text-[var(--color-primary)]">
           {{ pendingReviewCount() | number: '2.0-0' }}
-        </h3>
-      </div>
-      <div class="flex items-center justify-between">
-        <p class="text-[var(--color-on-surface-variant)] font-medium font-body text-sm">
-          Pending review items
         </p>
-        <span class="material-symbols-outlined text-[var(--color-on-primary-container)]"
-          >notifications_active</span
-        >
       </div>
     </div>
 
+    <!-- Next Best Step -->
     <div
-      class="relative overflow-hidden bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] p-8 rounded-xl flex flex-col justify-between min-h-[180px] shadow-sm"
+      class="relative overflow-hidden bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] p-6 rounded-2xl flex items-center gap-5 shadow-sm text-white"
     >
-      <div
-        class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(172,237,218,0.2),transparent_35%)]"
-      ></div>
-      <div class="relative z-10 flex items-start justify-between gap-4">
-        <div>
-          <p class="text-[11px] uppercase tracking-[0.2em] text-white/60 font-bold mb-3">
-            Next Best Step
-          </p>
-          <h4 class="font-headline text-2xl font-bold text-white mb-2">
-            {{ pendingRequirements()[0].title }}
-          </h4>
-          <p class="text-white/80 text-sm font-body max-w-xs">
-            {{ pendingRequirements()[0].detail }}
-          </p>
-        </div>
-        <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-white">
-          <span class="material-symbols-outlined text-[24px]">bolt</span>
-        </div>
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(172,237,218,0.15),transparent_40%)]"></div>
+      <div class="relative z-10 flex-1 min-w-0">
+        <p class="text-[11px] uppercase font-bold text-white/70 tracking-widest font-label mb-1.5">Next Step</p>
+        <p class="font-headline text-lg font-bold text-white leading-snug truncate">
+          {{ pendingRequirements()[0].title }}
+        </p>
+        <p class="text-xs text-white/80 font-body mt-1 line-clamp-1">
+          {{ pendingRequirements()[0].detail }}
+        </p>
       </div>
-      <div class="relative z-10 pt-6">
-        <a
-          [routerLink]="pendingRequirements()[0].path"
-          class="inline-flex items-center gap-2 text-white font-bold text-sm border border-white/15 bg-white/10 px-4 py-2 rounded-full hover:bg-white hover:text-[var(--color-primary)] transition-colors"
-        >
-          {{ pendingRequirements()[0].action }}
-          <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-        </a>
-      </div>
+      <a
+        [routerLink]="pendingRequirements()[0].path"
+        class="relative z-10 shrink-0 inline-flex items-center gap-1.5 text-white text-sm font-bold border border-white/20 bg-white/10 px-4 py-2.5 rounded-xl hover:bg-white hover:text-[var(--color-primary)] shadow-sm transition-all active:scale-95 font-label"
+      >
+        {{ pendingRequirements()[0].action }}
+        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+      </a>
     </div>
   </section>
 
   <!-- Application Status Table Section -->
-  <section class="bg-[var(--color-surface-container-low)] rounded-xl p-1 overflow-hidden">
-    <div class="bg-white dark:bg-slate-900 rounded-lg overflow-hidden shadow-sm">
-      <div
-        class="px-8 py-6 flex justify-between items-center border-b border-slate-100 dark:border-slate-800"
+  <section class="bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm border border-slate-200/50">
+    <div class="px-6 py-4 flex justify-between items-center border-b border-slate-100 dark:border-slate-800">
+      <h2 class="font-headline text-base font-bold text-[var(--color-primary)]">
+        Recent Applications
+      </h2>
+      <a
+        routerLink="/applicant/applications"
+        class="text-[var(--color-primary)] font-bold font-label text-xs hover:underline cursor-pointer"
+        >View All</a
       >
-        <h2 class="font-headline text-xl font-bold text-[var(--color-primary)]">
-          Recent Applications
-        </h2>
-        <a
-          routerLink="/applicant/applications"
-          class="text-[var(--color-primary)] font-bold font-label text-sm hover:underline cursor-pointer"
-          >View All History</a
-        >
-      </div>
-
-      @if (applications().length > 0) {
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="bg-slate-50 dark:bg-slate-900/50">
-                <th
-                  class="px-8 py-4 font-label font-bold text-xs uppercase tracking-widest text-[var(--color-on-surface-variant)]"
-                >
-                  Application ID
-                </th>
-                <th
-                  class="px-8 py-4 font-label font-bold text-xs uppercase tracking-widest text-[var(--color-on-surface-variant)]"
-                >
-                  Date Initiated
-                </th>
-                <th
-                  class="px-8 py-4 font-label font-bold text-xs uppercase tracking-widest text-[var(--color-on-surface-variant)]"
-                >
-                  Type
-                </th>
-                <th
-                  class="px-8 py-4 font-label font-bold text-xs uppercase tracking-widest text-[var(--color-on-surface-variant)]"
-                >
-                  Amount
-                </th>
-                <th
-                  class="px-8 py-4 font-label font-bold text-xs uppercase tracking-widest text-[var(--color-on-surface-variant)] text-right"
-                >
-                  Status
-                </th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-              @for (app of applications().slice(0, 5); track app.id) {
-                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
-                  <td class="px-8 py-6 font-bold text-[var(--color-primary)] font-body">
-                    <a [routerLink]="['/applicant/applications', app.id]" class="hover:underline"
-                      >#{{ app.applicationNumber }}</a
-                    >
-                  </td>
-                  <td class="px-8 py-6 text-sm text-[var(--color-on-surface-variant)] font-body">
-                    {{ app.createdAtUtc | date: 'mediumDate' }}
-                  </td>
-                  <td class="px-8 py-6 text-sm text-[var(--color-on-surface-variant)] font-body">
-                    {{ app.loanDetails.loanPurpose || 'Personal Loan' }}
-                  </td>
-                  <td class="px-8 py-6 font-bold text-[var(--color-primary)] font-body">
-                    ₹{{ app.loanDetails.requestedAmount | number }}
-                  </td>
-                  <td class="px-8 py-6 text-right font-body">
-                    <app-status-badge [status]="app.status" />
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      } @else {
-        <div class="p-12 text-center">
-          <h2 class="font-headline text-2xl font-bold text-[var(--color-primary)]">
-            No applications yet
-          </h2>
-          <p class="mx-auto mt-3 max-w-md text-sm text-[var(--color-on-surface-variant)] font-body">
-            Start your first application to begin tracking approvals, document reviews, and final
-            decisions from one place.
-          </p>
-          <a
-            routerLink="/applicant/apply"
-            class="mt-8 inline-flex items-center gap-2 bg-[var(--color-primary)] text-white px-6 py-3 rounded-lg font-bold font-label hover:opacity-90 transition-opacity"
-          >
-            <span class="material-symbols-outlined text-sm">add</span>
-            Apply Now
-          </a>
-        </div>
-      }
     </div>
+
+    @if (applications().length > 0) {
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-50 dark:bg-slate-900/50">
+              <th class="px-6 py-3 font-label font-bold text-[10px] uppercase tracking-widest text-[var(--color-on-surface-variant)]">App Number</th>
+              <th class="px-6 py-3 font-label font-bold text-[10px] uppercase tracking-widest text-[var(--color-on-surface-variant)]">Date</th>
+              <th class="px-6 py-3 font-label font-bold text-[10px] uppercase tracking-widest text-[var(--color-on-surface-variant)]">Type</th>
+              <th class="px-6 py-3 font-label font-bold text-[10px] uppercase tracking-widest text-[var(--color-on-surface-variant)]">Amount</th>
+              <th class="px-6 py-3 font-label font-bold text-[10px] uppercase tracking-widest text-[var(--color-on-surface-variant)] text-right">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+            @for (app of applications().slice(0, 5); track app.id) {
+              <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                <td class="px-6 py-3.5 font-bold text-[var(--color-primary)] font-body text-sm">
+                  <a [routerLink]="['/applicant/applications', app.id]" class="hover:underline"
+                    >{{ app.applicationNumber }}</a
+                  >
+                </td>
+                <td class="px-6 py-3.5 text-xs text-[var(--color-on-surface-variant)] font-body">
+                  {{ app.createdAtUtc | date: 'mediumDate' }}
+                </td>
+                <td class="px-6 py-3.5 text-xs text-[var(--color-on-surface-variant)] font-body">
+                  {{ app.loanDetails.loanPurpose || 'Personal Loan' }}
+                </td>
+                <td class="px-6 py-3.5 font-bold text-[var(--color-primary)] font-body text-sm">
+                  ₹{{ app.loanDetails.requestedAmount | number }}
+                </td>
+                <td class="px-6 py-3.5 text-right font-body">
+                  <app-status-badge [status]="app.status" />
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="p-10 text-center">
+        <span class="material-symbols-outlined text-4xl text-slate-300 mb-2">folder_open</span>
+        <h2 class="font-headline text-lg font-bold text-[var(--color-primary)]">
+          No applications yet
+        </h2>
+        <p class="mx-auto mt-2 max-w-md text-sm text-[var(--color-on-surface-variant)] font-body">
+          Start your first application to begin tracking approvals, reviews, and decisions.
+        </p>
+        <a
+          routerLink="/applicant/apply"
+          class="mt-6 inline-flex items-center gap-2 bg-[var(--color-primary)] text-white px-5 py-2.5 rounded-lg font-bold font-label hover:opacity-90 transition-opacity text-sm"
+        >
+          <span class="material-symbols-outlined text-sm">add</span>
+          Apply Now
+        </a>
+      </div>
+    }
   </section>
 </div>

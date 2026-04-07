@@ -12,7 +12,6 @@ export class SidebarComponent {
   auth = inject(AuthService);
 
   headerTitle = computed(() => this.role() === 'ADMIN' ? 'Cap FinLoan' : 'Cap FinLoan');
-  headerSubtitle = computed(() => this.role() === 'ADMIN' ? 'Admin Workspace' : 'Borrower Workspace');
   headerIcon = computed(() => this.role() === 'ADMIN' ? 'admin_panel_settings' : 'account_balance_wallet');
 
   navItems = computed(() => this.role() === 'ADMIN'

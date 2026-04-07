@@ -1,5 +1,7 @@
 <app-navbar />
-<main class="pt-16 min-h-screen">
-  <router-outlet />
+<main class="pt-16 min-h-screen relative overflow-x-hidden">
+  <div [@routeAnimations]="prepareRoute(outlet)">
+    <router-outlet #outlet="outlet"></router-outlet>
+  </div>
 </main>
 <app-footer />

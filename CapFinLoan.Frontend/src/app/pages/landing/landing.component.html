@@ -211,7 +211,7 @@
 
 <section id="services" class="py-32 bg-white relative">
   <div class="max-w-7xl mx-auto px-6 w-full relative">
-    <div class="flex flex-col lg:flex-row items-start gap-24">
+    <div class="flex flex-col lg:flex-row items-start lg:items-center gap-24">
       <div class="flex-1 max-w-xl">
         <p
           class="text-xs font-extrabold text-[var(--color-secondary)] border-l-2 border-[var(--color-secondary)] pl-3 inline-block tracking-[0.2em] uppercase mb-8"
@@ -219,7 +219,7 @@
           SERVICE
         </p>
         <h2
-          class="text-5xl md:text-6xl lg:text-7xl font-extrabold font-[var(--font-heading)] text-[var(--color-primary)] mb-8 leading-[1.1] tracking-tight"
+          class="text-3xl md:text-4xl lg:text-5xl font-extrabold font-[var(--font-heading)] text-[var(--color-primary)] mb-8 leading-[1.1] tracking-tight"
         >
           Why work<br />with us.
         </h2>
@@ -228,7 +228,7 @@
           so you can move from application to disbursal without friction.
         </p>
 
-        <div class="space-y-12 mt-12 w-full max-w-md">
+        <div class="space-y-12 mt-8 w-full max-w-md">
           @for (step of steps; track step.number; let i = $index) {
             <div class="flex items-start gap-6 animate-fade-in-up">
               <div class="flex-shrink-0 mt-0.5">
@@ -250,7 +250,7 @@
         </div>
       </div>
 
-      <div class="flex-1 w-full hidden lg:flex justify-end px-4 sticky top-40 h-fit">
+      <div class="flex-1 w-full hidden lg:flex justify-end px-4 sticky top-40 h-fit self-center">
         <div class="relative w-full max-w-[380px] lg:mr-8 xl:mr-16">
           <div
             class="absolute top-[-10%] left-[-35%] w-[90%] h-[85%] bg-[var(--color-primary)] rounded-[32px] z-0 shadow-[0_20px_50px_-15px_rgba(0,23,54,0.75)] overflow-hidden border border-[var(--color-primary-container)]"
@@ -444,7 +444,7 @@
         FAQS & MORE
       </p>
       <h2
-        class="text-5xl md:text-6xl font-extrabold font-[var(--font-heading)] text-[var(--color-primary)] tracking-tight leading-[1.1]"
+        class="text-3xl md:text-4xl font-extrabold font-[var(--font-heading)] text-[var(--color-primary)] tracking-tight leading-[1.1]"
       >
         You've Got Questions,<br />We've Got Answers
       </h2>
@@ -726,7 +726,7 @@
         >
           <a
             routerLink="/signup"
-            class="bg-white text-[var(--color-secondary)] font-black px-12 py-5 rounded-2xl hover:scale-105 hover:shadow-xl transition-all duration-300 text-lg tracking-wide uppercase inline-flex items-center gap-3 w-full sm:w-auto justify-center"
+            class="bg-white text-[var(--color-secondary)] font-black px-12 py-5 rounded-2xl transition-all hover:scale-105 hover:shadow-xl duration-300 text-lg tracking-wide uppercase inline-flex items-center gap-3 w-full sm:w-auto justify-center"
             >Get Started <span>→</span></a
           >
           <p class="text-white font-semibold text-lg tracking-wide shrink-0">
