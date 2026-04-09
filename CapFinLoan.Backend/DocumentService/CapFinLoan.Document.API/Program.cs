@@ -9,6 +9,7 @@ using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,8 +20,19 @@ var rabbitPassword = builder.Configuration["RabbitMQ:Password"] ?? "guest";
 builder.Services.AddDbContext<DocumentDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("CapFinLoanDb")));
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<CapFinLoan.Document.API.Handlers.TokenForwardingHandler>();
+
+// Register typed HttpClient for DocumentService to interact with ApplicationService
+builder.Services.AddHttpClient<IDocumentService, DocumentService>(client =>
+{
+    // Point directly to ApplicationService
+    client.BaseAddress = new Uri("http://localhost:5022");
+}).AddHttpMessageHandler<CapFinLoan.Document.API.Handlers.TokenForwardingHandler>();
+
 builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
-builder.Services.AddScoped<IDocumentService, DocumentService>();
+// Remove AddScoped since AddHttpClient handles DI mapping for IDocumentService -> DocumentService
+// builder.Services.AddScoped<IDocumentService, DocumentService>();
 builder.Services.AddScoped<IEventPublisher, RabbitMqEventPublisher>();
 
 builder.Services.AddMassTransit(x =>
@@ -68,36 +80,34 @@ builder.Services
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    options.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "CapFinLoan Document API",
         Version = "1.0"
     });
 
-    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
-        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Type = SecuritySchemeType.Http,
         Scheme = "bearer",
         BearerFormat = "JWT",
-        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        In = ParameterLocation.Header,
         Description = "Enter 'Bearer' [space] and then your valid JWT token."
     });
-    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+
+    options.AddSecurityRequirement(document =>
     {
+        return new OpenApiSecurityRequirement
         {
-            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
             {
-                Reference = new Microsoft.OpenApi.Models.OpenApiReference
-                {
-                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] {}
-        }
+                new OpenApiSecuritySchemeReference("Bearer", document),
+                new List<string>()
+            }
+        };
     });
 });
 

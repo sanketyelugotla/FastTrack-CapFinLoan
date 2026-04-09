@@ -291,7 +291,8 @@
           Documents
           <span class="bg-[var(--color-primary)] text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold">{{ documents().length }}</span>
         </h3>
-        <a
+        <a 
+          *ngIf="!isDecisionReady()"
           [routerLink]="['/applicant/applications', a.id, 'documents']"
           class="text-[var(--color-primary)] text-xs font-bold flex items-center gap-1 hover:underline cursor-pointer font-label"
         >

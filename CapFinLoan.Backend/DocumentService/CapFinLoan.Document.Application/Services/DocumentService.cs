@@ -12,6 +12,7 @@ public class DocumentService : IDocumentService
     private readonly IDocumentRepository _documentRepository;
     private readonly IFileStorageService _fileStorageService;
     private readonly IEventPublisher _eventPublisher;
+    private readonly HttpClient _httpClient;
 
     private static readonly HashSet<string> AllowedContentTypes = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -22,11 +23,12 @@ public class DocumentService : IDocumentService
 
     private const long MaxFileSizeBytes = 5 * 1024 * 1024; // 5 MB
 
-    public DocumentService(IDocumentRepository documentRepository, IFileStorageService fileStorageService, IEventPublisher eventPublisher)
+    public DocumentService(IDocumentRepository documentRepository, IFileStorageService fileStorageService, IEventPublisher eventPublisher, HttpClient httpClient)
     {
         _documentRepository = documentRepository;
         _fileStorageService = fileStorageService;
         _eventPublisher = eventPublisher;
+        _httpClient = httpClient;
     }
 
     public async Task<DocumentResponse> UploadAsync(Guid userId, Guid applicationId, string documentType, IFormFile file, CancellationToken cancellationToken = default)
@@ -39,6 +41,8 @@ public class DocumentService : IDocumentService
 
         if (!AllowedContentTypes.Contains(file.ContentType))
             throw new InvalidOperationException("File type is not supported. Allowed types: PDF, JPG, PNG.");
+
+        await ValidateApplicationStatusAsync(applicationId, cancellationToken);
 
         await using var stream = file.OpenReadStream();
         var storedFileName = await _fileStorageService.SaveFileAsync(stream, file.FileName, cancellationToken);
@@ -77,6 +81,8 @@ public class DocumentService : IDocumentService
 
         if (document.UserId != userId)
             throw new UnauthorizedAccessException("You are not allowed to edit this document.");
+
+        await ValidateApplicationStatusAsync(document.ApplicationId, cancellationToken);
 
         await using var stream = file.OpenReadStream();
         var storedFileName = await _fileStorageService.SaveFileAsync(stream, file.FileName, cancellationToken);
@@ -215,5 +221,23 @@ public class DocumentService : IDocumentService
             CreatedAtUtc = document.CreatedAtUtc,
             UpdatedAtUtc = document.UpdatedAtUtc
         };
+    }
+
+    private async Task ValidateApplicationStatusAsync(Guid applicationId, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.GetAsync($"/api/applications/{applicationId}/status", cancellationToken);
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync(cancellationToken);
+            using var doc = System.Text.Json.JsonDocument.Parse(content);
+            if (doc.RootElement.TryGetProperty("currentStatus", out var statusElement))
+            {
+                var status = statusElement.GetString();
+                if (status == "Approved" || status == "Rejected")
+                {
+                    throw new InvalidOperationException($"Documents cannot be updated because the application is already {status}.");
+                }
+            }
+        }
     }
 }

@@ -1,9 +1,11 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { DocumentService } from '../../../core/services/document.service';
 import { DocumentResponse } from '../../../core/models/document.models';
+import { ApplicationService } from '../../../core/services/application.service';
+import { LoanApplicationStatusResponse } from '../../../core/models/application.models';
 
 @Component({
   selector: 'app-documents',
@@ -14,10 +16,17 @@ import { DocumentResponse } from '../../../core/models/document.models';
 export class DocumentsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private docService = inject(DocumentService);
+  private appService = inject(ApplicationService);
 
   applicationId = '';
   documents = signal<DocumentResponse[]>([]);
+  appStatus = signal<LoanApplicationStatusResponse | null>(null);
   error = signal('');
+
+  isReadOnly = computed(() => {
+    const s = this.appStatus()?.currentStatus;
+    return s === 'Approved' || s === 'Rejected';
+  });
 
   docTypes = [
     { value: 'IdProof', label: 'ID Proof', description: 'Aadhaar, PAN, Passport, or Voter ID' },
@@ -29,6 +38,7 @@ export class DocumentsComponent implements OnInit {
   ngOnInit() {
     this.applicationId = this.route.snapshot.paramMap.get('id')!;
     this.loadDocuments();
+    this.appService.getStatus(this.applicationId).subscribe(s => this.appStatus.set(s));
   }
 
   loadDocuments() {

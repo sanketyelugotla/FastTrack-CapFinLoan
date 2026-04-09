@@ -3,6 +3,7 @@ using CapFinLoan.Notification.Infrastructure.Clients;
 using CapFinLoan.Notification.Infrastructure.Email;
 using CapFinLoan.Notification.Infrastructure.Messaging;
 using MassTransit;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,9 +41,10 @@ builder.Services.AddMassTransit(x =>
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    options.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "CapFinLoan Notification API",
         Version = "1.0"

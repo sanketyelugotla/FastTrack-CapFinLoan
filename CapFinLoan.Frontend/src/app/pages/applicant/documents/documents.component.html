@@ -17,6 +17,16 @@
     </div>
   }
 
+  @if (isReadOnly()) {
+    <div class="mb-6 rounded-lg border border-blue-200 bg-blue-50 px-4 py-4 flex items-start gap-3 text-blue-800">
+      <span class="material-symbols-outlined text-blue-600 mt-0.5">lock</span>
+      <div>
+        <p class="font-bold text-sm">Application Decision Finalized</p>
+        <p class="text-xs mt-1">This application has been processed, so document changes are no longer permitted. If you need to submit new documents, please start a new application.</p>
+      </div>
+    </div>
+  }
+
   <!-- Upload section -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
     @for (type of docTypes; track type.value) {
@@ -63,47 +73,56 @@
               </div>
             }
 
+            @if (!isReadOnly()) {
+              <label
+                class="mt-3 block border border-[var(--color-outline-variant)]/40 rounded-lg p-3 text-center cursor-pointer hover:border-[var(--color-primary)]/40 hover:bg-white transition-all"
+                [class]="
+                  doc.status === 'ReuploadRequired' ? 'border-amber-300 hover:border-amber-500' : ''
+                "
+              >
+                <input
+                  type="file"
+                  class="hidden"
+                  (change)="replaceFile($event, doc.id, type.value)"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                />
+                @if (doc.status === 'ReuploadRequired') {
+                  <p class="text-xs font-semibold text-amber-700">Re-upload Document</p>
+                  <p class="text-[11px] text-amber-600 mt-1">
+                    Upload corrected document as requested by admin
+                  </p>
+                } @else {
+                  <p class="text-xs font-semibold text-[var(--color-primary)]">Replace / Re-upload</p>
+                  <p class="text-[11px] text-[var(--color-outline)] mt-1">
+                    Upload corrected document
+                  </p>
+                }
+              </label>
+            }
+          </div>
+        } @else {
+          @if (!isReadOnly()) {
             <label
-              class="mt-3 block border border-[var(--color-outline-variant)]/40 rounded-lg p-3 text-center cursor-pointer hover:border-[var(--color-primary)]/40 hover:bg-white transition-all"
-              [class]="
-                doc.status === 'ReuploadRequired' ? 'border-amber-300 hover:border-amber-500' : ''
-              "
+              class="block border-2 border-dashed border-[var(--color-outline-variant)]/40 rounded-lg p-6 text-center cursor-pointer hover:border-[var(--color-primary)]/40 hover:bg-[var(--color-surface-container-low)] transition-all"
             >
               <input
                 type="file"
                 class="hidden"
-                (change)="replaceFile($event, doc.id, type.value)"
+                (change)="uploadFile($event, type.value)"
                 accept=".pdf,.jpg,.jpeg,.png"
               />
-              @if (doc.status === 'ReuploadRequired') {
-                <p class="text-xs font-semibold text-amber-700">Re-upload Document</p>
-                <p class="text-[11px] text-amber-600 mt-1">
-                  Upload corrected document as requested by admin
-                </p>
-              } @else {
-                <p class="text-xs font-semibold text-[var(--color-primary)]">Replace / Re-upload</p>
-                <p class="text-[11px] text-[var(--color-outline)] mt-1">
-                  Upload corrected document
-                </p>
-              }
+              <p class="text-2xl mb-2">📎</p>
+              <p class="text-sm font-medium text-[var(--color-on-surface-variant)]">
+                Click to upload
+              </p>
+              <p class="text-xs text-[var(--color-outline)]">PDF, JPG, PNG (max 5MB)</p>
             </label>
-          </div>
-        } @else {
-          <label
-            class="block border-2 border-dashed border-[var(--color-outline-variant)]/40 rounded-lg p-6 text-center cursor-pointer hover:border-[var(--color-primary)]/40 hover:bg-[var(--color-surface-container-low)] transition-all"
-          >
-            <input
-              type="file"
-              class="hidden"
-              (change)="uploadFile($event, type.value)"
-              accept=".pdf,.jpg,.jpeg,.png"
-            />
-            <p class="text-2xl mb-2">📎</p>
-            <p class="text-sm font-medium text-[var(--color-on-surface-variant)]">
-              Click to upload
-            </p>
-            <p class="text-xs text-[var(--color-outline)]">PDF, JPG, PNG (max 5MB)</p>
-          </label>
+          } @else {
+            <div class="block border border-[var(--color-outline-variant)]/20 bg-slate-50/50 rounded-lg p-6 text-center text-slate-400">
+              <span class="material-symbols-outlined text-3xl mb-1">lock</span>
+              <p class="text-sm font-medium">Upload Locked</p>
+            </div>
+          }
         }
       </div>
     }
