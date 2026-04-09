@@ -25,10 +25,15 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 app.UseCors();
+app.UseStaticFiles();
 
 app.UseSwaggerForOcelotUI(options =>
 {
     options.PathToSwaggerGenerator = "/swagger/docs";
+}, uiOptions =>
+{
+    uiOptions.DocumentTitle = "CapFinLoan API Gateway";
+    uiOptions.InjectStylesheet("/swagger-ui/SwaggerDark.css");
 });
 
 app.MapGet("/", () => "API Gateway running");
