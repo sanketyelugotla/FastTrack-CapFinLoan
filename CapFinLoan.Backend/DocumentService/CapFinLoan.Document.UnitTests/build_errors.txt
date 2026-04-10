@@ -1,0 +1,7 @@
+﻿F:\Capgemini Classes\CapFinLoan\CapFinLoan.Backend\DocumentService\CapFinLoan.Document.UnitTests\Services\DocumentServiceTests.cs(22,24): error NUnit1032: The field _httpClient should be Disposed in a method annotated with [TearDownAttribute] (https://github.com/nunit/nunit.analyzers/tree/master/documentation/NUnit1032.md) [F:\Capgemini Classes\CapFinLoan\CapFinLoan.Backend\DocumentService\CapFinLoan.Document.UnitTests\CapFinLoan.Document.UnitTests.csproj]
+
+Build FAILED.
+    0 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:03.97
