@@ -1,8 +1,12 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
-COPY ApiGateway ./ApiGateway
+# Copy only csproj and solution files for restore layer
+COPY ApiGateway/CapFinLoan.Gateway.API/CapFinLoan.Gateway.API.csproj ApiGateway/CapFinLoan.Gateway.API/
+COPY Shared/ Shared/
+RUN dotnet restore "ApiGateway/CapFinLoan.Gateway.API/CapFinLoan.Gateway.API.csproj"
+# Copy the rest of the source code
+COPY ApiGateway/ ApiGateway/
 WORKDIR /src/ApiGateway
-RUN dotnet restore "CapFinLoan.Gateway.API/CapFinLoan.Gateway.API.csproj"
 RUN dotnet publish "CapFinLoan.Gateway.API/CapFinLoan.Gateway.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
