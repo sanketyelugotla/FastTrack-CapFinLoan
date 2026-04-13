@@ -1,4 +1,5 @@
 using System.Net;
+using CapFinLoan.Document.Application.Exceptions;
 using CapFinLoan.Document.Application.Interfaces;
 using CapFinLoan.Document.Application.Services;
 using CapFinLoan.Document.Domain.Constants;
@@ -28,7 +29,7 @@ public class DocumentServiceTests
         _repositoryMock = new Mock<IDocumentRepository>();
         _fileStorageMock = new Mock<IFileStorageService>();
         _eventPublisherMock = new Mock<IEventPublisher>();
-        
+
         _httpMessageHandlerMock = new Mock<HttpMessageHandler>();
         // Default HTTP mock to return Draft status (i.e., allowed to upload)
         SetupHttpClientMock("Draft");
@@ -77,7 +78,7 @@ public class DocumentServiceTests
     }
 
     [Test]
-    public async Task UploadAsync_ZeroBytes_ThrowsInvalidOperationException()
+    public async Task UploadAsync_ZeroBytes_ThrowsDocumentValidationException()
     {
         // Arrange
         var fileMock = CreateFileMock(0, "application/pdf");
@@ -85,12 +86,12 @@ public class DocumentServiceTests
         // Act & Assert
         var action = async () => await _service.UploadAsync(Guid.NewGuid(), Guid.NewGuid(), "IDProof", fileMock.Object);
 
-        await action.Should().ThrowAsync<InvalidOperationException>()
+        await action.Should().ThrowAsync<DocumentValidationException>()
             .WithMessage("File is empty.");
     }
 
     [Test]
-    public async Task UploadAsync_FileTooLarge_ThrowsInvalidOperationException()
+    public async Task UploadAsync_FileTooLarge_ThrowsDocumentValidationException()
     {
         // Arrange
         long size = 6L * 1024 * 1024; // 6MB
@@ -99,12 +100,12 @@ public class DocumentServiceTests
         // Act & Assert
         var action = async () => await _service.UploadAsync(Guid.NewGuid(), Guid.NewGuid(), "IDProof", fileMock.Object);
 
-        await action.Should().ThrowAsync<InvalidOperationException>()
+        await action.Should().ThrowAsync<DocumentValidationException>()
             .WithMessage("File size exceeds the maximum allowed size of 5 MB.");
     }
 
     [Test]
-    public async Task UploadAsync_InvalidContentType_ThrowsInvalidOperationException()
+    public async Task UploadAsync_InvalidContentType_ThrowsDocumentValidationException()
     {
         // Arrange
         var fileMock = CreateFileMock(1024, "application/x-msdownload", "virus.exe");
@@ -112,13 +113,13 @@ public class DocumentServiceTests
         // Act & Assert
         var action = async () => await _service.UploadAsync(Guid.NewGuid(), Guid.NewGuid(), "IDProof", fileMock.Object);
 
-        await action.Should().ThrowAsync<InvalidOperationException>()
+        await action.Should().ThrowAsync<DocumentValidationException>()
             .WithMessage("File type is not supported. Allowed types: PDF, JPG, PNG.");
     }
 
     [TestCase("Approved")]
     [TestCase("Rejected")]
-    public async Task UploadAsync_ApplicationInTerminalState_ThrowsInvalidOperationException(string status)
+    public async Task UploadAsync_ApplicationInTerminalState_ThrowsDocumentConflictException(string status)
     {
         // Arrange
         var fileMock = CreateFileMock(1024, "application/pdf");
@@ -127,7 +128,7 @@ public class DocumentServiceTests
         // Act & Assert
         var action = async () => await _service.UploadAsync(Guid.NewGuid(), Guid.NewGuid(), "IDProof", fileMock.Object);
 
-        await action.Should().ThrowAsync<InvalidOperationException>()
+        await action.Should().ThrowAsync<DocumentConflictException>()
             .WithMessage($"Documents cannot be updated because the application is already {status}.");
     }
 
@@ -138,7 +139,7 @@ public class DocumentServiceTests
         var fileMock = CreateFileMock(1024, "image/jpeg", "passport.jpg");
         var appId = Guid.NewGuid();
         var userId = Guid.NewGuid();
-        
+
         _fileStorageMock.Setup(s => s.SaveFileAsync(It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync("random-guid-passport.jpg");
 
@@ -149,11 +150,11 @@ public class DocumentServiceTests
         result.Should().NotBeNull();
         result.FileName.Should().Be("passport.jpg");
         result.Status.Should().Be("Pending");
-        
-        _repositoryMock.Verify(repo => repo.AddAsync(It.Is<LoanDocument>(d => 
-            d.ApplicationId == appId && 
-            d.UserId == userId && 
-            d.DocumentType == "IDProof"), 
+
+        _repositoryMock.Verify(repo => repo.AddAsync(It.Is<LoanDocument>(d =>
+            d.ApplicationId == appId &&
+            d.UserId == userId &&
+            d.DocumentType == "IDProof"),
             It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -163,12 +164,12 @@ public class DocumentServiceTests
         // Arrange
         var documentId = Guid.NewGuid();
         var adminId = Guid.NewGuid();
-        var document = new LoanDocument 
-        { 
-            Id = documentId, 
-            ApplicationId = Guid.NewGuid(), 
+        var document = new LoanDocument
+        {
+            Id = documentId,
+            ApplicationId = Guid.NewGuid(),
             UserId = Guid.NewGuid(),
-            Status = DocumentStatus.Pending 
+            Status = DocumentStatus.Pending
         };
 
         _repositoryMock.Setup(repo => repo.GetByIdAsync(documentId, It.IsAny<CancellationToken>()))
@@ -183,9 +184,9 @@ public class DocumentServiceTests
         result.Remarks.Should().Be("Image is blurry");
         result.VerifiedAtUtc.Should().BeNull(); // Null because it wasn't approved
 
-        _eventPublisherMock.Verify(pub => pub.PublishAsync(It.Is<DocumentVerifiedEvent>(e => 
-            e.IsVerified == false && 
-            e.Remarks == "Image is blurry"), 
+        _eventPublisherMock.Verify(pub => pub.PublishAsync(It.Is<DocumentVerifiedEvent>(e =>
+            e.IsVerified == false &&
+            e.Remarks == "Image is blurry"),
             It.IsAny<CancellationToken>()), Times.Once);
     }
 }

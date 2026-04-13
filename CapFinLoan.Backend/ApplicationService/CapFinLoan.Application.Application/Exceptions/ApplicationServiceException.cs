@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Http;
-
 namespace CapFinLoan.Application.Application.Exceptions;
 
 public abstract class ApplicationServiceException : Exception

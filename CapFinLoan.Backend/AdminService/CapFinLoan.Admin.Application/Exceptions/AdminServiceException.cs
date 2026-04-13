@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Http;
-
 namespace CapFinLoan.Admin.Application.Exceptions;
 
 public abstract class AdminServiceException : Exception
