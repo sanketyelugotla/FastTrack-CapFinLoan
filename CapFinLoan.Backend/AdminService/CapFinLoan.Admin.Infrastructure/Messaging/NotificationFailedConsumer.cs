@@ -3,11 +3,9 @@ using MassTransit;
 
 namespace CapFinLoan.Admin.Infrastructure.Messaging;
 
-/// <summary>
-/// Consumes NotificationFailedEvent from NotificationService.
-/// Non-critical — only logs the failure for monitoring/alerting purposes.
-/// Does NOT trigger a Saga rollback since email failure is not data-critical.
-/// </summary>
+// Consumes NotificationFailedEvent from NotificationService.
+// Non-critical — only logs the failure for monitoring/alerting purposes.
+// Does NOT trigger a Saga rollback since email failure is not data-critical.
 public class NotificationFailedConsumer : IConsumer<NotificationFailedEvent>
 {
     public Task Consume(ConsumeContext<NotificationFailedEvent> context)

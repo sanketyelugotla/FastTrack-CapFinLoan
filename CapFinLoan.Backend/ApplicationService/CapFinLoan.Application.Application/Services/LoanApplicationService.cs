@@ -46,7 +46,7 @@ public class LoanApplicationService : ILoanApplicationService
 
     public async Task<LoanApplicationResponse> UpdateDraftAsync(Guid applicationId, Guid requesterUserId, bool isAdmin, SaveLoanApplicationRequest request, CancellationToken cancellationToken = default)
     {
-        var application = await GetOwnedOrAdminApplicationAsync(applicationId, requesterUserId, isAdmin, cancellationToken);
+        var application = await GetOwnedOrAdminApplicationAsync(applicationId, requesterUserId, false, cancellationToken);
 
         if (!string.Equals(application.Status, ApplicationStatuses.Draft, StringComparison.OrdinalIgnoreCase))
         {
@@ -73,7 +73,7 @@ public class LoanApplicationService : ILoanApplicationService
             .ToArray();
     }
 
-    public async Task<LoanApplicationResponse> SubmitAsync(Guid applicationId, Guid requesterUserId, CancellationToken cancellationToken = default)
+    public async Task<LoanApplicationResponse> SubmitAsync(Guid applicationId, Guid requesterUserId, bool isAdmin, CancellationToken cancellationToken = default)
     {
         var application = await GetOwnedOrAdminApplicationAsync(applicationId, requesterUserId, false, cancellationToken);
 
@@ -140,7 +140,7 @@ public class LoanApplicationService : ILoanApplicationService
 
     public async Task DeleteDraftAsync(Guid applicationId, Guid requesterUserId, bool isAdmin, CancellationToken cancellationToken = default)
     {
-        var application = await GetOwnedOrAdminApplicationAsync(applicationId, requesterUserId, isAdmin, cancellationToken);
+        var application = await GetOwnedOrAdminApplicationAsync(applicationId, requesterUserId, false, cancellationToken);
 
         if (!string.Equals(application.Status, ApplicationStatuses.Draft, StringComparison.OrdinalIgnoreCase))
         {

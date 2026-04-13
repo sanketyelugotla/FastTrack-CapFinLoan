@@ -46,15 +46,8 @@ public class InternalUsersController : ControllerBase
             }
         }
 
-        try
-        {
-            var user = await _authService.GetUserNotificationInfoAsync(id, cancellationToken);
-            return Ok(user);
-        }
-        catch (KeyNotFoundException exception)
-        {
-            return NotFound(new { message = exception.Message });
-        }
+        var user = await _authService.GetUserNotificationInfoAsync(id, cancellationToken);
+        return Ok(user);
     }
 
     [HttpPut("{id:guid}/status")]
@@ -62,14 +55,7 @@ public class InternalUsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateUserStatusRequest request, CancellationToken cancellationToken)
     {
-        try
-        {
-            var user = await _authService.UpdateUserStatusAsync(id, request.IsActive, cancellationToken);
-            return Ok(user);
-        }
-        catch (KeyNotFoundException exception)
-        {
-            return NotFound(new { message = exception.Message });
-        }
+        var user = await _authService.UpdateUserStatusAsync(id, request.IsActive, cancellationToken);
+        return Ok(user);
     }
 }

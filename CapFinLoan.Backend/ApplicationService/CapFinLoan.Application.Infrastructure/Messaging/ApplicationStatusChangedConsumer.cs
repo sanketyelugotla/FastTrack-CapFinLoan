@@ -6,12 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CapFinLoan.Application.Infrastructure.Messaging;
 
-/// <summary>
 /// SAGA PARTICIPANT: Consumes status changes from AdminService and syncs them
 /// into the ApplicationService's own database.
 /// On success → publishes LoanApprovedEvent / LoanRejectedEvent
 /// On failure → publishes StatusSyncFailedEvent (triggers compensation in AdminService)
-/// </summary>
 public class ApplicationStatusChangedConsumer : IConsumer<ApplicationStatusChangedEvent>
 {
     private readonly ApplicationDbContext _dbContext;

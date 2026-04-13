@@ -29,15 +29,8 @@ public class DocumentsController : ControllerBase
         IFormFile file,
         CancellationToken cancellationToken)
     {
-        try
-        {
-            var result = await _documentService.UploadAsync(GetUserId(), applicationId, documentType, file, cancellationToken);
-            return Ok(result);
-        }
-        catch (InvalidOperationException exception)
-        {
-            return BadRequest(new { message = exception.Message });
-        }
+        var result = await _documentService.UploadAsync(GetUserId(), applicationId, documentType, file, cancellationToken);
+        return Ok(result);
     }
 
     /// <summary>
@@ -66,15 +59,8 @@ public class DocumentsController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
-        try
-        {
-            var document = await _documentService.GetByIdAsync(id, cancellationToken);
-            return Ok(document);
-        }
-        catch (KeyNotFoundException exception)
-        {
-            return NotFound(new { message = exception.Message });
-        }
+        var document = await _documentService.GetByIdAsync(id, cancellationToken);
+        return Ok(document);
     }
 
     /// <summary>
@@ -88,23 +74,8 @@ public class DocumentsController : ControllerBase
         [FromForm] string? documentType,
         CancellationToken cancellationToken)
     {
-        try
-        {
-            var result = await _documentService.ReplaceAsync(GetUserId(), id, file, documentType, cancellationToken);
-            return Ok(result);
-        }
-        catch (KeyNotFoundException exception)
-        {
-            return NotFound(new { message = exception.Message });
-        }
-        catch (UnauthorizedAccessException exception)
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, new { message = exception.Message });
-        }
-        catch (InvalidOperationException exception)
-        {
-            return BadRequest(new { message = exception.Message });
-        }
+        var result = await _documentService.ReplaceAsync(GetUserId(), id, file, documentType, cancellationToken);
+        return Ok(result);
     }
 
     /// <summary>
@@ -117,19 +88,8 @@ public class DocumentsController : ControllerBase
         [FromBody] CapFinLoan.Document.Application.Contracts.Requests.LinkDocumentRequest request,
         CancellationToken cancellationToken)
     {
-        try
-        {
-            var result = await _documentService.LinkAsync(GetUserId(), id, request.ApplicationId, cancellationToken);
-            return Ok(result);
-        }
-        catch (KeyNotFoundException exception)
-        {
-            return NotFound(new { message = exception.Message });
-        }
-        catch (UnauthorizedAccessException exception)
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, new { message = exception.Message });
-        }
+        var result = await _documentService.LinkAsync(GetUserId(), id, request.ApplicationId, cancellationToken);
+        return Ok(result);
     }
 
     /// <summary>
@@ -139,19 +99,8 @@ public class DocumentsController : ControllerBase
     [Authorize(Roles = RoleNames.Applicant)]
     public async Task<IActionResult> Download(Guid id, CancellationToken cancellationToken)
     {
-        try
-        {
-            var (stream, contentType, fileName) = await _documentService.DownloadAsync(id, GetUserId(), isAdmin: false, cancellationToken);
-            return File(stream, contentType, fileName);
-        }
-        catch (KeyNotFoundException exception)
-        {
-            return NotFound(new { message = exception.Message });
-        }
-        catch (UnauthorizedAccessException exception)
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, new { message = exception.Message });
-        }
+        var (stream, contentType, fileName) = await _documentService.DownloadAsync(id, GetUserId(), isAdmin: false, cancellationToken);
+        return File(stream, contentType, fileName);
     }
 
     private Guid GetUserId()

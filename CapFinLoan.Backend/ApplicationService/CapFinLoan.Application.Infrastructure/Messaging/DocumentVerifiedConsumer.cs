@@ -25,8 +25,6 @@ public class DocumentVerifiedConsumer : IConsumer<DocumentVerifiedEvent>
         var application = await _repository.GetByIdAsync(message.ApplicationId);
         if (application != null && message.IsVerified && application.Status == ApplicationStatuses.DocsPending)
         {
-            // Note: In a fully distributed system, we would query DocumentService if ALL docs are verified.
-            // For simplicity (as per PRD flow step), we promote it when a document is verified successfully.
             application.Status = ApplicationStatuses.DocsVerified;
             application.UpdatedAtUtc = DateTime.UtcNow;
 

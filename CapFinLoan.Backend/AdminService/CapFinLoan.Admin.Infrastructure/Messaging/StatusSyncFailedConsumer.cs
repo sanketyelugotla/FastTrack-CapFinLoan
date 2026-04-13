@@ -6,12 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CapFinLoan.Admin.Infrastructure.Messaging;
 
-/// <summary>
-/// SAGA COMPENSATOR: Consumes StatusSyncFailedEvent from ApplicationService.
-/// When ApplicationService fails to sync a status change, this consumer
-/// rolls the AdminService's loan application back to the previous status.
-/// This is the core compensating transaction of the Saga pattern.
-/// </summary>
+// SAGA COMPENSATOR: Consumes StatusSyncFailedEvent from ApplicationService.
+// When ApplicationService fails to sync a status change, this consumer
+// rolls the AdminService's loan application back to the previous status.
+// This is the core compensating transaction of the Saga pattern.
 public class StatusSyncFailedConsumer : IConsumer<StatusSyncFailedEvent>
 {
     private readonly AdminDbContext _dbContext;

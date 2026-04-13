@@ -36,33 +36,15 @@ public class AdminApplicationsController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
-        try
-        {
-            var application = await _adminLoanApplicationService.GetByIdAsync(id, cancellationToken);
-            return Ok(application);
-        }
-        catch (KeyNotFoundException exception)
-        {
-            return NotFound(new { message = exception.Message });
-        }
+        var application = await _adminLoanApplicationService.GetByIdAsync(id, cancellationToken);
+        return Ok(application);
     }
 
     [HttpPut("{id:guid}/status")]
     public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] ReviewLoanApplicationRequest request, CancellationToken cancellationToken)
     {
-        try
-        {
-            var application = await _adminLoanApplicationService.UpdateStatusAsync(id, GetUserId(), request, cancellationToken);
-            return Ok(application);
-        }
-        catch (KeyNotFoundException exception)
-        {
-            return NotFound(new { message = exception.Message });
-        }
-        catch (InvalidOperationException exception)
-        {
-            return BadRequest(new { message = exception.Message });
-        }
+        var application = await _adminLoanApplicationService.UpdateStatusAsync(id, GetUserId(), request, cancellationToken);
+        return Ok(application);
     }
 
     private Guid GetUserId()

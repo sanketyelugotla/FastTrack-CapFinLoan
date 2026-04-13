@@ -5,9 +5,7 @@ namespace CapFinLoan.Admin.Persistence.Data;
 
 public class AdminDbContext : DbContext
 {
-    public AdminDbContext(DbContextOptions<AdminDbContext> options) : base(options)
-    {
-    }
+    public AdminDbContext(DbContextOptions<AdminDbContext> options) : base(options) { }
 
     public DbSet<LoanApplication> LoanApplications => Set<LoanApplication>();
     public DbSet<ApplicationStatusHistory> ApplicationStatusHistories => Set<ApplicationStatusHistory>();

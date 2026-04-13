@@ -30,19 +30,8 @@ public class ApplicationsController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
-        try
-        {
-            var application = await _loanApplicationService.GetByIdAsync(id, GetUserId(), IsAdmin(), cancellationToken);
-            return Ok(application);
-        }
-        catch (KeyNotFoundException exception)
-        {
-            return NotFound(new { message = exception.Message });
-        }
-        catch (UnauthorizedAccessException)
-        {
-            return Forbid();
-        }
+        var application = await _loanApplicationService.GetByIdAsync(id, GetUserId(), IsAdmin(), cancellationToken);
+        return Ok(application);
     }
 
     [HttpPost]
@@ -57,87 +46,31 @@ public class ApplicationsController : ControllerBase
     [Authorize(Roles = RoleNames.Applicant)]
     public async Task<IActionResult> UpdateDraft(Guid id, [FromBody] SaveLoanApplicationRequest request, CancellationToken cancellationToken)
     {
-        try
-        {
-            var application = await _loanApplicationService.UpdateDraftAsync(id, GetUserId(), false, request, cancellationToken);
-            return Ok(application);
-        }
-        catch (KeyNotFoundException exception)
-        {
-            return NotFound(new { message = exception.Message });
-        }
-        catch (InvalidOperationException exception)
-        {
-            return BadRequest(new { message = exception.Message });
-        }
-        catch (UnauthorizedAccessException)
-        {
-            return Forbid();
-        }
+        var application = await _loanApplicationService.UpdateDraftAsync(id, GetUserId(), IsAdmin(), request, cancellationToken);
+        return Ok(application);
     }
 
     [HttpPost("{id:guid}/submit")]
     [Authorize(Roles = RoleNames.Applicant)]
     public async Task<IActionResult> Submit(Guid id, CancellationToken cancellationToken)
     {
-        try
-        {
-            var application = await _loanApplicationService.SubmitAsync(id, GetUserId(), cancellationToken);
-            return Ok(application);
-        }
-        catch (KeyNotFoundException exception)
-        {
-            return NotFound(new { message = exception.Message });
-        }
-        catch (InvalidOperationException exception)
-        {
-            return BadRequest(new { message = exception.Message });
-        }
-        catch (UnauthorizedAccessException)
-        {
-            return Forbid();
-        }
+        var application = await _loanApplicationService.SubmitAsync(id, GetUserId(), IsAdmin(), cancellationToken);
+        return Ok(application);
     }
 
     [HttpGet("{id:guid}/status")]
     public async Task<IActionResult> GetStatus(Guid id, CancellationToken cancellationToken)
     {
-        try
-        {
-            var status = await _loanApplicationService.GetStatusAsync(id, GetUserId(), IsAdmin(), cancellationToken);
-            return Ok(status);
-        }
-        catch (KeyNotFoundException exception)
-        {
-            return NotFound(new { message = exception.Message });
-        }
-        catch (UnauthorizedAccessException)
-        {
-            return Forbid();
-        }
+        var status = await _loanApplicationService.GetStatusAsync(id, GetUserId(), IsAdmin(), cancellationToken);
+        return Ok(status);
     }
 
     [HttpDelete("{id:guid}")]
     [Authorize(Roles = RoleNames.Applicant)]
     public async Task<IActionResult> DeleteDraft(Guid id, CancellationToken cancellationToken)
     {
-        try
-        {
-            await _loanApplicationService.DeleteDraftAsync(id, GetUserId(), false, cancellationToken);
-            return NoContent();
-        }
-        catch (KeyNotFoundException exception)
-        {
-            return NotFound(new { message = exception.Message });
-        }
-        catch (InvalidOperationException exception)
-        {
-            return BadRequest(new { message = exception.Message });
-        }
-        catch (UnauthorizedAccessException)
-        {
-            return Forbid();
-        }
+        await _loanApplicationService.DeleteDraftAsync(id, GetUserId(), IsAdmin(), cancellationToken);
+        return NoContent();
     }
 
     private Guid GetUserId()

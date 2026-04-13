@@ -25,15 +25,8 @@ public class InternalDocumentsController : ControllerBase
     [HttpPut("{id:guid}/verify")]
     public async Task<IActionResult> Verify(Guid id, [FromBody] VerifyDocumentRequest request, CancellationToken cancellationToken)
     {
-        try
-        {
-            var result = await _documentService.VerifyAsync(id, GetUserId(), request.IsVerified, request.Remarks, cancellationToken);
-            return Ok(result);
-        }
-        catch (KeyNotFoundException exception)
-        {
-            return NotFound(new { message = exception.Message });
-        }
+        var result = await _documentService.VerifyAsync(id, GetUserId(), request.IsVerified, request.Remarks, cancellationToken);
+        return Ok(result);
     }
 
     /// <summary>
@@ -62,15 +55,8 @@ public class InternalDocumentsController : ControllerBase
     [HttpGet("{id:guid}/download")]
     public async Task<IActionResult> Download(Guid id, CancellationToken cancellationToken)
     {
-        try
-        {
-            var (stream, contentType, fileName) = await _documentService.DownloadAsync(id, null, isAdmin: true, cancellationToken);
-            return File(stream, contentType, fileName);
-        }
-        catch (KeyNotFoundException exception)
-        {
-            return NotFound(new { message = exception.Message });
-        }
+        var (stream, contentType, fileName) = await _documentService.DownloadAsync(id, null, isAdmin: true, cancellationToken);
+        return File(stream, contentType, fileName);
     }
 
     private Guid GetUserId()

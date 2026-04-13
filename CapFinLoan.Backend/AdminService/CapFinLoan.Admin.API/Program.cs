@@ -8,7 +8,7 @@ using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi; // ← was Microsoft.OpenApi.Models in v9
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -100,7 +100,6 @@ builder.Services.AddSwaggerGen(options =>
         Description = "Enter 'Bearer' [space] and then your valid JWT token."
     });
 
-    // v10 pattern: delegate-based AddSecurityRequirement using OpenApiSecuritySchemeReference
     options.AddSecurityRequirement(document =>
     {
         return new OpenApiSecurityRequirement

@@ -9,7 +9,7 @@ public interface ILoanApplicationService
     Task<LoanApplicationResponse> UpdateDraftAsync(Guid applicationId, Guid requesterUserId, bool isAdmin, SaveLoanApplicationRequest request, CancellationToken cancellationToken = default);
     Task<LoanApplicationResponse> GetByIdAsync(Guid applicationId, Guid requesterUserId, bool isAdmin, CancellationToken cancellationToken = default);
     Task<IReadOnlyCollection<LoanApplicationResponse>> GetMineAsync(Guid applicantUserId, CancellationToken cancellationToken = default);
-    Task<LoanApplicationResponse> SubmitAsync(Guid applicationId, Guid requesterUserId, CancellationToken cancellationToken = default);
+    Task<LoanApplicationResponse> SubmitAsync(Guid applicationId, Guid requesterUserId, bool isAdmin, CancellationToken cancellationToken = default);
     Task<LoanApplicationStatusResponse> GetStatusAsync(Guid applicationId, Guid requesterUserId, bool isAdmin, CancellationToken cancellationToken = default);
     Task DeleteDraftAsync(Guid applicationId, Guid requesterUserId, bool isAdmin, CancellationToken cancellationToken = default);
 }

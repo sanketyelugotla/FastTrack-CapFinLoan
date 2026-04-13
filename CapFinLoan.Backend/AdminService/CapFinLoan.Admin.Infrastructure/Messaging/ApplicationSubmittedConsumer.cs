@@ -7,12 +7,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CapFinLoan.Admin.Infrastructure.Messaging;
 
-/// <summary>
-/// SAGA DATA SYNC: When a user submits a loan application in ApplicationService,
-/// this consumer creates a corresponding record in the AdminService's own database.
-/// This is essential for the database-per-service architecture — the AdminService
-/// cannot directly query ApplicationService's database.
-/// </summary>
+// SAGA DATA SYNC: When a user submits a loan application in ApplicationService,
+// this consumer creates a corresponding record in the AdminService's own database.
+// This is essential for the database-per-service architecture — the AdminService
+// cannot directly query ApplicationService's database.
 public class ApplicationSubmittedConsumer : IConsumer<ApplicationSubmittedEvent>
 {
     private readonly AdminDbContext _dbContext;
