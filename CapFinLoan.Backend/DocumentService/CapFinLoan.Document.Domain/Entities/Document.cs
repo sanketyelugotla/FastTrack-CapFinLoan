@@ -2,9 +2,7 @@ using CapFinLoan.Document.Domain.Constants;
 
 namespace CapFinLoan.Document.Domain.Entities;
 
-/// <summary>
-/// Represents an uploaded document (KYC, income proof, etc.) linked to a loan application.
-/// </summary>
+// Represents an uploaded document (KYC, income proof, etc.) linked to a loan application.
 public class LoanDocument
 {
     public Guid Id { get; set; } = Guid.NewGuid();
@@ -18,7 +16,7 @@ public class LoanDocument
 
     public string DocumentType { get; set; } = string.Empty;
 
-    /// <summary>Explicit status of this document in the review lifecycle.</summary>
+    // Explicit status of this document in the review lifecycle.
     public DocumentStatus Status { get; set; } = DocumentStatus.Pending;
 
     // Legacy derived fields — kept for backwards compatibility

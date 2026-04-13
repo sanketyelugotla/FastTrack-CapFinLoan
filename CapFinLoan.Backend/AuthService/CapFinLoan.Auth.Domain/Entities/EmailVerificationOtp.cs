@@ -9,8 +9,6 @@ public class EmailVerificationOtp
     public bool IsUsed { get; set; } = false;
     public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
 
-    /// <summary>
-    /// Check if OTP is still valid (not expired and not used)
-    /// </summary>
+    // Check if OTP is still valid (not expired and not used)
     public bool IsValid => !IsUsed && DateTime.UtcNow <= ExpiresAtUtc;
 }

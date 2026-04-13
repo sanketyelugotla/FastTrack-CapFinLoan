@@ -2,9 +2,7 @@ using CapFinLoan.Document.Application.Interfaces;
 
 namespace CapFinLoan.Document.Infrastructure.Storage;
 
-/// <summary>
-/// Stores uploaded files on the local filesystem under wwwroot/uploads.
-/// </summary>
+// Stores uploaded files on the local filesystem under wwwroot/uploads.
 public class LocalFileStorageService : IFileStorageService
 {
     private readonly string _basePath;

@@ -2,15 +2,15 @@ namespace CapFinLoan.Document.Domain.Constants;
 
 public enum DocumentStatus
 {
-    /// <summary>Uploaded, awaiting admin review.</summary>
+    // Uploaded, awaiting admin review.
     Pending,
 
-    /// <summary>Admin is actively reviewing the document.</summary>
+    // Admin is actively reviewing the document.
     UnderReview,
 
-    /// <summary>Admin has approved the document.</summary>
+    // Admin has approved the document.
     Verified,
 
-    /// <summary>Admin has rejected and requested a fresh upload.</summary>
+    // Admin has rejected and requested a fresh upload.
     ReuploadRequired
 }

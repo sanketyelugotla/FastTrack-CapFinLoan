@@ -1,4 +1,5 @@
 using CapFinLoan.Auth.Application.Interfaces;
+using CapFinLoan.Auth.Application.Exceptions;
 using CapFinLoan.Auth.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -43,7 +44,7 @@ public class UserRepository : IUserRepository
         if (!result.Succeeded)
         {
             var errors = string.Join("; ", result.Errors.Select(e => e.Description));
-            throw new InvalidOperationException($"Failed to create user: {errors}");
+            throw new AuthPersistenceException($"Failed to create user: {errors}");
         }
     }
 
@@ -53,7 +54,7 @@ public class UserRepository : IUserRepository
         if (!result.Succeeded)
         {
             var errors = string.Join("; ", result.Errors.Select(e => e.Description));
-            throw new InvalidOperationException($"Failed to update user: {errors}");
+            throw new AuthPersistenceException($"Failed to update user: {errors}");
         }
     }
 
@@ -62,43 +63,35 @@ public class UserRepository : IUserRepository
         return await _userManager.CheckPasswordAsync(user, password);
     }
 
-    /// <summary>
-    /// Add a user to a role using Identity roles (AspNetUserRoles table).
-    /// </summary>
+    // Add a user to a role using Identity roles (AspNetUserRoles table).
     public async Task AddToRoleAsync(ApplicationUser user, string roleName, CancellationToken cancellationToken = default)
     {
         var result = await _userManager.AddToRoleAsync(user, roleName);
         if (!result.Succeeded)
         {
             var errors = string.Join("; ", result.Errors.Select(e => e.Description));
-            throw new InvalidOperationException($"Failed to add user to role: {errors}");
+            throw new AuthPersistenceException($"Failed to add user to role: {errors}");
         }
     }
 
-    /// <summary>
-    /// Get all roles for a user.
-    /// </summary>
+    // Get all roles for a user.
     public async Task<IList<string>> GetRolesAsync(ApplicationUser user, CancellationToken cancellationToken = default)
     {
         return await _userManager.GetRolesAsync(user);
     }
 
-    /// <summary>
-    /// Add a claim to a user (stored in AspNetUserClaims table).
-    /// </summary>
+    // Add a claim to a user (stored in AspNetUserClaims table).
     public async Task AddClaimAsync(ApplicationUser user, Claim claim, CancellationToken cancellationToken = default)
     {
         var result = await _userManager.AddClaimAsync(user, claim);
         if (!result.Succeeded)
         {
             var errors = string.Join("; ", result.Errors.Select(e => e.Description));
-            throw new InvalidOperationException($"Failed to add claim to user: {errors}");
+            throw new AuthPersistenceException($"Failed to add claim to user: {errors}");
         }
     }
 
-    /// <summary>
-    /// Get all claims for a user.
-    /// </summary>
+    // Get all claims for a user.
     public async Task<IList<Claim>> GetClaimsAsync(ApplicationUser user, CancellationToken cancellationToken = default)
     {
         return await _userManager.GetClaimsAsync(user);

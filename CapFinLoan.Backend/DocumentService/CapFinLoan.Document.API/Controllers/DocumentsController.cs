@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using CapFinLoan.Document.Application.Interfaces;
 using CapFinLoan.Document.Domain.Constants;
+using CapFinLoan.Document.Application.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,9 +19,7 @@ public class DocumentsController : ControllerBase
         _documentService = documentService;
     }
 
-    /// <summary>
-    /// Upload a document for a loan application.
-    /// </summary>
+    // Upload a document for a loan application.
     [HttpPost("upload")]
     [Authorize(Roles = RoleNames.Applicant)]
     public async Task<IActionResult> Upload(
@@ -33,9 +32,7 @@ public class DocumentsController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Get all documents for a specific application.
-    /// </summary>
+    // Get all documents for a specific application.
     [HttpGet("application/{applicationId:guid}")]
     public async Task<IActionResult> GetByApplicationId(Guid applicationId, CancellationToken cancellationToken)
     {
@@ -43,9 +40,7 @@ public class DocumentsController : ControllerBase
         return Ok(documents);
     }
 
-    /// <summary>
-    /// Get all documents uploaded by the current user.
-    /// </summary>
+    // Get all documents uploaded by the current user.
     [HttpGet("my")]
     public async Task<IActionResult> GetMine(CancellationToken cancellationToken)
     {
@@ -53,9 +48,7 @@ public class DocumentsController : ControllerBase
         return Ok(documents);
     }
 
-    /// <summary>
-    /// Get a single document's metadata by ID.
-    /// </summary>
+    // Get a single document's metadata by ID.
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
@@ -63,9 +56,7 @@ public class DocumentsController : ControllerBase
         return Ok(document);
     }
 
-    /// <summary>
-    /// Replace/edit a previously uploaded document.
-    /// </summary>
+    // Replace/edit a previously uploaded document.
     [HttpPut("{id:guid}")]
     [Authorize(Roles = RoleNames.Applicant)]
     public async Task<IActionResult> Replace(
@@ -78,9 +69,7 @@ public class DocumentsController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Link an already uploaded Document to a target Application without re-uploading file bytes.
-    /// </summary>
+    // Link an already uploaded Document to a target Application without re-uploading file bytes.
     [HttpPost("{id:guid}/link")]
     [Authorize(Roles = RoleNames.Applicant)]
     public async Task<IActionResult> Link(
@@ -92,9 +81,7 @@ public class DocumentsController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Download/View the document contents.
-    /// </summary>
+    // Download/View the document contents.
     [HttpGet("{id:guid}/download")]
     [Authorize(Roles = RoleNames.Applicant)]
     public async Task<IActionResult> Download(Guid id, CancellationToken cancellationToken)
@@ -108,6 +95,6 @@ public class DocumentsController : ControllerBase
         var value = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub");
         return Guid.TryParse(value, out var userId)
             ? userId
-            : throw new UnauthorizedAccessException("User identifier claim is missing.");
+            : throw new DocumentForbiddenException("User identifier claim is missing.");
     }
 }

@@ -1,0 +1,6 @@
+1. Corelation Id (Done)
+2. Notifications for rollbacks (Done)
+3. Logging
+4. CICD
+5. Deploy
+6. Redis

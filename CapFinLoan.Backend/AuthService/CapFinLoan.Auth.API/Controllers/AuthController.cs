@@ -65,15 +65,8 @@ public class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
-        try
-        {
-            var result = await _authService.LoginAsync(request, cancellationToken);
-            return Ok(result);
-        }
-        catch (UnauthorizedAccessException exception)
-        {
-            return Unauthorized(new { message = exception.Message });
-        }
+        var result = await _authService.LoginAsync(request, cancellationToken);
+        return Ok(result);
     }
 
     [HttpPost("google-login")]
@@ -81,14 +74,7 @@ public class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginRequest request, CancellationToken cancellationToken)
     {
-        try
-        {
-            var result = await _authService.LoginWithGoogleAsync(request.IdToken, cancellationToken);
-            return Ok(result);
-        }
-        catch (UnauthorizedAccessException exception)
-        {
-            return Unauthorized(new { message = exception.Message });
-        }
+        var result = await _authService.LoginWithGoogleAsync(request.IdToken, cancellationToken);
+        return Ok(result);
     }
 }

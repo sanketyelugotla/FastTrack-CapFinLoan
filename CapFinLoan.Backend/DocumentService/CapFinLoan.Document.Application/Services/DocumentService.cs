@@ -1,4 +1,5 @@
 using CapFinLoan.Document.Application.Contracts.Responses;
+using CapFinLoan.Document.Application.Exceptions;
 using CapFinLoan.Document.Application.Interfaces;
 using CapFinLoan.Document.Domain.Constants;
 using CapFinLoan.Document.Domain.Entities;
@@ -34,13 +35,13 @@ public class DocumentService : IDocumentService
     public async Task<DocumentResponse> UploadAsync(Guid userId, Guid applicationId, string documentType, IFormFile file, CancellationToken cancellationToken = default)
     {
         if (file.Length == 0)
-            throw new InvalidOperationException("File is empty.");
+            throw new DocumentValidationException("File is empty.");
 
         if (file.Length > MaxFileSizeBytes)
-            throw new InvalidOperationException($"File size exceeds the maximum allowed size of {MaxFileSizeBytes / (1024 * 1024)} MB.");
+            throw new DocumentValidationException($"File size exceeds the maximum allowed size of {MaxFileSizeBytes / (1024 * 1024)} MB.");
 
         if (!AllowedContentTypes.Contains(file.ContentType))
-            throw new InvalidOperationException("File type is not supported. Allowed types: PDF, JPG, PNG.");
+            throw new DocumentValidationException("File type is not supported. Allowed types: PDF, JPG, PNG.");
 
         await ValidateApplicationStatusAsync(applicationId, cancellationToken);
 
@@ -68,19 +69,19 @@ public class DocumentService : IDocumentService
     public async Task<DocumentResponse> ReplaceAsync(Guid userId, Guid documentId, IFormFile file, string? documentType = null, CancellationToken cancellationToken = default)
     {
         if (file.Length == 0)
-            throw new InvalidOperationException("File is empty.");
+            throw new DocumentValidationException("File is empty.");
 
         if (file.Length > MaxFileSizeBytes)
-            throw new InvalidOperationException($"File size exceeds the maximum allowed size of {MaxFileSizeBytes / (1024 * 1024)} MB.");
+            throw new DocumentValidationException($"File size exceeds the maximum allowed size of {MaxFileSizeBytes / (1024 * 1024)} MB.");
 
         if (!AllowedContentTypes.Contains(file.ContentType))
-            throw new InvalidOperationException("File type is not supported. Allowed types: PDF, JPG, PNG.");
+            throw new DocumentValidationException("File type is not supported. Allowed types: PDF, JPG, PNG.");
 
         var document = await _documentRepository.GetByIdAsync(documentId, cancellationToken)
-                       ?? throw new KeyNotFoundException("Document not found.");
+                       ?? throw new DocumentNotFoundException();
 
         if (document.UserId != userId)
-            throw new UnauthorizedAccessException("You are not allowed to edit this document.");
+            throw new DocumentForbiddenException("You are not allowed to edit this document.");
 
         await ValidateApplicationStatusAsync(document.ApplicationId, cancellationToken);
 
@@ -123,14 +124,14 @@ public class DocumentService : IDocumentService
     public async Task<DocumentResponse> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var document = await _documentRepository.GetByIdAsync(id, cancellationToken)
-                       ?? throw new KeyNotFoundException("Document not found.");
+                       ?? throw new DocumentNotFoundException();
         return MapToResponse(document);
     }
 
     public async Task<DocumentResponse> VerifyAsync(Guid documentId, Guid adminUserId, bool isVerified, string? remarks, CancellationToken cancellationToken = default)
     {
         var document = await _documentRepository.GetByIdAsync(documentId, cancellationToken)
-                       ?? throw new KeyNotFoundException("Document not found.");
+                       ?? throw new DocumentNotFoundException();
 
         document.Status = isVerified ? DocumentStatus.Verified : DocumentStatus.ReuploadRequired;
         document.VerifiedByUserId = adminUserId;
@@ -159,10 +160,10 @@ public class DocumentService : IDocumentService
     public async Task<DocumentResponse> LinkAsync(Guid userId, Guid documentId, Guid targetApplicationId, CancellationToken cancellationToken = default)
     {
         var originalDocument = await _documentRepository.GetByIdAsync(documentId, cancellationToken)
-                               ?? throw new KeyNotFoundException("Original document not found.");
+                               ?? throw new DocumentNotFoundException("Original document not found.");
 
         if (originalDocument.UserId != userId)
-            throw new UnauthorizedAccessException("You are not allowed to link this document.");
+            throw new DocumentForbiddenException("You are not allowed to link this document.");
 
         // Create a new document entity pointing to the exact same stored file
         var newDocument = new LoanDocument
@@ -189,15 +190,15 @@ public class DocumentService : IDocumentService
     public async Task<(Stream Stream, string ContentType, string FileName)> DownloadAsync(Guid documentId, Guid? userId, bool isAdmin, CancellationToken cancellationToken = default)
     {
         var document = await _documentRepository.GetByIdAsync(documentId, cancellationToken)
-                       ?? throw new KeyNotFoundException("Document not found.");
+                       ?? throw new DocumentNotFoundException();
 
         if (!isAdmin && document.UserId != userId)
         {
-            throw new UnauthorizedAccessException("You are not authorized to download this document.");
+            throw new DocumentForbiddenException("You are not authorized to download this document.");
         }
 
         var stream = await _fileStorageService.GetFileStreamAsync(document.StoredFileName, cancellationToken)
-                     ?? throw new KeyNotFoundException("Physical file not found in storage.");
+                     ?? throw new DocumentNotFoundException("Physical file not found in storage.");
 
         return (stream, document.ContentType, document.FileName);
     }
@@ -235,7 +236,7 @@ public class DocumentService : IDocumentService
                 var status = statusElement.GetString();
                 if (status == "Approved" || status == "Rejected")
                 {
-                    throw new InvalidOperationException($"Documents cannot be updated because the application is already {status}.");
+                    throw new DocumentConflictException($"Documents cannot be updated because the application is already {status}.");
                 }
             }
         }

@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using CapFinLoan.Admin.Application.Contracts.Requests;
+using CapFinLoan.Admin.Application.Exceptions;
 using CapFinLoan.Admin.Application.Interfaces;
 using CapFinLoan.Admin.Domain.Constants;
 using Microsoft.AspNetCore.Authorization;
@@ -52,6 +53,6 @@ public class AdminApplicationsController : ControllerBase
         var value = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub");
         return Guid.TryParse(value, out var userId)
             ? userId
-            : throw new UnauthorizedAccessException("User identifier claim is missing.");
+            : throw new AdminForbiddenException("User identifier claim is missing.");
     }
 }

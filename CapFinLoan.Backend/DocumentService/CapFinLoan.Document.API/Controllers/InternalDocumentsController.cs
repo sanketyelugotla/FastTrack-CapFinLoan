@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using CapFinLoan.Document.Application.Contracts.Requests;
+using CapFinLoan.Document.Application.Exceptions;
 using CapFinLoan.Document.Application.Interfaces;
 using CapFinLoan.Document.Domain.Constants;
 using Microsoft.AspNetCore.Authorization;
@@ -19,9 +20,7 @@ public class InternalDocumentsController : ControllerBase
         _documentService = documentService;
     }
 
-    /// <summary>
-    /// Admin: Verify or reject a document.
-    /// </summary>
+    // Admin: Verify or reject a document.
     [HttpPut("{id:guid}/verify")]
     public async Task<IActionResult> Verify(Guid id, [FromBody] VerifyDocumentRequest request, CancellationToken cancellationToken)
     {
@@ -29,9 +28,7 @@ public class InternalDocumentsController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Admin: Get all documents for a specific application.
-    /// </summary>
+    // Admin: Get all documents for a specific application.
     [HttpGet("application/{applicationId:guid}")]
     public async Task<IActionResult> GetByApplicationId(Guid applicationId, CancellationToken cancellationToken)
     {
@@ -39,9 +36,7 @@ public class InternalDocumentsController : ControllerBase
         return Ok(documents);
     }
 
-    /// <summary>
-    /// Admin: Get all documents across all applications
-    /// </summary>
+    // Admin: Get all documents across all applications
     [HttpGet("all")]
     public async Task<IActionResult> GetAll([FromQuery] string? status, CancellationToken cancellationToken)
     {
@@ -49,9 +44,7 @@ public class InternalDocumentsController : ControllerBase
         return Ok(documents);
     }
 
-    /// <summary>
-    /// Admin: Download/View the document contents.
-    /// </summary>
+    // Admin: Download/View the document contents.
     [HttpGet("{id:guid}/download")]
     public async Task<IActionResult> Download(Guid id, CancellationToken cancellationToken)
     {
@@ -64,6 +57,6 @@ public class InternalDocumentsController : ControllerBase
         var value = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub");
         return Guid.TryParse(value, out var userId)
             ? userId
-            : throw new UnauthorizedAccessException("User identifier claim is missing.");
+            : throw new DocumentForbiddenException("User identifier claim is missing.");
     }
 }

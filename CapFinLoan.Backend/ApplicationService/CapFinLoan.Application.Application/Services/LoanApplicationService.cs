@@ -1,5 +1,6 @@
 using CapFinLoan.Application.Application.Contracts.Requests;
 using CapFinLoan.Application.Application.Contracts.Responses;
+using CapFinLoan.Application.Application.Exceptions;
 using CapFinLoan.Application.Application.Interfaces;
 using CapFinLoan.Application.Domain.Constants;
 using CapFinLoan.Application.Domain.Entities;
@@ -50,7 +51,7 @@ public class LoanApplicationService : ILoanApplicationService
 
         if (!string.Equals(application.Status, ApplicationStatuses.Draft, StringComparison.OrdinalIgnoreCase))
         {
-            throw new InvalidOperationException("Only draft applications can be updated.");
+            throw new ApplicationConflictException("Only draft applications can be updated.");
         }
 
         ApplyRequest(application, request, DateTime.UtcNow);
@@ -79,7 +80,7 @@ public class LoanApplicationService : ILoanApplicationService
 
         if (!string.Equals(application.Status, ApplicationStatuses.Draft, StringComparison.OrdinalIgnoreCase))
         {
-            throw new InvalidOperationException("Only draft applications can be submitted.");
+            throw new ApplicationConflictException("Only draft applications can be submitted.");
         }
 
         ValidateForSubmission(application);
@@ -144,7 +145,7 @@ public class LoanApplicationService : ILoanApplicationService
 
         if (!string.Equals(application.Status, ApplicationStatuses.Draft, StringComparison.OrdinalIgnoreCase))
         {
-            throw new InvalidOperationException("Only draft applications can be deleted.");
+            throw new ApplicationConflictException("Only draft applications can be deleted.");
         }
 
         await _loanApplicationRepository.DeleteAsync(application, cancellationToken);
@@ -153,11 +154,11 @@ public class LoanApplicationService : ILoanApplicationService
     private async Task<LoanApplication> GetOwnedOrAdminApplicationAsync(Guid applicationId, Guid requesterUserId, bool isAdmin, CancellationToken cancellationToken)
     {
         var application = await _loanApplicationRepository.GetByIdAsync(applicationId, cancellationToken)
-                         ?? throw new KeyNotFoundException("Application not found.");
+                         ?? throw new ApplicationNotFoundException();
 
         if (!isAdmin && application.ApplicantUserId != requesterUserId)
         {
-            throw new UnauthorizedAccessException("You are not allowed to access this application.");
+            throw new ApplicationForbiddenException();
         }
 
         return application;
@@ -211,22 +212,22 @@ public class LoanApplicationService : ILoanApplicationService
 
         if (missingFields.Count > 0)
         {
-            throw new InvalidOperationException($"Application is incomplete. Missing or invalid: {string.Join(", ", missingFields)}.");
+            throw new ApplicationValidationException($"Application is incomplete. Missing or invalid: {string.Join(", ", missingFields)}.");
         }
 
         if (application.RequestedAmount is < 10000 or > 5000000)
         {
-            throw new InvalidOperationException("Requested amount must be between 10,000 and 5,000,000.");
+            throw new ApplicationValidationException("Requested amount must be between 10,000 and 5,000,000.");
         }
 
         if (application.RequestedTenureMonths is < 6 or > 360)
         {
-            throw new InvalidOperationException("Requested tenure must be between 6 and 360 months.");
+            throw new ApplicationValidationException("Requested tenure must be between 6 and 360 months.");
         }
 
         if (application.MonthlyIncome <= application.ExistingEmiAmount)
         {
-            throw new InvalidOperationException("Monthly income must be greater than existing EMI obligations.");
+            throw new ApplicationValidationException("Monthly income must be greater than existing EMI obligations.");
         }
     }
 

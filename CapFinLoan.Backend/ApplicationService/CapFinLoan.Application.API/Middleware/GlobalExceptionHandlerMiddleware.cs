@@ -1,3 +1,5 @@
+using CapFinLoan.Application.Application.Exceptions;
+
 namespace CapFinLoan.Application.API.Middleware;
 
 public class GlobalExceptionHandlerMiddleware(RequestDelegate next, ILogger<GlobalExceptionHandlerMiddleware> logger)
@@ -8,32 +10,29 @@ public class GlobalExceptionHandlerMiddleware(RequestDelegate next, ILogger<Glob
         {
             await next(context);
         }
-        catch (InvalidOperationException ex)
+        catch (ApplicationServiceException ex)
         {
-            logger.LogWarning(ex, "Business rule violation: {Message}", ex.Message);
-            await WriteErrorAsync(context, StatusCodes.Status400BadRequest, ex.Message);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            logger.LogWarning(ex, "Resource not found: {Message}", ex.Message);
-            await WriteErrorAsync(context, StatusCodes.Status404NotFound, ex.Message);
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            logger.LogWarning(ex, "Unauthorized access: {Message}", ex.Message);
-            await WriteErrorAsync(context, StatusCodes.Status403Forbidden, ex.Message);
+            logger.LogWarning(ex, "Application exception {ErrorCode}: {Message}", ex.ErrorCode, ex.Message);
+            await WriteErrorAsync(context, ex.StatusCode, ex.ErrorCode, ex.Message);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Unhandled exception");
-            await WriteErrorAsync(context, StatusCodes.Status500InternalServerError, "An unexpected error occurred. Please try again.");
+            await WriteErrorAsync(context, StatusCodes.Status500InternalServerError, "UNHANDLED_EXCEPTION", "An unexpected error occurred. Please try again.");
         }
     }
 
-    private static async Task WriteErrorAsync(HttpContext context, int statusCode, string message)
+    private static async Task WriteErrorAsync(HttpContext context, int statusCode, string errorCode, string message)
     {
         context.Response.StatusCode = statusCode;
         context.Response.ContentType = "application/json";
-        await context.Response.WriteAsJsonAsync(new { message });
+        await context.Response.WriteAsJsonAsync(new
+        {
+            message,
+            errorCode,
+            statusCode,
+            traceId = context.TraceIdentifier,
+            timestampUtc = DateTime.UtcNow
+        });
     }
 }

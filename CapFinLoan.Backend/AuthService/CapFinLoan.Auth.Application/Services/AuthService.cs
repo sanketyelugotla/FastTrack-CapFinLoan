@@ -1,5 +1,6 @@
 using CapFinLoan.Auth.Application.Contracts.Requests;
 using CapFinLoan.Auth.Application.Contracts.Responses;
+using CapFinLoan.Auth.Application.Exceptions;
 using CapFinLoan.Auth.Application.Interfaces;
 using CapFinLoan.Auth.Domain.Constants;
 using CapFinLoan.Auth.Domain.Entities;
@@ -39,7 +40,7 @@ public class AuthService : IAuthService
 
         if (await _userRepository.ExistsByEmailAsync(normalizedEmail, cancellationToken))
         {
-            throw new InvalidOperationException("An account already exists with this email.");
+            throw new AccountConflictException();
         }
 
         // Generate OTP (10 minutes validity)
@@ -70,7 +71,7 @@ public class AuthService : IAuthService
         // Verify OTP
         if (!await _otpRepository.VerifyOtpAsync(email, request.OtpCode.Trim(), cancellationToken))
         {
-            throw new InvalidOperationException("Invalid or expired OTP.");
+            throw new InvalidOtpException();
         }
 
         // Create user
@@ -120,7 +121,7 @@ public class AuthService : IAuthService
         // Verify OTP
         if (!await _otpRepository.VerifyOtpAsync(email, request.OtpCode.Trim(), cancellationToken))
         {
-            throw new InvalidOperationException("Invalid or expired OTP.");
+            throw new InvalidOtpException();
         }
 
         // Create admin user
@@ -168,7 +169,7 @@ public class AuthService : IAuthService
         var email = request.Email.Trim().ToLowerInvariant();
         if (await _userRepository.ExistsByEmailAsync(email, cancellationToken))
         {
-            throw new InvalidOperationException("An account already exists with this email.");
+            throw new AccountConflictException();
         }
 
         var user = new ApplicationUser
@@ -217,7 +218,7 @@ public class AuthService : IAuthService
         var email = request.Email.Trim().ToLowerInvariant();
         if (await _userRepository.ExistsByEmailAsync(email, cancellationToken))
         {
-            throw new InvalidOperationException("An account already exists with this email.");
+            throw new AccountConflictException();
         }
 
         var user = new ApplicationUser
@@ -268,12 +269,12 @@ public class AuthService : IAuthService
 
         if (user is null || !await _userRepository.CheckPasswordAsync(user, request.Password))
         {
-            throw new UnauthorizedAccessException("Invalid email or password.");
+            throw new InvalidCredentialsException();
         }
 
         if (!user.IsActive)
         {
-            throw new UnauthorizedAccessException("User is deactivated.");
+            throw new AccountDeactivatedException();
         }
 
         // Get user roles for JWT token
@@ -299,7 +300,7 @@ public class AuthService : IAuthService
         {
             var clientId = _configuration["Google:ClientId"];
             if (string.IsNullOrEmpty(clientId))
-                throw new UnauthorizedAccessException("Google Client ID is not configured on the server.");
+                throw new AuthUnauthorizedException("Google Client ID is not configured on the server.");
 
             var settings = new GoogleJsonWebSignature.ValidationSettings()
             {
@@ -310,7 +311,7 @@ public class AuthService : IAuthService
         }
         catch (InvalidJwtException ex)
         {
-            throw new UnauthorizedAccessException($"Invalid Google token: {ex.Message}", ex);
+            throw new AuthUnauthorizedException($"Invalid Google token: {ex.Message}", ex);
         }
 
         var email = payload.Email.Trim().ToLowerInvariant();
@@ -346,7 +347,7 @@ public class AuthService : IAuthService
         {
             if (!user.IsActive)
             {
-                throw new UnauthorizedAccessException("User is deactivated.");
+                throw new AccountDeactivatedException();
             }
             var dbRoles = await _userRepository.GetRolesAsync(user, cancellationToken);
             primaryRole = dbRoles.FirstOrDefault() ?? RoleNames.Applicant;
@@ -354,7 +355,7 @@ public class AuthService : IAuthService
 
         var userRoles = await _userRepository.GetRolesAsync(user, cancellationToken);
         var (token, expiresAtUtc) = await _jwtTokenGenerator.GenerateTokenAsync(user, userRoles);
-        
+
         return new AuthResponse
         {
             Token = token,
@@ -384,7 +385,7 @@ public class AuthService : IAuthService
     public async Task<UserNotificationInfoResponse> GetUserNotificationInfoAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         var user = await _userRepository.GetByIdAsync(userId, cancellationToken)
-                   ?? throw new KeyNotFoundException("User not found.");
+                   ?? throw new AuthNotFoundException();
 
         return new UserNotificationInfoResponse
         {
@@ -397,7 +398,7 @@ public class AuthService : IAuthService
     public async Task<UserSummaryResponse> UpdateUserStatusAsync(Guid userId, bool isActive, CancellationToken cancellationToken = default)
     {
         var user = await _userRepository.GetByIdAsync(userId, cancellationToken)
-                   ?? throw new KeyNotFoundException("User not found.");
+                   ?? throw new AuthNotFoundException();
 
         user.IsActive = isActive;
         user.UpdatedAtUtc = DateTime.UtcNow;

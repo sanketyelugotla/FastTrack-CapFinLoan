@@ -1,5 +1,6 @@
 using CapFinLoan.Admin.Application.Contracts.Requests;
 using CapFinLoan.Admin.Application.Contracts.Responses;
+using CapFinLoan.Admin.Application.Exceptions;
 using CapFinLoan.Admin.Application.Interfaces;
 using CapFinLoan.Admin.Domain.Constants;
 using CapFinLoan.Admin.Domain.Entities;
@@ -49,7 +50,7 @@ public class AdminLoanApplicationService : IAdminLoanApplicationService
     public async Task<AdminApplicationDetailResponse> GetByIdAsync(Guid applicationId, CancellationToken cancellationToken = default)
     {
         var application = await _adminLoanApplicationRepository.GetByIdAsync(applicationId, cancellationToken)
-            ?? throw new KeyNotFoundException("Application not found.");
+            ?? throw new AdminNotFoundException();
 
         return MapDetail(application);
     }
@@ -57,7 +58,7 @@ public class AdminLoanApplicationService : IAdminLoanApplicationService
     public async Task<AdminApplicationDetailResponse> UpdateStatusAsync(Guid applicationId, Guid reviewerUserId, ReviewLoanApplicationRequest request, CancellationToken cancellationToken = default)
     {
         var application = await _adminLoanApplicationRepository.GetByIdAsync(applicationId, cancellationToken)
-            ?? throw new KeyNotFoundException("Application not found.");
+            ?? throw new AdminNotFoundException();
 
         var targetStatus = NormalizeStatus(request.TargetStatus);
         ValidateTransition(application.Status, targetStatus, request.Remarks);
@@ -113,29 +114,29 @@ public class AdminLoanApplicationService : IAdminLoanApplicationService
     {
         if (!AllowedDecisionStatuses.Contains(targetStatus))
         {
-            throw new InvalidOperationException("Target status is not supported by the admin workflow.");
+            throw new AdminConflictException("Target status is not supported by the admin workflow.");
         }
 
         if (string.Equals(currentStatus, ApplicationStatuses.Draft, StringComparison.OrdinalIgnoreCase))
         {
-            throw new InvalidOperationException("Draft applications cannot be reviewed by admin.");
+            throw new AdminConflictException("Draft applications cannot be reviewed by admin.");
         }
 
         if (string.Equals(currentStatus, targetStatus, StringComparison.OrdinalIgnoreCase))
         {
-            throw new InvalidOperationException("Application is already in the requested status.");
+            throw new AdminConflictException("Application is already in the requested status.");
         }
 
         if (string.Equals(targetStatus, ApplicationStatuses.Rejected, StringComparison.OrdinalIgnoreCase) &&
             string.IsNullOrWhiteSpace(remarks))
         {
-            throw new InvalidOperationException("Remarks are required when rejecting an application.");
+            throw new AdminValidationException("Remarks are required when rejecting an application.");
         }
 
         if (string.Equals(targetStatus, ApplicationStatuses.DocsPending, StringComparison.OrdinalIgnoreCase) &&
             string.IsNullOrWhiteSpace(remarks))
         {
-            throw new InvalidOperationException("Remarks are required when requesting document re-upload.");
+            throw new AdminValidationException("Remarks are required when requesting document re-upload.");
         }
 
         var allowedFromStatuses = targetStatus switch
@@ -149,7 +150,7 @@ public class AdminLoanApplicationService : IAdminLoanApplicationService
 
         if (!allowedFromStatuses.Contains(currentStatus, StringComparer.OrdinalIgnoreCase))
         {
-            throw new InvalidOperationException($"Status cannot be changed from {currentStatus} to {targetStatus}.");
+            throw new AdminConflictException($"Status cannot be changed from {currentStatus} to {targetStatus}.");
         }
     }
 

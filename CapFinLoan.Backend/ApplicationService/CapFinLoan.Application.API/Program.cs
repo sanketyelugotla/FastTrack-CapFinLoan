@@ -63,19 +63,6 @@ builder.Services
             RoleClaimType = System.Security.Claims.ClaimTypes.Role,
             NameClaimType = System.Security.Claims.ClaimTypes.Name
         };
-
-        // DEBUG: Log incoming JWT tokens
-        options.Events = new JwtBearerEvents
-        {
-            OnMessageReceived = context =>
-            {
-                if (!string.IsNullOrEmpty(context.Token))
-                {
-                    Console.WriteLine($"[DEBUG] Incoming JWT Token: {context.Token}");
-                }
-                return Task.CompletedTask;
-            }
-        };
     });
 
 builder.Services.AddAuthorization();
