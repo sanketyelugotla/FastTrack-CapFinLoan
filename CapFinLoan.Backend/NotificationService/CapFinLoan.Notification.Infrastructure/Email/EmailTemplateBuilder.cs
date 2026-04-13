@@ -47,6 +47,14 @@ public static class EmailTemplateBuilder
             $"<p>A new application has been submitted.</p><p>Applicant: <strong>{Escape(message.ApplicantName)}</strong><br/>Email: <strong>{Escape(message.Email)}</strong><br/>Amount: <strong>{Escape(amount)}</strong><br/>Tenure: <strong>{message.RequestedTenureMonths} months</strong></p>");
     }
 
+    public static string BuildApplicationStatusRolledBack(ApplicationStatusRolledBackEvent message, string recipientName)
+    {
+        var remarks = string.IsNullOrWhiteSpace(message.Remarks) ? string.Empty : $"<p><strong>Remarks:</strong> {Escape(message.Remarks)}</p>";
+        return BuildLayout(
+            $"Application Status Correction: {Escape(message.ApplicationNumber)}",
+            $"<p>Hello {Escape(recipientName)},</p><p>We apologize for the inconvenience. Your application <strong>{Escape(message.ApplicationNumber)}</strong> status has been corrected.</p><p>The status was rolled back from <strong>{Escape(message.RolledBackFromStatus)}</strong> to <strong>{Escape(message.PreviousStatus)}</strong> due to a technical issue.</p>{remarks}<p>Please check your application status again. If you have any questions, contact our support team.</p><p>Updated at {message.ChangedAtUtc:u} UTC.</p>");
+    }
+
     private static string BuildLayout(string title, string bodyHtml)
     {
         return $"<html><body style='font-family:Segoe UI,Arial,sans-serif;background:#f4f7fb;padding:24px;'><div style='max-width:640px;margin:auto;background:#ffffff;border:1px solid #e5e7eb;border-radius:10px;padding:24px;'><h2 style='margin-top:0;color:#0f172a;'>{title}</h2>{bodyHtml}<hr style='border:none;border-top:1px solid #e5e7eb;margin:20px 0;'/><p style='margin:0;color:#475569;font-size:13px;'>CapFinLoan Notification Service</p></div></body></html>";

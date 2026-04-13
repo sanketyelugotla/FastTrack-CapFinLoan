@@ -67,14 +67,14 @@ public class StatusSyncFailedConsumer : IConsumer<StatusSyncFailedEvent>
             Console.WriteLine($"[SAGA COMPENSATOR] Successfully rolled back {message.ApplicationNumber}: {message.AttemptedStatus} → {message.PreviousStatus}");
 
             // Notify other services about the rollback
-            await _publishEndpoint.Publish(new ApplicationStatusChangedEvent
+            await _publishEndpoint.Publish(new ApplicationStatusRolledBackEvent
             {
                 ApplicationId = application.Id,
                 ApplicantUserId = application.ApplicantUserId,
                 ApplicationNumber = application.ApplicationNumber,
-                PreviousStatus = message.AttemptedStatus,
-                NewStatus = message.PreviousStatus,
-                Remarks = $"[SAGA ROLLBACK] Status reverted due to sync failure.",
+                PreviousStatus = message.PreviousStatus,
+                RolledBackFromStatus = message.AttemptedStatus,
+                Remarks = $"[SAGA ROLLBACK] Status reverted due to sync failure: {message.FailureReason}",
                 ChangedByUserId = Guid.Empty,
                 ChangedAtUtc = now
             });
