@@ -32,6 +32,8 @@ builder.Services.AddMassTransit(x =>
     x.AddConsumer<StatusSyncFailedConsumer>();
     x.AddConsumer<NotificationFailedConsumer>();
 
+    x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("admin", false));
+
     x.UsingRabbitMq((context, cfg) =>
     {
         cfg.Host(rabbitHost, "/", h =>

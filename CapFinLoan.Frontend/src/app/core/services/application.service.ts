@@ -2,8 +2,10 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import {
+  ApplicantProfileResponse,
   LoanApplicationResponse,
   LoanApplicationStatusResponse,
+  SaveApplicantProfileRequest,
   SaveLoanApplicationRequest
 } from '../models/application.models';
 
@@ -14,6 +16,14 @@ export class ApplicationService {
 
   getMyApplications() {
     return this.http.get<LoanApplicationResponse[]>(`${this.apiUrl}/my`);
+  }
+
+  getProfile() {
+    return this.http.get<ApplicantProfileResponse>(`${this.apiUrl}/profile`);
+  }
+
+  saveProfile(data: SaveApplicantProfileRequest) {
+    return this.http.put<ApplicantProfileResponse>(`${this.apiUrl}/profile`, data);
   }
 
   getById(id: string) {

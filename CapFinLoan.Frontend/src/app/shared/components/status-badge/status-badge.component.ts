@@ -8,27 +8,33 @@ import { Component, input } from '@angular/core';
 export class StatusBadgeComponent {
   status = input.required<string>();
 
+  private normalizeStatus(status: string): string {
+    return (status ?? '').toLowerCase().replace(/[\s_-]/g, '');
+  }
+
   label() {
     const map: Record<string, string> = {
-      'Draft': 'Draft',
-      'Submitted': 'Submitted',
-      'DocsPending': 'Docs Pending',
-      'UnderReview': 'Under Review',
-      'Approved': 'Approved',
-      'Rejected': 'Rejected'
+      draft: 'Draft',
+      submitted: 'Submitted',
+      docspending: 'Docs Pending',
+      docsverified: 'Docs Verified',
+      underreview: 'Under Review',
+      approved: 'Approved',
+      rejected: 'Rejected'
     };
-    return map[this.status()] ?? this.status();
+    return map[this.normalizeStatus(this.status())] ?? this.status();
   }
 
   badgeClass() {
     const map: Record<string, string> = {
-      'Draft': 'badge badge-draft',
-      'Submitted': 'badge badge-submitted',
-      'DocsPending': 'badge badge-docs-pending',
-      'UnderReview': 'badge badge-under-review',
-      'Approved': 'badge badge-approved',
-      'Rejected': 'badge badge-rejected'
+      draft: 'badge badge-draft',
+      submitted: 'badge badge-submitted',
+      docspending: 'badge badge-docs-pending',
+      docsverified: 'badge badge-docs-pending',
+      underreview: 'badge badge-under-review',
+      approved: 'badge badge-approved',
+      rejected: 'badge badge-rejected'
     };
-    return map[this.status()] ?? 'badge badge-draft';
+    return map[this.normalizeStatus(this.status())] ?? 'badge badge-draft';
   }
 }

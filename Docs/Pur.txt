@@ -1,0 +1,55 @@
+File Structure
+1. Service.API (Receptionist)->  entry point of application 
+						handles http req controllers
+						routes/endpoints, Frontend backed connection
+						calls Application layer
+						Contains: Controllers,middleware,Program.cs,Apiconfigs
+
+2.Service.Application(Manager) -> Core logic like login , register, no db dependency
+					    Contains : Services(AuthService,UserService), DTO(Req and res models)
+						Interfaces → What can be done
+						DTOs       → What data is used
+						Services   → How it is done
+					    	Interfaces and validators
+
+3.Service.Application.Tests(Quality check) -> Tests App logic , Ensure business rules work correctly
+						     Contains: unit tests, mock services
+
+4.Service.Domain(Rules book) -> Core business models contains : entities, value objects
+
+5.Service.Infrastrtucture (Tools) -> External Service implementation 
+
+6.Persisitance(Storage room) -> Handles all DB operations contains ( DBcontext, repos, migrations)
+
+
+
+AUTH SERVICE
+
+
+.Domain -> User.cs -> this class is sent as table in db With these columns and DataAnnontaions pace is used for Validation
+					like required and maxlength
+	
+.Application -> Interfaces(Blueprint or set of rules(contract)) -> IGoogleTokenvalidator to get he user from frontend auth, IJwtservice to generate jw token after login
+						      ISignupOtpService for sending and consuming otp, IUserrepository to Add user, get user by id by email to save changes.
+
+			   AuthService.cs -> This is your AUTH ENGINE
+
+Handles:
+	•	Signup (OTP-based)
+	•	Login (secure + upgrade)
+	•	Google login
+	•	Profile management
+
+
+
+.API -> Controllers(AuthController -> API layer sends the req to Auth service) Frontend-> AuthController-> AuthService-> Repository-> DB
+	      Middleware -> 1. APIexpection middleware -> sealed class can’t be inherited, Invokasync method runs or every req, _next to pass to next middle ware, Last method is for exception mapping
+					 to Provide Clean responses for errors code
+					2. Correlation id middleware : Assigns a unique ID to every request,To track a request across systems
+					3.Request Loggin middleware -> runs all the time when program starts to track the logs by capturing requests info
+		
+		Program.cs -> AddScoped -> one instance per request connect Interfaces with implemetations 
+
+
+
+APPLICATION SERVICE

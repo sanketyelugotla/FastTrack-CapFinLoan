@@ -12,10 +12,15 @@
   </div>
 
   <!-- Filter Bar -->
-  <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/50 shadow-sm p-4 mb-5 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+  <div
+    class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/50 shadow-sm p-4 mb-5 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center"
+  >
     <!-- Search -->
     <div class="relative flex-1 min-w-0">
-      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-outline)] text-lg pointer-events-none">search</span>
+      <span
+        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-outline)] text-lg pointer-events-none"
+        >search</span
+      >
       <input
         type="text"
         placeholder="Search by app number or loan type..."
@@ -37,7 +42,7 @@
               : 'bg-[var(--color-surface-container-low)] text-[var(--color-on-surface-variant)] hover:bg-[var(--color-surface-container-high)]'
           "
         >
-          {{ opt === 'DocsPending' ? 'Docs Pending' : opt === 'DocsVerified' ? 'Docs Verified' : opt === 'UnderReview' ? 'Under Review' : opt }}
+          {{ opt }}
         </button>
       }
     </div>
@@ -56,12 +61,21 @@
         {{ applications().length === 0 ? 'No applications found' : 'No matching applications' }}
       </h3>
       <p class="text-sm text-[var(--color-on-surface-variant)] mb-6 font-body">
-        {{ applications().length === 0 ? 'Create your first loan application to get started.' : 'Try adjusting your filters or search query.' }}
+        {{
+          applications().length === 0
+            ? 'Create your first loan application to get started.'
+            : 'Try adjusting your filters or search query.'
+        }}
       </p>
       @if (applications().length === 0) {
         <a routerLink="/applicant/apply" class="btn-primary">Apply Now</a>
       } @else {
-        <button (click)="onStatusChange('All'); onSearchChange('')" class="btn-primary cursor-pointer">Clear Filters</button>
+        <button
+          (click)="onStatusChange('All'); onSearchChange('')"
+          class="btn-primary cursor-pointer"
+        >
+          Clear Filters
+        </button>
       }
     </div>
   } @else {
@@ -70,12 +84,36 @@
         <table class="w-full text-sm">
           <thead>
             <tr class="bg-[var(--color-surface-container-low)]">
-              <th class="text-left px-6 py-3 text-[10px] font-bold text-[var(--color-on-surface-variant)] uppercase tracking-wider font-label">App Number</th>
-              <th class="text-left px-6 py-3 text-[10px] font-bold text-[var(--color-on-surface-variant)] uppercase tracking-wider font-label">Amount</th>
-              <th class="text-left px-6 py-3 text-[10px] font-bold text-[var(--color-on-surface-variant)] uppercase tracking-wider font-label">Tenure</th>
-              <th class="text-left px-6 py-3 text-[10px] font-bold text-[var(--color-on-surface-variant)] uppercase tracking-wider font-label">Status</th>
-              <th class="text-left px-6 py-3 text-[10px] font-bold text-[var(--color-on-surface-variant)] uppercase tracking-wider font-label">Created</th>
-              <th class="text-left px-6 py-3 text-[10px] font-bold text-[var(--color-on-surface-variant)] uppercase tracking-wider font-label">Actions</th>
+              <th
+                class="text-left px-6 py-3 text-[10px] font-bold text-[var(--color-on-surface-variant)] uppercase tracking-wider font-label"
+              >
+                App Number
+              </th>
+              <th
+                class="text-left px-6 py-3 text-[10px] font-bold text-[var(--color-on-surface-variant)] uppercase tracking-wider font-label"
+              >
+                Amount
+              </th>
+              <th
+                class="text-left px-6 py-3 text-[10px] font-bold text-[var(--color-on-surface-variant)] uppercase tracking-wider font-label"
+              >
+                Tenure
+              </th>
+              <th
+                class="text-left px-6 py-3 text-[10px] font-bold text-[var(--color-on-surface-variant)] uppercase tracking-wider font-label"
+              >
+                Status
+              </th>
+              <th
+                class="text-left px-6 py-3 text-[10px] font-bold text-[var(--color-on-surface-variant)] uppercase tracking-wider font-label"
+              >
+                Created
+              </th>
+              <th
+                class="text-left px-6 py-3 text-[10px] font-bold text-[var(--color-on-surface-variant)] uppercase tracking-wider font-label"
+              >
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody class="divide-y divide-[var(--color-outline-variant)]/10">
@@ -95,7 +133,7 @@
                       class="text-[var(--color-primary)] font-medium hover:underline text-xs"
                       >View</a
                     >
-                    @if (app.status === 'Submitted' || app.status !== 'Draft') {
+                    @if (app.status !== 'Draft') {
                       <a
                         [routerLink]="['/applicant/applications', app.id, 'status']"
                         class="text-[var(--color-secondary)] font-medium hover:underline text-xs"

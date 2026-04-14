@@ -19,6 +19,10 @@ export class ApplicantDashboardComponent implements OnInit {
   applications = signal<LoanApplicationResponse[]>([]);
   loading = signal(true);
 
+  private normalizeStatus(status: string): string {
+    return (status ?? '').toLowerCase().replace(/[\s_-]/g, '');
+  }
+
   ngOnInit() {
     this.appService.getMyApplications().subscribe({
       next: (apps) => { this.applications.set(apps); this.loading.set(false); },
@@ -31,7 +35,8 @@ export class ApplicantDashboardComponent implements OnInit {
   }
 
   countByStatus(status: string): number {
-    return this.applications().filter(a => a.status === status).length;
+    const target = this.normalizeStatus(status);
+    return this.applications().filter(a => this.normalizeStatus(a.status) === target).length;
   }
 
   pendingReviewCount() {
@@ -40,8 +45,8 @@ export class ApplicantDashboardComponent implements OnInit {
 
   pendingRequirements() {
     const items: Array<{ title: string; detail: string; action: string; path: string | string[]; complete: boolean }> = [];
-    const draft = this.applications().find(app => app.status === 'Draft');
-    const docsPending = this.applications().find(app => app.status === 'DocsPending');
+    const draft = this.applications().find(app => this.normalizeStatus(app.status) === 'draft');
+    const docsPending = this.applications().find(app => this.normalizeStatus(app.status) === 'docspending');
 
     if (draft) {
       items.push({

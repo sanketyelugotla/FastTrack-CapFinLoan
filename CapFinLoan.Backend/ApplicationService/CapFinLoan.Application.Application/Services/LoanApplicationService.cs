@@ -10,13 +10,56 @@ namespace CapFinLoan.Application.Application.Services;
 
 public class LoanApplicationService : ILoanApplicationService
 {
+    private readonly IApplicantProfileRepository _applicantProfileRepository;
     private readonly ILoanApplicationRepository _loanApplicationRepository;
     private readonly IEventPublisher _eventPublisher;
 
-    public LoanApplicationService(ILoanApplicationRepository loanApplicationRepository, IEventPublisher eventPublisher)
+    public LoanApplicationService(IApplicantProfileRepository applicantProfileRepository, ILoanApplicationRepository loanApplicationRepository, IEventPublisher eventPublisher)
     {
+        _applicantProfileRepository = applicantProfileRepository;
         _loanApplicationRepository = loanApplicationRepository;
         _eventPublisher = eventPublisher;
+    }
+
+    public async Task<ApplicantProfileResponse> GetProfileAsync(Guid applicantUserId, CancellationToken cancellationToken = default)
+    {
+        var profile = await _applicantProfileRepository.GetByApplicantUserIdAsync(applicantUserId, cancellationToken);
+
+        if (profile is null)
+        {
+            return new ApplicantProfileResponse
+            {
+                ApplicantUserId = applicantUserId,
+                CreatedAtUtc = DateTime.UtcNow,
+                UpdatedAtUtc = DateTime.UtcNow
+            };
+        }
+
+        return MapProfile(profile);
+    }
+
+    public async Task<ApplicantProfileResponse> SaveProfileAsync(Guid applicantUserId, SaveApplicantProfileRequest request, CancellationToken cancellationToken = default)
+    {
+        var now = DateTime.UtcNow;
+        var profile = await _applicantProfileRepository.GetByApplicantUserIdAsync(applicantUserId, cancellationToken);
+
+        if (profile is null)
+        {
+            profile = new ApplicantProfile
+            {
+                ApplicantUserId = applicantUserId,
+                CreatedAtUtc = now,
+                UpdatedAtUtc = now
+            };
+
+            ApplyProfileRequest(profile, request, now);
+            await _applicantProfileRepository.AddAsync(profile, cancellationToken);
+            return MapProfile(profile);
+        }
+
+        ApplyProfileRequest(profile, request, now);
+        await _applicantProfileRepository.UpdateAsync(profile, cancellationToken);
+        return MapProfile(profile);
     }
 
     public async Task<LoanApplicationResponse> CreateDraftAsync(Guid applicantUserId, SaveLoanApplicationRequest request, CancellationToken cancellationToken = default)
@@ -189,6 +232,27 @@ public class LoanApplicationService : ILoanApplicationService
         application.UpdatedAtUtc = updatedAtUtc;
     }
 
+    private static void ApplyProfileRequest(ApplicantProfile profile, SaveApplicantProfileRequest request, DateTime updatedAtUtc)
+    {
+        profile.FirstName = request.PersonalDetails.FirstName.Trim();
+        profile.LastName = request.PersonalDetails.LastName.Trim();
+        profile.DateOfBirth = request.PersonalDetails.DateOfBirth;
+        profile.Gender = request.PersonalDetails.Gender.Trim();
+        profile.Email = request.PersonalDetails.Email.Trim();
+        profile.Phone = request.PersonalDetails.Phone.Trim();
+        profile.AddressLine1 = request.PersonalDetails.AddressLine1.Trim();
+        profile.AddressLine2 = request.PersonalDetails.AddressLine2.Trim();
+        profile.City = request.PersonalDetails.City.Trim();
+        profile.State = request.PersonalDetails.State.Trim();
+        profile.PostalCode = request.PersonalDetails.PostalCode.Trim();
+        profile.EmployerName = request.EmploymentDetails.EmployerName.Trim();
+        profile.EmploymentType = request.EmploymentDetails.EmploymentType.Trim();
+        profile.MonthlyIncome = request.EmploymentDetails.MonthlyIncome;
+        profile.AnnualIncome = request.EmploymentDetails.AnnualIncome;
+        profile.ExistingEmiAmount = request.EmploymentDetails.ExistingEmiAmount;
+        profile.UpdatedAtUtc = updatedAtUtc;
+    }
+
     private static void ValidateForSubmission(LoanApplication application)
     {
         var missingFields = new List<string>();
@@ -271,6 +335,38 @@ public class LoanApplicationService : ILoanApplicationService
             CreatedAtUtc = application.CreatedAtUtc,
             UpdatedAtUtc = application.UpdatedAtUtc,
             SubmittedAtUtc = application.SubmittedAtUtc
+        };
+    }
+
+    private static ApplicantProfileResponse MapProfile(ApplicantProfile profile)
+    {
+        return new ApplicantProfileResponse
+        {
+            ApplicantUserId = profile.ApplicantUserId,
+            PersonalDetails = new PersonalDetailsResponse
+            {
+                FirstName = profile.FirstName,
+                LastName = profile.LastName,
+                DateOfBirth = profile.DateOfBirth,
+                Gender = profile.Gender,
+                Email = profile.Email,
+                Phone = profile.Phone,
+                AddressLine1 = profile.AddressLine1,
+                AddressLine2 = profile.AddressLine2,
+                City = profile.City,
+                State = profile.State,
+                PostalCode = profile.PostalCode
+            },
+            EmploymentDetails = new EmploymentDetailsResponse
+            {
+                EmployerName = profile.EmployerName,
+                EmploymentType = profile.EmploymentType,
+                MonthlyIncome = profile.MonthlyIncome,
+                AnnualIncome = profile.AnnualIncome,
+                ExistingEmiAmount = profile.ExistingEmiAmount
+            },
+            CreatedAtUtc = profile.CreatedAtUtc,
+            UpdatedAtUtc = profile.UpdatedAtUtc
         };
     }
 }

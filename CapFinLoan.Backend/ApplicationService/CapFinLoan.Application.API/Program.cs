@@ -19,6 +19,7 @@ var rabbitPassword = builder.Configuration["RabbitMQ:Password"] ?? "guest";
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("CapFinLoanDb")));
 
+builder.Services.AddScoped<IApplicantProfileRepository, ApplicantProfileRepository>();
 builder.Services.AddScoped<ILoanApplicationRepository, LoanApplicationRepository>();
 builder.Services.AddScoped<ILoanApplicationService, LoanApplicationService>();
 builder.Services.AddScoped<IEventPublisher, RabbitMqEventPublisher>();
@@ -28,6 +29,8 @@ builder.Services.AddMassTransit(x =>
     x.AddConsumer<ApplicationStatusChangedConsumer>();
     x.AddConsumer<UserRegisteredConsumer>();
     x.AddConsumer<DocumentVerifiedConsumer>();
+
+    x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("application", false));
 
     x.UsingRabbitMq((context, cfg) =>
     {

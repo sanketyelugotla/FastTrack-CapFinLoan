@@ -1,76 +1,151 @@
 @if (loading()) {
   <div class="flex items-center justify-center py-32">
-    <span class="w-10 h-10 border-4 border-primary-fixed border-t-primary rounded-full animate-spin"></span>
+    <span
+      class="w-10 h-10 border-4 border-primary-fixed border-t-primary rounded-full animate-spin"
+    ></span>
   </div>
 } @else if (status(); as s) {
   <div class="max-w-4xl mx-auto py-8 animate-fade-in-up">
-    <!-- Header Area -->
     <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
-        <a routerLink="/applicant/applications" class="inline-flex items-center text-sm font-semibold text-outline hover:text-primary mb-3 group">
-          <span class="material-symbols-outlined text-[18px] mr-1 group-hover:-translate-x-1 transition-transform">arrow_back</span>
+        <a
+          routerLink="/applicant/applications"
+          class="inline-flex items-center text-sm font-semibold text-outline hover:text-primary mb-3 group"
+        >
+          <span
+            class="material-symbols-outlined text-[18px] mr-1 group-hover:-translate-x-1 transition-transform"
+          >
+            arrow_back
+          </span>
           Back to Applications
         </a>
         <h1 class="text-3xl font-headline font-extrabold text-primary mb-1">Track Application</h1>
-        <p class="text-sm text-on-surface-variant font-medium bg-surface-container-low px-3 py-1 rounded inline-block">
+        <p
+          class="text-sm text-on-surface-variant font-medium bg-surface-container-low px-3 py-1 rounded inline-block"
+        >
           Application #{{ s.applicationNumber }}
         </p>
       </div>
       <div class="text-left md:text-right">
         <p class="text-xs text-outline mb-1 font-bold uppercase tracking-wider">Current Status</p>
-        <app-status-badge [status]="s.currentStatus" class="scale-110 origin-left md:origin-right" />
+        <app-status-badge
+          [status]="s.currentStatus"
+          class="scale-110 origin-left md:origin-right"
+        />
       </div>
     </div>
 
     <!-- Macro Progress Bar / Stepper -->
-    <div class="bg-white dark:bg-slate-900 rounded-2xl p-8 mb-12 shadow-sm border border-slate-200 dark:border-slate-800 relative z-10">
+    <div
+      class="bg-white dark:bg-slate-900 rounded-2xl p-8 mb-12 shadow-sm border border-slate-200 dark:border-slate-800 relative z-10"
+    >
       <div class="relative flex justify-between items-center px-4 md:px-12">
         <!-- Background Track -->
-        <div class="absolute top-1/2 left-8 md:left-16 right-8 md:right-16 h-1 bg-surface-container-high -translate-y-1/2 -z-10 rounded-full"></div>
-        
+        <div
+          class="absolute top-1/2 left-8 md:left-16 right-8 md:right-16 h-1 bg-surface-container-high -translate-y-1/2 -z-10 rounded-full"
+        ></div>
+
         <!-- Active Track -->
-        <div class="absolute top-1/2 left-8 md:left-16 h-1 bg-gradient-to-r from-primary to-secondary -translate-y-1/2 -z-10 rounded-full transition-all duration-1000 ease-out"
-             [style.width]="(getProgressStep(s.currentStatus) - 1) * (100 / 3) + '%'"></div>
+        <div
+          class="absolute top-1/2 left-8 md:left-16 h-1 bg-gradient-to-r from-primary to-secondary -translate-y-1/2 -z-10 rounded-full transition-all duration-1000 ease-out"
+          [style.width]="(getProgressStep(s.currentStatus) - 1) * (100 / 3) + '%'"
+        ></div>
 
         <!-- Step 1: Draft -->
         <div class="flex flex-col items-center group">
-          <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold shadow-md ring-4 ring-white dark:ring-slate-900 transition-all duration-300"
-               [class]="getProgressStep(s.currentStatus) >= 1 ? 'bg-primary text-white scale-110' : 'bg-surface-container-highest text-outline'">
-            <span class="material-symbols-outlined text-[20px]">{{ getProgressStep(s.currentStatus) > 1 ? 'check' : 'edit_document' }}</span>
+          <div
+            class="w-12 h-12 rounded-full flex items-center justify-center font-bold shadow-md ring-4 ring-white dark:ring-slate-900 transition-all duration-300"
+            [class]="
+              getProgressStep(s.currentStatus) >= 1
+                ? 'bg-primary text-white scale-110'
+                : 'bg-surface-container-highest text-outline'
+            "
+          >
+            <span class="material-symbols-outlined text-[20px]">{{
+              getProgressStep(s.currentStatus) > 1 ? 'check' : 'edit_document'
+            }}</span>
           </div>
-          <span class="mt-3 text-xs font-bold uppercase tracking-wider" [class]="getProgressStep(s.currentStatus) >= 1 ? 'text-primary' : 'text-outline'">Drafted</span>
+          <span
+            class="mt-3 text-xs font-bold uppercase tracking-wider"
+            [class]="getProgressStep(s.currentStatus) >= 1 ? 'text-primary' : 'text-outline'"
+            >Drafted</span
+          >
         </div>
 
         <!-- Step 2: Submitted -->
         <div class="flex flex-col items-center group">
-          <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold shadow-md ring-4 ring-white dark:ring-slate-900 transition-all duration-300"
-               [class]="getProgressStep(s.currentStatus) >= 2 ? 'bg-primary text-white scale-110' : 'bg-surface-container-highest text-outline'">
-            <span class="material-symbols-outlined text-[20px]">{{ getProgressStep(s.currentStatus) > 2 ? 'check' : 'send' }}</span>
+          <div
+            class="w-12 h-12 rounded-full flex items-center justify-center font-bold shadow-md ring-4 ring-white dark:ring-slate-900 transition-all duration-300"
+            [class]="
+              getProgressStep(s.currentStatus) >= 2
+                ? 'bg-primary text-white scale-110'
+                : 'bg-surface-container-highest text-outline'
+            "
+          >
+            <span class="material-symbols-outlined text-[20px]">{{
+              getProgressStep(s.currentStatus) > 2 ? 'check' : 'send'
+            }}</span>
           </div>
-          <span class="mt-3 text-xs font-bold uppercase tracking-wider hidden sm:block" [class]="getProgressStep(s.currentStatus) >= 2 ? 'text-primary' : 'text-outline'">Submitted</span>
+          <span
+            class="mt-3 text-xs font-bold uppercase tracking-wider hidden sm:block"
+            [class]="getProgressStep(s.currentStatus) >= 2 ? 'text-primary' : 'text-outline'"
+            >Submitted</span
+          >
         </div>
 
         <!-- Step 3: Under Review -->
         <div class="flex flex-col items-center group">
-          <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold shadow-md ring-4 ring-white dark:ring-slate-900 transition-all duration-300"
-               [class]="getProgressStep(s.currentStatus) >= 3 ? 'bg-secondary text-white scale-110' : 'bg-surface-container-highest text-outline'">
+          <div
+            class="w-12 h-12 rounded-full flex items-center justify-center font-bold shadow-md ring-4 ring-white dark:ring-slate-900 transition-all duration-300"
+            [class]="
+              getProgressStep(s.currentStatus) >= 3
+                ? 'bg-secondary text-white scale-110'
+                : 'bg-surface-container-highest text-outline'
+            "
+          >
             <span class="material-symbols-outlined text-[20px]">
-              {{ getProgressStep(s.currentStatus) > 3 ? 'check' : (getProgressStep(s.currentStatus) === 3 ? 'sync' : 'hourglass_empty') }}
+              {{
+                getProgressStep(s.currentStatus) > 3
+                  ? 'check'
+                  : getProgressStep(s.currentStatus) === 3
+                    ? 'sync'
+                    : 'hourglass_empty'
+              }}
             </span>
           </div>
-          <span class="mt-3 text-xs font-bold uppercase tracking-wider hidden sm:block" [class]="getProgressStep(s.currentStatus) >= 3 ? 'text-secondary' : 'text-outline'">Review</span>
+          <span
+            class="mt-3 text-xs font-bold uppercase tracking-wider hidden sm:block"
+            [class]="getProgressStep(s.currentStatus) >= 3 ? 'text-secondary' : 'text-outline'"
+            >Review</span
+          >
         </div>
 
         <!-- Step 4: Decision -->
         <div class="flex flex-col items-center group">
-          <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold shadow-md ring-4 ring-white dark:ring-slate-900 transition-all duration-300"
-               [class]="getProgressStep(s.currentStatus) >= 4 ? (s.currentStatus === 'Rejected' ? 'bg-error text-white scale-110' : 'bg-success text-white scale-110') : 'bg-surface-container-highest text-outline'">
+          <div
+            class="w-12 h-12 rounded-full flex items-center justify-center font-bold shadow-md ring-4 ring-white dark:ring-slate-900 transition-all duration-300"
+            [class]="
+              getProgressStep(s.currentStatus) >= 4
+                ? isStatus('Rejected')
+                  ? 'bg-error text-white scale-110'
+                  : 'bg-success text-white scale-110'
+                : 'bg-surface-container-highest text-outline'
+            "
+          >
             <span class="material-symbols-outlined text-[20px]">
-              {{ s.currentStatus === 'Rejected' ? 'close' : (s.currentStatus === 'Approved' ? 'verified' : 'flag') }}
+              {{ isStatus('Rejected') ? 'close' : isStatus('Approved') ? 'verified' : 'flag' }}
             </span>
           </div>
-          <span class="mt-3 text-xs font-bold uppercase tracking-wider hidden sm:block" 
-                [class]="getProgressStep(s.currentStatus) >= 4 ? (s.currentStatus === 'Rejected' ? 'text-error' : 'text-success') : 'text-outline'">
+          <span
+            class="mt-3 text-xs font-bold uppercase tracking-wider hidden sm:block"
+            [class]="
+              getProgressStep(s.currentStatus) >= 4
+                ? isStatus('Rejected')
+                  ? 'text-error'
+                  : 'text-success'
+                : 'text-outline'
+            "
+          >
             Decision
           </span>
         </div>
@@ -81,34 +156,49 @@
     <h2 class="text-lg font-headline font-bold text-primary mb-6 flex items-center gap-2">
       <span class="material-symbols-outlined">history</span> Activity History
     </h2>
-    
+
     <div class="relative pl-6 md:pl-10">
       <!-- Vertical Timeline Line -->
-      <div class="absolute left-6 md:left-[35px] top-4 bottom-4 w-0.5 bg-gradient-to-b from-primary via-surface-container-high to-transparent"></div>
-      
+      <div
+        class="absolute left-6 md:left-[35px] top-4 bottom-4 w-0.5 bg-gradient-to-b from-primary via-surface-container-high to-transparent"
+      ></div>
+
       @for (entry of s.timeline; track entry.createdAtUtc; let i = $index) {
         <div class="relative mb-6 animate-fade-in-up" [style.animation-delay]="i * 100 + 'ms'">
           <!-- Node Dot -->
-          <div class="absolute -left-6 md:-left-4 w-8 h-8 rounded-full flex items-center justify-center z-10 shadow-sm"
-               [class]="i === 0 ? 'bg-primary ring-4 ring-white dark:ring-slate-900' : 'bg-white border-2 border-surface-container-higher dark:bg-slate-800 dark:border-slate-700'">
+          <div
+            class="absolute -left-6 md:-left-4 w-8 h-8 rounded-full flex items-center justify-center z-10 shadow-sm"
+            [class]="
+              i === 0
+                ? 'bg-primary ring-4 ring-white dark:ring-slate-900'
+                : 'bg-white border-2 border-surface-container-higher dark:bg-slate-800 dark:border-slate-700'
+            "
+          >
             @if (i === 0) {
               <div class="w-2.5 h-2.5 rounded-full bg-white animate-pulse"></div>
             } @else {
               <div class="w-2 h-2 rounded-full bg-outline"></div>
             }
           </div>
-          
+
           <!-- Event Card -->
-          <div class="ml-8 md:ml-12 bg-white dark:bg-slate-900 rounded-xl p-5 shadow-sm border border-slate-200 dark:border-slate-800 hover:shadow-md transition-shadow group">
+          <div
+            class="ml-8 md:ml-12 bg-white dark:bg-slate-900 rounded-xl p-5 shadow-sm border border-slate-200 dark:border-slate-800 hover:shadow-md transition-shadow group"
+          >
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
-              <span class="text-sm font-bold text-primary group-hover:text-secondary transition-colors">{{ entry.status }}</span>
+              <span
+                class="text-sm font-bold text-primary group-hover:text-secondary transition-colors"
+                >{{ entry.status }}</span
+              >
               <span class="text-xs font-medium text-outline flex items-center gap-1">
                 <span class="material-symbols-outlined text-[14px]">schedule</span>
                 {{ entry.createdAtUtc | date: 'MMM d, y, h:mm a' }}
               </span>
             </div>
             @if (entry.remarks) {
-              <p class="text-sm text-on-surface-variant bg-surface-container-low p-3 rounded-lg border-l-4 border-primary mt-3">
+              <p
+                class="text-sm text-on-surface-variant bg-surface-container-low p-3 rounded-lg border-l-4 border-primary mt-3"
+              >
                 "{{ entry.remarks }}"
               </p>
             }
@@ -127,38 +217,72 @@
     </div>
 
     @if (applications().length === 0) {
-      <div class="bg-white dark:bg-slate-900 rounded-2xl p-12 text-center border border-slate-200 dark:border-slate-800 shadow-sm">
-        <div class="w-20 h-20 bg-primary-container text-primary rounded-full flex items-center justify-center mx-auto mb-6">
+      <div
+        class="bg-white dark:bg-slate-900 rounded-2xl p-12 text-center border border-slate-200 dark:border-slate-800 shadow-sm"
+      >
+        <div
+          class="w-20 h-20 bg-primary-container text-primary rounded-full flex items-center justify-center mx-auto mb-6"
+        >
           <span class="material-symbols-outlined text-4xl">folder_off</span>
         </div>
         <h2 class="text-xl font-headline font-bold text-primary mb-2">No active applications</h2>
         <p class="text-sm text-on-surface-variant max-w-md mx-auto mb-8">
-          You haven't requested any financing yet. Start a new loan application to see your timeline appear here.
+          You haven't requested any financing yet. Start a new loan application to see your timeline
+          appear here.
         </p>
-        <a routerLink="/applicant/apply" class="btn-primary inline-flex items-center gap-2 shadow-lg hover:shadow-xl transition-all">
+        <a
+          routerLink="/applicant/apply"
+          class="btn-primary inline-flex items-center gap-2 shadow-lg hover:shadow-xl transition-all"
+        >
           <span class="material-symbols-outlined">add</span>
           Start Application
         </a>
       </div>
     } @else {
-      <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+      <div
+        class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden"
+      >
         <div class="overflow-x-auto">
           <table class="w-full text-sm">
             <thead>
               <tr class="bg-surface-container-low border-b border-surface-container-high">
-                <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-primary">Application</th>
-                <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-primary">Created</th>
-                <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-primary">Amount</th>
-                <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-primary">Status</th>
-                <th class="px-6 py-4 text-right text-xs font-bold uppercase tracking-wider text-primary">Action</th>
+                <th
+                  class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-primary"
+                >
+                  Application
+                </th>
+                <th
+                  class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-primary"
+                >
+                  Created
+                </th>
+                <th
+                  class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-primary"
+                >
+                  Amount
+                </th>
+                <th
+                  class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-primary"
+                >
+                  Status
+                </th>
+                <th
+                  class="px-6 py-4 text-right text-xs font-bold uppercase tracking-wider text-primary"
+                >
+                  Action
+                </th>
               </tr>
             </thead>
             <tbody class="divide-y divide-surface-container-high">
               @for (app of applications(); track app.id) {
                 <tr class="transition-colors hover:bg-surface-container-lowest group">
                   <td class="px-6 py-5">
-                    <div class="font-bold text-primary font-headline">{{ app.applicationNumber }}</div>
-                    <div class="text-xs text-outline">{{ app.loanDetails.loanPurpose || 'Personal Loan' }}</div>
+                    <div class="font-bold text-primary font-headline">
+                      {{ app.applicationNumber }}
+                    </div>
+                    <div class="text-xs text-outline">
+                      {{ app.loanDetails.loanPurpose || 'Personal Loan' }}
+                    </div>
                   </td>
                   <td class="px-6 py-5 text-on-surface-variant font-medium">
                     {{ app.createdAtUtc | date: 'mediumDate' }}
@@ -168,8 +292,10 @@
                   </td>
                   <td class="px-6 py-5"><app-status-badge [status]="app.status" /></td>
                   <td class="px-6 py-5 text-right relative">
-                    <a [routerLink]="['/applicant/applications', app.id, 'status']"
-                       class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary-container text-primary hover:bg-primary hover:text-white transition-all shadow-sm">
+                    <a
+                      [routerLink]="['/applicant/applications', app.id, 'status']"
+                      class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary-container text-primary hover:bg-primary hover:text-white transition-all shadow-sm"
+                    >
                       <span class="material-symbols-outlined text-[20px]">chevron_right</span>
                     </a>
                   </td>

@@ -45,6 +45,8 @@ builder.Services.AddScoped<CapFinLoan.Auth.Application.Interfaces.IEventPublishe
 
 builder.Services.AddMassTransit(x =>
 {
+    x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("auth", false));
+
     x.UsingRabbitMq((context, cfg) =>
     {
         cfg.Host(rabbitHost, "/", h =>

@@ -6,6 +6,8 @@ namespace CapFinLoan.Application.Application.Interfaces;
 public interface ILoanApplicationService
 {
     Task<LoanApplicationResponse> CreateDraftAsync(Guid applicantUserId, SaveLoanApplicationRequest request, CancellationToken cancellationToken = default);
+    Task<ApplicantProfileResponse> GetProfileAsync(Guid applicantUserId, CancellationToken cancellationToken = default);
+    Task<ApplicantProfileResponse> SaveProfileAsync(Guid applicantUserId, SaveApplicantProfileRequest request, CancellationToken cancellationToken = default);
     Task<LoanApplicationResponse> UpdateDraftAsync(Guid applicationId, Guid requesterUserId, bool isAdmin, SaveLoanApplicationRequest request, CancellationToken cancellationToken = default);
     Task<LoanApplicationResponse> GetByIdAsync(Guid applicationId, Guid requesterUserId, bool isAdmin, CancellationToken cancellationToken = default);
     Task<IReadOnlyCollection<LoanApplicationResponse>> GetMineAsync(Guid applicantUserId, CancellationToken cancellationToken = default);

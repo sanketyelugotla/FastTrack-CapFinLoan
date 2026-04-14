@@ -7,12 +7,35 @@ public class ApplicationDbContext : DbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
+    public DbSet<ApplicantProfile> ApplicantProfiles => Set<ApplicantProfile>();
     public DbSet<LoanApplication> LoanApplications => Set<LoanApplication>();
     public DbSet<ApplicationStatusHistory> ApplicationStatusHistories => Set<ApplicationStatusHistory>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("core");
+
+        modelBuilder.Entity<ApplicantProfile>(entity =>
+        {
+            entity.ToTable("ApplicantProfiles");
+            entity.HasKey(x => x.ApplicantUserId);
+
+            entity.Property(x => x.FirstName).HasMaxLength(100);
+            entity.Property(x => x.LastName).HasMaxLength(100);
+            entity.Property(x => x.Gender).HasMaxLength(20);
+            entity.Property(x => x.Email).HasMaxLength(150);
+            entity.Property(x => x.Phone).HasMaxLength(20);
+            entity.Property(x => x.AddressLine1).HasMaxLength(250);
+            entity.Property(x => x.AddressLine2).HasMaxLength(250);
+            entity.Property(x => x.City).HasMaxLength(100);
+            entity.Property(x => x.State).HasMaxLength(100);
+            entity.Property(x => x.PostalCode).HasMaxLength(15);
+            entity.Property(x => x.EmployerName).HasMaxLength(150);
+            entity.Property(x => x.EmploymentType).HasMaxLength(50);
+            entity.Property(x => x.MonthlyIncome).HasColumnType("decimal(18,2)");
+            entity.Property(x => x.AnnualIncome).HasColumnType("decimal(18,2)");
+            entity.Property(x => x.ExistingEmiAmount).HasColumnType("decimal(18,2)");
+        });
 
         modelBuilder.Entity<LoanApplication>(entity =>
         {

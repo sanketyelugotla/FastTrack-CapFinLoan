@@ -33,6 +33,11 @@ export interface SaveLoanApplicationRequest {
   loanDetails: LoanDetailsRequest;
 }
 
+export interface SaveApplicantProfileRequest {
+  personalDetails: PersonalDetailsRequest;
+  employmentDetails: EmploymentDetailsRequest;
+}
+
 export interface PersonalDetailsResponse {
   firstName: string;
   lastName: string;
@@ -73,6 +78,14 @@ export interface LoanApplicationResponse {
   createdAtUtc: string;
   updatedAtUtc: string;
   submittedAtUtc: string | null;
+}
+
+export interface ApplicantProfileResponse {
+  applicantUserId: string;
+  personalDetails: PersonalDetailsResponse;
+  employmentDetails: EmploymentDetailsResponse;
+  createdAtUtc: string;
+  updatedAtUtc: string;
 }
 
 export interface ApplicationStatusHistoryResponse {

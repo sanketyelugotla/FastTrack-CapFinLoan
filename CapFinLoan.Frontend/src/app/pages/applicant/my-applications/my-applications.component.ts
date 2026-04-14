@@ -17,11 +17,15 @@ export class MyApplicationsComponent implements OnInit {
   applications = signal<LoanApplicationResponse[]>([]);
   loading = signal(true);
 
+  private normalizeStatus(status: string): string {
+    return (status ?? '').toLowerCase().replace(/[\s_-]/g, '');
+  }
+
   // Filter state
   statusFilter = signal('All');
   searchQuery = signal('');
 
-  readonly statusOptions = ['All', 'Draft', 'Submitted', 'DocsPending', 'DocsVerified', 'UnderReview', 'Approved', 'Rejected'];
+  readonly statusOptions = ['All', 'Draft', 'Submitted', 'Docs Pending', 'Docs Verified', 'Under Review', 'Approved', 'Rejected'];
 
   filteredApplications = computed(() => {
     let apps = this.applications();
@@ -29,7 +33,8 @@ export class MyApplicationsComponent implements OnInit {
     const query = this.searchQuery().toLowerCase().trim();
 
     if (status !== 'All') {
-      apps = apps.filter(a => a.status === status);
+      const target = this.normalizeStatus(status);
+      apps = apps.filter(a => this.normalizeStatus(a.status) === target);
     }
     if (query) {
       apps = apps.filter(a =>

@@ -1,15 +1,17 @@
 1. Structure
 
 a. API ->  
-	Controllers
+	* Entry point of the request
+	Controllers (Http routes)
 	Middleware(Global exception handling)
 
-b. Application (Use cases, bussiness workflows and service interfaces) -> 
-	Contracts (Requests, Responses)
+b. Application (Use cases, bussiness workflows, logic and service interfaces) -> 
+	Contracts (Request, Response bodies)
 	Interfaces (For Repositories, Services, Event publishers)
 	Services (Implements Core microservice operations interface)
+	* Does not contain any relation with database
 
-c. Domain (Core business logic and rules) ->
+c. Domain (Core business Models and rules) ->
 	Constants (Fixed values for current micro service)
 	Entities (Models in current micro service DB)
 
@@ -19,6 +21,7 @@ d. Infrastructure (Technical, External and integration codes) ->
 e. Persistence (Handles data access and storage, Repositories) ->
 	Data (DbContext - Tables and Fluent API)
 	Repositories (The actual logic linked with database)
+	Migrations
 
 
 use case, architecture and database diagram

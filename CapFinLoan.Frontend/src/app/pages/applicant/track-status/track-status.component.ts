@@ -20,6 +20,28 @@ export class TrackStatusComponent implements OnInit {
   applications = signal<LoanApplicationResponse[]>([]);
   loading = signal(true);
 
+  private normalizeStatus(status: string | null | undefined): string {
+    return (status ?? '').toLowerCase().replace(/[\s_-]/g, '');
+  }
+
+  isStatus(status: string): boolean {
+    return this.normalizeStatus(this.status()?.currentStatus) === this.normalizeStatus(status);
+  }
+
+  displayStatus(status: string | null | undefined): string {
+    const normalized = this.normalizeStatus(status);
+    const map: Record<string, string> = {
+      draft: 'Draft',
+      submitted: 'Submitted',
+      docspending: 'Docs Pending',
+      docsverified: 'Docs Verified',
+      underreview: 'Under Review',
+      approved: 'Approved',
+      rejected: 'Rejected'
+    };
+    return map[normalized] ?? (status ?? '');
+  }
+
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
 

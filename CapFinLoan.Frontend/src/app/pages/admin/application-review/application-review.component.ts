@@ -14,6 +14,7 @@ import { StatusBadgeComponent } from '../../../shared/components/status-badge/st
   templateUrl: './application-review.component.html',
   styleUrl: './application-review.component.css'
 })
+
 export class ApplicationReviewComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private adminService = inject(AdminService);
@@ -46,13 +47,17 @@ export class ApplicationReviewComponent implements OnInit {
     return this.normalizeStatus(this.app()?.status) === this.normalizeStatus(status);
   }
 
+  canStartReview(): boolean {
+    return !this.isStatus('UnderReview') && !this.isStatus('Approved') && !this.isStatus('Rejected');
+  }
+
   canMarkUnderReview(): boolean {
     const normalized = this.normalizeStatus(this.app()?.status);
     return normalized === 'submitted' || normalized === 'docspending' || normalized === 'docsverified';
   }
 
   canShowDecisionActions(): boolean {
-    return !this.isStatus('Approved') && !this.isStatus('Rejected');
+    return this.isStatus('UnderReview');
   }
 
   private loadDocuments(applicationId: string) {

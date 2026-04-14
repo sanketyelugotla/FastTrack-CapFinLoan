@@ -28,6 +28,8 @@ builder.Services.AddMassTransit(x =>
     x.AddConsumer<ApplicationStatusChangedConsumer>();
     x.AddConsumer<ApplicationStatusRolledBackConsumer>();
     x.AddConsumer<DocumentVerifiedConsumer>(); x.AddConsumer<OtpSendConsumer>();
+    x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("notification", false));
+
     x.UsingRabbitMq((context, cfg) =>
     {
         cfg.Host(rabbitHost, "/", h =>

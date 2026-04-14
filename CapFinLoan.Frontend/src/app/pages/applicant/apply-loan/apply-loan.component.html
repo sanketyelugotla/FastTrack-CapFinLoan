@@ -79,9 +79,18 @@
     }
 
     @if (isReadOnly()) {
-      <div class="p-4 mb-6 rounded-xl bg-amber-50 border border-amber-300 text-amber-800 text-sm font-medium flex items-center gap-3">
-        <span class="material-symbols-outlined text-xl shrink-0" style="font-variation-settings: 'FILL' 1;">lock</span>
-        <span>This application is <strong>{{ appStatus() }}</strong> and can no longer be edited. Document uploads are disabled.</span>
+      <div
+        class="p-4 mb-6 rounded-xl bg-amber-50 border border-amber-300 text-amber-800 text-sm font-medium flex items-center gap-3"
+      >
+        <span
+          class="material-symbols-outlined text-xl shrink-0"
+          style="font-variation-settings: 'FILL' 1"
+          >lock</span
+        >
+        <span
+          >This application is <strong>{{ appStatus() }}</strong> and can no longer be edited.
+          Document uploads are disabled.</span
+        >
       </div>
     }
 
@@ -413,18 +422,28 @@
         @if (currentStep() === 3) {
           <!-- Step 4: Documents -->
           <div class="space-y-6">
-            <p class="text-sm text-[var(--color-on-surface-variant)] pb-2 border-b border-[var(--color-surface-container-low)]">
-              Upload the required documents below to support your loan application. You can always replace them later.
+            <p
+              class="text-sm text-[var(--color-on-surface-variant)] pb-2 border-b border-[var(--color-surface-container-low)]"
+            >
+              Upload the required documents below to support your loan application. You can always
+              replace them later.
             </p>
 
             @if (docsLoading()) {
               <div class="flex justify-center py-10">
-                <span class="material-symbols-outlined animate-spin text-[var(--color-primary)] text-3xl">sync</span>
+                <span
+                  class="material-symbols-outlined animate-spin text-[var(--color-primary)] text-3xl"
+                  >sync</span
+                >
               </div>
             } @else {
               @if (uploadSuccess()) {
-                <div class="p-3 bg-green-50 text-green-700 rounded-lg text-sm mb-4 border border-green-200">
-                  <span class="material-symbols-outlined text-sm align-middle mr-1">check_circle</span>
+                <div
+                  class="p-3 bg-green-50 text-green-700 rounded-lg text-sm mb-4 border border-green-200"
+                >
+                  <span class="material-symbols-outlined text-sm align-middle mr-1"
+                    >check_circle</span
+                  >
                   {{ uploadSuccess() }}
                 </div>
               }
@@ -432,30 +451,58 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 @for (docType of docTypes; track docType.value) {
                   @let doc = getDocForType(docType.value);
-                  <div class="border border-[var(--color-outline-variant)]/20 shadow-sm rounded-xl p-4 bg-white dark:bg-slate-900 group hover:shadow-md transition-shadow">
+                  <div
+                    class="border border-[var(--color-outline-variant)]/20 shadow-sm rounded-xl p-4 bg-white dark:bg-slate-900 group hover:shadow-md transition-shadow"
+                  >
                     <div class="flex items-start gap-4">
-                      <div class="w-10 h-10 bg-[var(--color-primary-fixed)] text-[var(--color-primary)] rounded-lg flex items-center justify-center shrink-0">
+                      <div
+                        class="w-10 h-10 bg-[var(--color-primary-fixed)] text-[var(--color-primary)] rounded-lg flex items-center justify-center shrink-0"
+                      >
                         <span class="material-symbols-outlined">{{ docType.icon }}</span>
                       </div>
                       <div class="flex-1">
-                        <h4 class="font-bold text-[var(--color-primary)] text-sm font-headline">{{ docType.label }}</h4>
-                        <p class="text-xs text-[var(--color-on-surface-variant)] font-body mb-3">{{ docType.description }}</p>
+                        <h4 class="font-bold text-[var(--color-primary)] text-sm font-headline">
+                          {{ docType.label }}
+                        </h4>
+                        <p class="text-xs text-[var(--color-on-surface-variant)] font-body mb-3">
+                          {{ docType.description }}
+                        </p>
 
                         @if (doc) {
                           <div class="bg-[var(--color-surface-container-low)] p-3 rounded-lg">
                             <div class="flex justify-between items-start mb-2">
-                              <span class="text-xs font-semibold truncate max-w-[120px]">{{ doc.fileName }}</span>
-                              <span class="text-[10px] px-2 py-0.5 rounded-full font-bold border" [class]="getStatusClass(doc.status)">
-                                {{ doc.status === 'ReuploadRequired' ? 'RE-UPLOAD' : doc.status.toUpperCase() }}
+                              <span class="text-xs font-semibold truncate max-w-[120px]">{{
+                                doc.fileName
+                              }}</span>
+                              <span
+                                class="text-[10px] px-2 py-0.5 rounded-full font-bold border"
+                                [class]="getStatusClass(doc.status)"
+                              >
+                                {{
+                                  doc.status === 'ReuploadRequired'
+                                    ? 'RE-UPLOAD'
+                                    : doc.status.toUpperCase()
+                                }}
                               </span>
                             </div>
-                            @if (!isReadOnly()) {
-                              <label class="w-full text-center block text-xs font-bold text-[var(--color-primary)] bg-white border border-[var(--color-primary)]/20 py-2 rounded cursor-pointer hover:bg-slate-50 transition-colors">
+                            @if (!isReadOnly() && doc.status !== 'Verified') {
+                              <label
+                                class="w-full text-center block text-xs font-bold text-[var(--color-primary)] bg-white border border-[var(--color-primary)]/20 py-2 rounded cursor-pointer hover:bg-slate-50 transition-colors"
+                              >
                                 Replace
-                                <input type="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png" (change)="replaceFile($event, doc.id, docType.value)" />
+                                <input
+                                  type="file"
+                                  class="hidden"
+                                  accept=".pdf,.jpg,.jpeg,.png"
+                                  (change)="replaceFile($event, doc.id, docType.value)"
+                                />
                               </label>
                             } @else {
-                              <p class="text-center text-xs text-[var(--color-on-surface-variant)] italic py-1">Read-only</p>
+                              <p
+                                class="text-center text-xs text-[var(--color-on-surface-variant)] italic py-1"
+                              >
+                                Verified documents cannot be edited
+                              </p>
                             }
                           </div>
                         } @else {
@@ -463,30 +510,65 @@
                             @let genericDoc = getGenericDocForType(docType.value);
                             @if (genericDoc) {
                               <div class="space-y-2">
-                                <button type="button" (click)="linkExistingDoc(genericDoc.id, docType.value)" class="w-full flex items-center justify-center gap-2 text-xs font-bold text-[var(--color-primary)] bg-[var(--color-surface-container-low)] border border-[var(--color-primary)]/20 py-2 rounded shadow-sm hover:bg-[var(--color-surface-container-high)] transition-all">
+                                <button
+                                  type="button"
+                                  (click)="linkExistingDoc(genericDoc.id, docType.value)"
+                                  class="w-full flex items-center justify-center gap-2 text-xs font-bold text-[var(--color-primary)] bg-[var(--color-surface-container-low)] border border-[var(--color-primary)]/20 py-2 rounded shadow-sm hover:bg-[var(--color-surface-container-high)] transition-all"
+                                >
                                   <span class="material-symbols-outlined text-[14px]">link</span>
                                   Use Existing ({{ genericDoc.fileName }})
                                 </button>
                                 <div class="relative flex items-center py-1">
-                                  <div class="flex-grow border-t border-[var(--color-outline-variant)]/30"></div>
-                                  <span class="mx-2 text-[10px] text-[var(--color-outline-variant)] uppercase">or</span>
-                                  <div class="flex-grow border-t border-[var(--color-outline-variant)]/30"></div>
+                                  <div
+                                    class="flex-grow border-t border-[var(--color-outline-variant)]/30"
+                                  ></div>
+                                  <span
+                                    class="mx-2 text-[10px] text-[var(--color-outline-variant)] uppercase"
+                                    >or</span
+                                  >
+                                  <div
+                                    class="flex-grow border-t border-[var(--color-outline-variant)]/30"
+                                  ></div>
                                 </div>
-                                <label class="w-full text-center block text-xs font-bold text-white bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] py-2 rounded shadow-sm hover:scale-[1.02] active:scale-95 cursor-pointer transition-all">
-                                  <span class="material-symbols-outlined text-[14px] align-middle mr-1">upload</span>
+                                <label
+                                  class="w-full text-center block text-xs font-bold text-white bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] py-2 rounded shadow-sm hover:scale-[1.02] active:scale-95 cursor-pointer transition-all"
+                                >
+                                  <span
+                                    class="material-symbols-outlined text-[14px] align-middle mr-1"
+                                    >upload</span
+                                  >
                                   Upload New
-                                  <input type="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png" (change)="uploadFile($event, docType.value)" />
+                                  <input
+                                    type="file"
+                                    class="hidden"
+                                    accept=".pdf,.jpg,.jpeg,.png"
+                                    (change)="uploadFile($event, docType.value)"
+                                  />
                                 </label>
                               </div>
                             } @else {
-                              <label class="w-full text-center block text-xs font-bold text-white bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] py-2 rounded shadow-sm hover:scale-[1.02] active:scale-95 cursor-pointer transition-all">
-                                <span class="material-symbols-outlined text-[14px] align-middle mr-1">upload</span>
+                              <label
+                                class="w-full text-center block text-xs font-bold text-white bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] py-2 rounded shadow-sm hover:scale-[1.02] active:scale-95 cursor-pointer transition-all"
+                              >
+                                <span
+                                  class="material-symbols-outlined text-[14px] align-middle mr-1"
+                                  >upload</span
+                                >
                                 Upload
-                                <input type="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png" (change)="uploadFile($event, docType.value)" />
+                                <input
+                                  type="file"
+                                  class="hidden"
+                                  accept=".pdf,.jpg,.jpeg,.png"
+                                  (change)="uploadFile($event, docType.value)"
+                                />
                               </label>
                             }
                           } @else {
-                            <p class="text-center text-xs text-[var(--color-on-surface-variant)] italic py-2">No document uploaded</p>
+                            <p
+                              class="text-center text-xs text-[var(--color-on-surface-variant)] italic py-2"
+                            >
+                              No document uploaded
+                            </p>
                           }
                         }
                       </div>

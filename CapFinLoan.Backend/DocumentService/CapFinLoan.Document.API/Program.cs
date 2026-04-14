@@ -24,10 +24,14 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<CapFinLoan.Document.API.Handlers.TokenForwardingHandler>();
 
 // Register typed HttpClient for DocumentService to interact with ApplicationService
+// Determine ApplicationService URL based on environment
+var applicationServiceUrl = builder.Environment.IsEnvironment("Docker")
+    ? "http://application-service:8080"
+    : "http://localhost:5022";
+
 builder.Services.AddHttpClient<IDocumentService, DocumentService>(client =>
 {
-    // Point directly to ApplicationService
-    client.BaseAddress = new Uri("http://localhost:5022");
+    client.BaseAddress = new Uri(applicationServiceUrl);
 }).AddHttpMessageHandler<CapFinLoan.Document.API.Handlers.TokenForwardingHandler>();
 
 builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
@@ -37,6 +41,8 @@ builder.Services.AddScoped<IEventPublisher, RabbitMqEventPublisher>();
 
 builder.Services.AddMassTransit(x =>
 {
+    x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("document", false));
+
     x.UsingRabbitMq((context, cfg) =>
     {
         cfg.Host(rabbitHost, "/", h =>

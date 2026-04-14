@@ -78,7 +78,10 @@ export class ApplyLoanComponent implements OnInit {
       this.loading.set(true);
       this.appService.getById(id).subscribe({
         next: (app) => {
-          this.form.personalDetails = { ...app.personalDetails };
+          this.form.personalDetails = {
+            ...app.personalDetails,
+            dateOfBirth: this.normalizeDateForInput(app.personalDetails.dateOfBirth)
+          };
           this.form.employmentDetails = { ...app.employmentDetails };
           this.form.loanDetails = { ...app.loanDetails };
           this.appStatus.set(app.status);
@@ -229,18 +232,15 @@ export class ApplyLoanComponent implements OnInit {
   }
 
   private loadProfileData() {
-    const saved = localStorage.getItem('capfinloan_profile');
-    if (!saved) return;
-
-    try {
-      const profile = JSON.parse(saved);
-      let filled = false;
-
-      if (profile.personalDetails) {
+    this.appService.getProfile().subscribe({
+      next: (profile) => {
+        let filled = false;
         const p = profile.personalDetails;
+        const e = profile.employmentDetails;
+
         if (p.firstName) { this.form.personalDetails.firstName = p.firstName; filled = true; }
         if (p.lastName) { this.form.personalDetails.lastName = p.lastName; filled = true; }
-        if (p.dateOfBirth) { this.form.personalDetails.dateOfBirth = p.dateOfBirth; filled = true; }
+        if (p.dateOfBirth) { this.form.personalDetails.dateOfBirth = this.normalizeDateForInput(p.dateOfBirth); filled = true; }
         if (p.gender) { this.form.personalDetails.gender = p.gender; filled = true; }
         if (p.email) { this.form.personalDetails.email = p.email; filled = true; }
         if (p.phone) { this.form.personalDetails.phone = p.phone; filled = true; }
@@ -249,22 +249,41 @@ export class ApplyLoanComponent implements OnInit {
         if (p.city) { this.form.personalDetails.city = p.city; filled = true; }
         if (p.state) { this.form.personalDetails.state = p.state; filled = true; }
         if (p.postalCode) { this.form.personalDetails.postalCode = p.postalCode; filled = true; }
-      }
 
-      if (profile.employmentDetails) {
-        const e = profile.employmentDetails;
         if (e.employerName) { this.form.employmentDetails.employerName = e.employerName; filled = true; }
         if (e.employmentType) { this.form.employmentDetails.employmentType = e.employmentType; filled = true; }
         if (e.monthlyIncome) { this.form.employmentDetails.monthlyIncome = e.monthlyIncome; filled = true; }
         if (e.annualIncome) { this.form.employmentDetails.annualIncome = e.annualIncome; filled = true; }
         if (e.existingEmiAmount !== undefined) { this.form.employmentDetails.existingEmiAmount = e.existingEmiAmount; filled = true; }
-      }
 
-      if (filled) {
-        this.profileAutoFilled.set(true);
-        setTimeout(() => this.profileAutoFilled.set(false), 5000);
+        if (filled) {
+          this.profileAutoFilled.set(true);
+          setTimeout(() => this.profileAutoFilled.set(false), 5000);
+        }
       }
-    } catch { /* ignore corrupt data */ }
+    });
+  }
+
+  private normalizeDateForInput(value: string | null | undefined): string | null {
+    if (!value) {
+      return null;
+    }
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+      return value;
+    }
+
+    const datePart = value.slice(0, 10);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
+      return datePart;
+    }
+
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) {
+      return null;
+    }
+
+    return parsed.toISOString().slice(0, 10);
   }
 
   // ─── Navigation ────────────────────────────────────────────────────────────
@@ -298,7 +317,7 @@ export class ApplyLoanComponent implements OnInit {
         this.saving.set(false);
         this.currentStep.set(this.currentStep() + 1);
         if (this.currentStep() === 3) {
-           this.loadDocuments(res.id);
+          this.loadDocuments(res.id);
         }
       },
       error: (err) => {

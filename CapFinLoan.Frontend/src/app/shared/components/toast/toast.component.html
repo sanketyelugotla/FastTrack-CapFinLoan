@@ -1,0 +1,26 @@
+<div
+  class="fixed bottom-6 right-6 z-9999 flex flex-col gap-3 pointer-events-none"
+  aria-live="polite"
+>
+  @for (toast of errorService.toasts(); track toast.id) {
+    <div
+      class="pointer-events-auto flex items-start gap-3 px-5 py-4 rounded-xl shadow-2xl text-sm font-medium font-body max-w-sm animate-slide-in-up"
+      [class]="getClass(toast)"
+    >
+      <span
+        class="material-symbols-outlined text-lg shrink-0 mt-0.5"
+        style="font-variation-settings: 'FILL' 1"
+      >
+        {{ getIcon(toast) }}
+      </span>
+      <span class="flex-1 leading-snug">{{ toast.text }}</span>
+      <button
+        (click)="errorService.dismiss(toast.id)"
+        class="shrink-0 opacity-60 hover:opacity-100 transition-opacity cursor-pointer ml-1"
+        aria-label="Dismiss"
+      >
+        <span class="material-symbols-outlined text-base">close</span>
+      </button>
+    </div>
+  }
+</div>

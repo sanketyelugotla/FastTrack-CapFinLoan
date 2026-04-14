@@ -20,6 +20,22 @@ public class ApplicationsController : ControllerBase
         _loanApplicationService = loanApplicationService;
     }
 
+    [HttpGet("profile")]
+    [Authorize(Roles = RoleNames.Applicant)]
+    public async Task<IActionResult> GetProfile(CancellationToken cancellationToken)
+    {
+        var profile = await _loanApplicationService.GetProfileAsync(GetUserId(), cancellationToken);
+        return Ok(profile);
+    }
+
+    [HttpPut("profile")]
+    [Authorize(Roles = RoleNames.Applicant)]
+    public async Task<IActionResult> SaveProfile([FromBody] SaveApplicantProfileRequest request, CancellationToken cancellationToken)
+    {
+        var profile = await _loanApplicationService.SaveProfileAsync(GetUserId(), request, cancellationToken);
+        return Ok(profile);
+    }
+
     [HttpGet("my")]
     public async Task<IActionResult> GetMine(CancellationToken cancellationToken)
     {

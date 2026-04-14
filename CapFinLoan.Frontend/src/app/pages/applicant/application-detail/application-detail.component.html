@@ -1,13 +1,16 @@
 @if (app(); as a) {
   <div class="animate-fade-in-up max-w-4xl mx-auto space-y-6">
-
     <!-- Top Hero Card -->
-    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] text-white p-8">
+    <div
+      class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] text-white p-8"
+    >
       <!-- Decorative circles -->
       <div class="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/5"></div>
       <div class="absolute -bottom-6 -left-6 w-24 h-24 rounded-full bg-white/5"></div>
 
-      <div class="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+      <div
+        class="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6"
+      >
         <div class="space-y-3">
           <!-- Status badge -->
           <span
@@ -21,9 +24,17 @@
             "
           >
             <span class="material-symbols-outlined text-[14px]">
-              {{ a.status === 'Approved' ? 'verified' : a.status === 'Rejected' ? 'cancel' : a.status === 'Draft' ? 'edit' : 'schedule' }}
+              {{
+                a.status === 'Approved'
+                  ? 'verified'
+                  : a.status === 'Rejected'
+                    ? 'cancel'
+                    : a.status === 'Draft'
+                      ? 'edit'
+                      : 'schedule'
+              }}
             </span>
-            {{ a.status === 'DocsPending' ? 'Docs Pending' : a.status === 'DocsVerified' ? 'Docs Verified' : a.status === 'UnderReview' ? 'Under Review' : a.status }}
+            {{ displayStatus(a.status) }}
           </span>
 
           <!-- Loan purpose title -->
@@ -38,23 +49,34 @@
         </div>
 
         <!-- Amount card -->
-        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-5 min-w-[160px] text-center ring-1 ring-white/10">
-          <p class="text-white/50 text-[10px] font-bold uppercase tracking-widest font-label mb-1">Requested</p>
-          <p class="font-headline text-3xl font-extrabold">₹{{ a.loanDetails.requestedAmount | number }}</p>
-          <p class="text-white/50 text-[11px] font-semibold mt-1 font-label">{{ a.loanDetails.requestedTenureMonths }} months</p>
+        <div
+          class="bg-white/10 backdrop-blur-sm rounded-xl p-5 min-w-[160px] text-center ring-1 ring-white/10"
+        >
+          <p class="text-white/50 text-[10px] font-bold uppercase tracking-widest font-label mb-1">
+            Requested
+          </p>
+          <p class="font-headline text-3xl font-extrabold">
+            ₹{{ a.loanDetails.requestedAmount | number }}
+          </p>
+          <p class="text-white/50 text-[11px] font-semibold mt-1 font-label">
+            {{ a.loanDetails.requestedTenureMonths }} months
+          </p>
         </div>
       </div>
 
       <!-- Context message -->
       <p class="relative z-10 mt-5 text-white/70 text-sm font-body leading-relaxed max-w-xl">
         @if (isDecisionReady() && a.status === 'Approved') {
-          🎉 Congratulations! Your loan has been approved. Check your email for the offer letter and next steps.
+          🎉 Congratulations! Your loan has been approved. Check your email for the offer letter and
+          next steps.
         } @else if (isDecisionReady() && a.status === 'Rejected') {
-          Unfortunately, your application was not approved at this time. Please review the remarks or contact support.
-        } @else if (a.status === 'DocsPending') {
+          Unfortunately, your application was not approved at this time. Please review the remarks
+          or contact support.
+        } @else if (hasPendingDocuments()) {
           ⚠️ Action required — some documents need to be re-uploaded. See details below.
         } @else if (isUnderReview()) {
-          Your application is being evaluated by our credit underwriting team. We'll notify you once a decision is made.
+          Your application is being evaluated by our credit underwriting team. We'll notify you once
+          a decision is made.
         } @else if (isDocsVerified()) {
           All documents verified. Underwriting review will begin shortly.
         } @else if (isSubmitted()) {
@@ -66,15 +88,21 @@
     </div>
 
     <!-- Horizontal Timeline -->
-    <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200/60 dark:border-slate-800">
-      <h2 class="font-headline font-bold text-sm text-[var(--color-on-surface-variant)] uppercase tracking-widest mb-6 flex items-center gap-2">
+    <div
+      class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200/60 dark:border-slate-800"
+    >
+      <h2
+        class="font-headline font-bold text-sm text-[var(--color-on-surface-variant)] uppercase tracking-widest mb-6 flex items-center gap-2"
+      >
         <span class="material-symbols-outlined text-[var(--color-primary)] text-lg">timeline</span>
         Application Journey
       </h2>
 
       <div class="relative flex justify-between items-start">
         <!-- Background track -->
-        <div class="absolute top-[18px] left-[20px] right-[20px] h-[3px] bg-slate-200 dark:bg-slate-700 rounded-full"></div>
+        <div
+          class="absolute top-[18px] left-[20px] right-[20px] h-[3px] bg-slate-200 dark:bg-slate-700 rounded-full"
+        ></div>
         <!-- Progress track -->
         <div
           class="absolute top-[18px] left-[20px] h-[3px] rounded-full transition-all duration-700 ease-out"
@@ -86,11 +114,11 @@
                 ? 'calc(100% - 40px)'
                 : isUnderReview()
                   ? 'calc(66% - 26px)'
-                : isDocsVerified()
-                  ? 'calc(66% - 26px)'
-                  : isSubmitted()
-                    ? 'calc(33% - 13px)'
-                    : '0%'
+                  : isDocsVerified()
+                    ? 'calc(66% - 26px)'
+                    : isSubmitted()
+                      ? 'calc(33% - 13px)'
+                      : '0%'
           "
         ></div>
 
@@ -108,9 +136,16 @@
               {{ isSubmitted() ? 'check_circle' : 'radio_button_unchecked' }}
             </span>
           </div>
-          <p class="mt-2.5 text-xs font-bold font-label" [class]="isSubmitted() ? 'text-[var(--color-on-surface)]' : 'text-slate-400'">Submitted</p>
+          <p
+            class="mt-2.5 text-xs font-bold font-label"
+            [class]="isSubmitted() ? 'text-[var(--color-on-surface)]' : 'text-slate-400'"
+          >
+            Submitted
+          </p>
           @if (a.submittedAtUtc) {
-            <p class="text-[10px] text-[var(--color-on-surface-variant)] mt-0.5 font-body">{{ a.submittedAtUtc | date:'MMM d' }}</p>
+            <p class="text-[10px] text-[var(--color-on-surface-variant)] mt-0.5 font-body">
+              {{ a.submittedAtUtc | date: 'MMM d' }}
+            </p>
           }
         </div>
 
@@ -127,12 +162,33 @@
             "
           >
             <span class="material-symbols-outlined text-[18px]">
-              {{ isDocsVerified() ? 'check_circle' : isSubmitted() && !isDocsVerified() ? 'hourglass_top' : 'radio_button_unchecked' }}
+              {{
+                isDocsVerified()
+                  ? 'check_circle'
+                  : isSubmitted() && !isDocsVerified()
+                    ? 'hourglass_top'
+                    : 'radio_button_unchecked'
+              }}
             </span>
           </div>
-          <p class="mt-2.5 text-xs font-bold font-label" [class]="isSubmitted() && !isDocsVerified() ? 'text-[var(--color-primary)]' : isDocsVerified() ? 'text-[var(--color-on-surface)]' : 'text-slate-400'">Docs Verified</p>
-          @if (isSubmitted() && !isDocsVerified()) {
-            <p class="text-[10px] font-bold text-[var(--color-primary)] mt-0.5 font-label uppercase tracking-wider">Current</p>
+          <p
+            class="mt-2.5 text-xs font-bold font-label"
+            [class]="
+              isSubmitted() && !isDocsVerified() && !isUnderReview()
+                ? 'text-[var(--color-primary)]'
+                : isDocsVerified()
+                  ? 'text-[var(--color-on-surface)]'
+                  : 'text-slate-400'
+            "
+          >
+            {{ isDocsVerified() ? 'Docs Verified' : 'Docs Pending' }}
+          </p>
+          @if (isSubmitted() && !isDocsVerified() && !isUnderReview()) {
+            <p
+              class="text-[10px] font-bold text-[var(--color-primary)] mt-0.5 font-label uppercase tracking-wider"
+            >
+              Current
+            </p>
           }
         </div>
 
@@ -149,12 +205,33 @@
             "
           >
             <span class="material-symbols-outlined text-[18px]">
-              {{ isDecisionReady() ? 'check_circle' : isUnderReview() ? 'hourglass_top' : 'radio_button_unchecked' }}
+              {{
+                isDecisionReady()
+                  ? 'check_circle'
+                  : isUnderReview()
+                    ? 'hourglass_top'
+                    : 'radio_button_unchecked'
+              }}
             </span>
           </div>
-          <p class="mt-2.5 text-xs font-bold font-label" [class]="isUnderReview() ? 'text-[var(--color-primary)]' : isDecisionReady() ? 'text-[var(--color-on-surface)]' : 'text-slate-400'">Under Review</p>
+          <p
+            class="mt-2.5 text-xs font-bold font-label"
+            [class]="
+              isUnderReview()
+                ? 'text-[var(--color-primary)]'
+                : isDecisionReady()
+                  ? 'text-[var(--color-on-surface)]'
+                  : 'text-slate-400'
+            "
+          >
+            Under Review
+          </p>
           @if (isUnderReview()) {
-            <p class="text-[10px] font-bold text-[var(--color-primary)] mt-0.5 font-label uppercase tracking-wider">Current</p>
+            <p
+              class="text-[10px] font-bold text-[var(--color-primary)] mt-0.5 font-label uppercase tracking-wider"
+            >
+              Current
+            </p>
           }
         </div>
 
@@ -171,13 +248,26 @@
             "
           >
             <span class="material-symbols-outlined text-[18px]">
-              {{ a.status === 'Approved' ? 'check_circle' : a.status === 'Rejected' ? 'cancel' : 'radio_button_unchecked' }}
+              {{
+                a.status === 'Approved'
+                  ? 'check_circle'
+                  : a.status === 'Rejected'
+                    ? 'cancel'
+                    : 'radio_button_unchecked'
+              }}
             </span>
           </div>
-          <p class="mt-2.5 text-xs font-bold font-label" [class]="isDecisionReady() ? 'text-[var(--color-on-surface)]' : 'text-slate-400'">Decision</p>
+          <p
+            class="mt-2.5 text-xs font-bold font-label"
+            [class]="isDecisionReady() ? 'text-[var(--color-on-surface)]' : 'text-slate-400'"
+          >
+            Decision
+          </p>
           @if (isDecisionReady()) {
-            <p class="text-[10px] font-bold mt-0.5 font-label uppercase tracking-wider"
-              [class]="a.status === 'Approved' ? 'text-emerald-600' : 'text-red-500'">
+            <p
+              class="text-[10px] font-bold mt-0.5 font-label uppercase tracking-wider"
+              [class]="a.status === 'Approved' ? 'text-emerald-600' : 'text-red-500'"
+            >
               {{ a.status }}
             </p>
           } @else {
@@ -189,20 +279,31 @@
 
     <!-- Action Cards Row -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
       <!-- Tasks Card -->
-      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-200/60 dark:border-slate-800">
-        <h3 class="font-headline font-bold text-sm text-[var(--color-on-surface-variant)] uppercase tracking-widest mb-4 flex items-center gap-2">
+      <div
+        class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-200/60 dark:border-slate-800"
+      >
+        <h3
+          class="font-headline font-bold text-sm text-[var(--color-on-surface-variant)] uppercase tracking-widest mb-4 flex items-center gap-2"
+        >
           <span class="material-symbols-outlined text-lg text-amber-500">task_alt</span>
           Tasks & Actions
         </h3>
 
         @if (a.status === 'Draft') {
-          <div class="flex items-start gap-4 p-4 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200/50 dark:border-blue-800/30">
-            <span class="material-symbols-outlined text-blue-500 text-xl shrink-0 mt-0.5">edit_note</span>
+          <div
+            class="flex items-start gap-4 p-4 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200/50 dark:border-blue-800/30"
+          >
+            <span class="material-symbols-outlined text-blue-500 text-xl shrink-0 mt-0.5"
+              >edit_note</span
+            >
             <div class="flex-1">
-              <p class="font-bold text-sm text-blue-900 dark:text-blue-200 font-body">Complete Application</p>
-              <p class="text-xs text-blue-700/70 dark:text-blue-300/60 mt-0.5 font-body">Finish the wizard and submit.</p>
+              <p class="font-bold text-sm text-blue-900 dark:text-blue-200 font-body">
+                Complete Application
+              </p>
+              <p class="text-xs text-blue-700/70 dark:text-blue-300/60 mt-0.5 font-body">
+                Finish the wizard and submit.
+              </p>
               <a
                 [routerLink]="['/applicant/apply', app()!.id]"
                 class="mt-3 inline-flex items-center gap-1.5 px-4 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 transition-colors font-label"
@@ -214,21 +315,37 @@
         }
 
         @if (a.status === 'Submitted') {
-          <div class="flex items-start gap-4 p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200/50 dark:border-amber-800/30">
-            <span class="material-symbols-outlined text-amber-500 text-xl shrink-0 mt-0.5">upload_file</span>
+          <div
+            class="flex items-start gap-4 p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200/50 dark:border-amber-800/30"
+          >
+            <span class="material-symbols-outlined text-amber-500 text-xl shrink-0 mt-0.5"
+              >upload_file</span
+            >
             <div class="flex-1">
-              <p class="font-bold text-sm text-amber-900 dark:text-amber-200 font-body">Document Verification</p>
-              <p class="text-xs text-amber-700/70 dark:text-amber-300/60 mt-0.5 font-body">Your documents are being reviewed by the admin team.</p>
+              <p class="font-bold text-sm text-amber-900 dark:text-amber-200 font-body">
+                Document Verification
+              </p>
+              <p class="text-xs text-amber-700/70 dark:text-amber-300/60 mt-0.5 font-body">
+                Your documents are being reviewed by the admin team.
+              </p>
             </div>
           </div>
         }
 
-        @if (a.status === 'DocsPending') {
-          <div class="flex items-start gap-4 p-4 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200/50 dark:border-red-800/30">
-            <span class="material-symbols-outlined text-red-500 text-xl shrink-0 mt-0.5">warning</span>
+        @if (hasPendingDocuments()) {
+          <div
+            class="flex items-start gap-4 p-4 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200/50 dark:border-red-800/30"
+          >
+            <span class="material-symbols-outlined text-red-500 text-xl shrink-0 mt-0.5"
+              >warning</span
+            >
             <div class="flex-1">
-              <p class="font-bold text-sm text-red-900 dark:text-red-200 font-body">Re-upload Required</p>
-              <p class="text-xs text-red-700/70 dark:text-red-300/60 mt-0.5 font-body">Some documents were flagged. See the documents section below.</p>
+              <p class="font-bold text-sm text-red-900 dark:text-red-200 font-body">
+                Re-upload Required
+              </p>
+              <p class="text-xs text-red-700/70 dark:text-red-300/60 mt-0.5 font-body">
+                An admin has requested updated documents. Review the documents section below.
+              </p>
               <a
                 [routerLink]="['/applicant/applications', a.id, 'documents']"
                 class="mt-3 inline-flex items-center gap-1.5 px-4 py-1.5 bg-red-600 text-white text-xs font-bold rounded-lg hover:bg-red-700 transition-colors font-label"
@@ -237,62 +354,119 @@
               </a>
             </div>
           </div>
+        } @else if (canManageDocuments()) {
+          <div
+            class="flex items-start gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/50 dark:border-slate-700/30"
+          >
+            <span class="material-symbols-outlined text-slate-500 text-xl shrink-0 mt-0.5"
+              >description</span
+            >
+            <div class="flex-1">
+              <p class="font-bold text-sm text-[var(--color-on-surface)] font-body">
+                Manage Documents
+              </p>
+              <p class="text-xs text-[var(--color-on-surface-variant)] mt-0.5 font-body">
+                Review uploaded documents, add missing ones, or keep them ready for admin review.
+              </p>
+              <a
+                [routerLink]="['/applicant/applications', a.id, 'documents']"
+                class="mt-3 inline-flex items-center gap-1.5 px-4 py-1.5 bg-[var(--color-primary)] text-white text-xs font-bold rounded-lg hover:opacity-90 transition-opacity font-label"
+              >
+                <span class="material-symbols-outlined text-[14px]">folder_open</span> Manage
+                Documents
+              </a>
+            </div>
+          </div>
         }
 
         @if (isDocsVerified() || isDecisionReady()) {
           <div class="flex flex-col items-center justify-center py-6 text-center">
-            <span class="material-symbols-outlined text-3xl text-emerald-400 mb-2">check_circle</span>
-            <p class="text-sm font-semibold text-[var(--color-on-surface-variant)] font-body">All tasks complete</p>
-            <p class="text-xs text-[var(--color-on-surface-variant)]/60 mt-0.5 font-body">Nothing required from your end.</p>
+            <span class="material-symbols-outlined text-3xl text-emerald-400 mb-2"
+              >check_circle</span
+            >
+            <p class="text-sm font-semibold text-[var(--color-on-surface-variant)] font-body">
+              All tasks complete
+            </p>
+            <p class="text-xs text-[var(--color-on-surface-variant)]/60 mt-0.5 font-body">
+              Nothing required from your end.
+            </p>
           </div>
         }
       </div>
 
       <!-- Quick Info Card -->
-      <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-200/60 dark:border-slate-800">
-        <h3 class="font-headline font-bold text-sm text-[var(--color-on-surface-variant)] uppercase tracking-widest mb-4 flex items-center gap-2">
+      <div
+        class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-200/60 dark:border-slate-800"
+      >
+        <h3
+          class="font-headline font-bold text-sm text-[var(--color-on-surface-variant)] uppercase tracking-widest mb-4 flex items-center gap-2"
+        >
           <span class="material-symbols-outlined text-lg text-[var(--color-primary)]">info</span>
           Applicant Details
         </h3>
         <div class="space-y-3">
           <div class="flex justify-between items-center">
             <span class="text-xs text-[var(--color-on-surface-variant)] font-body">Name</span>
-            <span class="text-sm font-semibold text-[var(--color-on-surface)] font-body">{{ a.personalDetails.firstName }} {{ a.personalDetails.lastName }}</span>
+            <span class="text-sm font-semibold text-[var(--color-on-surface)] font-body"
+              >{{ a.personalDetails.firstName }} {{ a.personalDetails.lastName }}</span
+            >
           </div>
           <div class="h-px bg-slate-100 dark:bg-slate-800"></div>
           <div class="flex justify-between items-center">
             <span class="text-xs text-[var(--color-on-surface-variant)] font-body">Email</span>
-            <span class="text-sm font-semibold text-[var(--color-on-surface)] font-body truncate max-w-[180px]">{{ a.personalDetails.email }}</span>
+            <span
+              class="text-sm font-semibold text-[var(--color-on-surface)] font-body truncate max-w-[180px]"
+              >{{ a.personalDetails.email }}</span
+            >
           </div>
           <div class="h-px bg-slate-100 dark:bg-slate-800"></div>
           <div class="flex justify-between items-center">
             <span class="text-xs text-[var(--color-on-surface-variant)] font-body">Employer</span>
-            <span class="text-sm font-semibold text-[var(--color-on-surface)] font-body">{{ a.employmentDetails.employerName }}</span>
+            <span class="text-sm font-semibold text-[var(--color-on-surface)] font-body">{{
+              a.employmentDetails.employerName
+            }}</span>
           </div>
           <div class="h-px bg-slate-100 dark:bg-slate-800"></div>
           <div class="flex justify-between items-center">
-            <span class="text-xs text-[var(--color-on-surface-variant)] font-body">Monthly Income</span>
-            <span class="text-sm font-semibold text-[var(--color-on-surface)] font-body">₹{{ a.employmentDetails.monthlyIncome | number }}</span>
+            <span class="text-xs text-[var(--color-on-surface-variant)] font-body"
+              >Monthly Income</span
+            >
+            <span class="text-sm font-semibold text-[var(--color-on-surface)] font-body"
+              >₹{{ a.employmentDetails.monthlyIncome | number }}</span
+            >
           </div>
           <div class="h-px bg-slate-100 dark:bg-slate-800"></div>
           <div class="flex justify-between items-center">
             <span class="text-xs text-[var(--color-on-surface-variant)] font-body">Applied On</span>
-            <span class="text-sm font-semibold text-[var(--color-on-surface)] font-body">{{ a.createdAtUtc | date:'mediumDate' }}</span>
+            <span class="text-sm font-semibold text-[var(--color-on-surface)] font-body">{{
+              a.createdAtUtc | date: 'mediumDate'
+            }}</span>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Documents Section -->
-    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200/60 dark:border-slate-800 overflow-hidden">
-      <div class="px-6 py-5 flex justify-between items-center border-b border-slate-100 dark:border-slate-800">
-        <h3 class="font-headline font-bold text-sm text-[var(--color-on-surface-variant)] uppercase tracking-widest flex items-center gap-2">
-          <span class="material-symbols-outlined text-lg text-[var(--color-primary)]">description</span>
+    <div
+      class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200/60 dark:border-slate-800 overflow-hidden"
+    >
+      <div
+        class="px-6 py-5 flex justify-between items-center border-b border-slate-100 dark:border-slate-800"
+      >
+        <h3
+          class="font-headline font-bold text-sm text-[var(--color-on-surface-variant)] uppercase tracking-widest flex items-center gap-2"
+        >
+          <span class="material-symbols-outlined text-lg text-[var(--color-primary)]"
+            >description</span
+          >
           Documents
-          <span class="bg-[var(--color-primary)] text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold">{{ documents().length }}</span>
+          <span
+            class="bg-[var(--color-primary)] text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold"
+            >{{ documents().length }}</span
+          >
         </h3>
-        <a 
-          *ngIf="!isDecisionReady()"
+        <a
+          *ngIf="canManageDocuments()"
           [routerLink]="['/applicant/applications', a.id, 'documents']"
           class="text-[var(--color-primary)] text-xs font-bold flex items-center gap-1 hover:underline cursor-pointer font-label"
         >
@@ -303,28 +477,53 @@
       @if (documents().length > 0) {
         <div class="divide-y divide-slate-100 dark:divide-slate-800">
           @for (doc of documents(); track doc.id) {
-            <div class="flex items-center justify-between px-6 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+            <div
+              class="flex items-center justify-between px-6 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+            >
               <div class="flex items-center gap-4">
-                <div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                <div
+                  class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
                   [class]="
-                    doc.status === 'Verified' ? 'bg-emerald-100 text-emerald-600' :
-                    doc.status === 'ReuploadRequired' ? 'bg-amber-100 text-amber-600' :
-                    doc.status === 'UnderReview' ? 'bg-blue-100 text-blue-600' :
-                    'bg-slate-100 text-slate-500'
-                  ">
+                    doc.status === 'Verified'
+                      ? 'bg-emerald-100 text-emerald-600'
+                      : doc.status === 'ReuploadRequired'
+                        ? 'bg-amber-100 text-amber-600'
+                        : doc.status === 'UnderReview'
+                          ? 'bg-blue-100 text-blue-600'
+                          : 'bg-slate-100 text-slate-500'
+                  "
+                >
                   <span class="material-symbols-outlined text-lg">
-                    {{ doc.status === 'Verified' ? 'verified' : doc.status === 'ReuploadRequired' ? 'error' : 'description' }}
+                    {{
+                      doc.status === 'Verified'
+                        ? 'verified'
+                        : doc.status === 'ReuploadRequired'
+                          ? 'error'
+                          : 'description'
+                    }}
                   </span>
                 </div>
                 <div>
                   <p class="text-sm font-semibold text-[var(--color-on-surface)] font-body">
-                    {{ doc.documentType === 'IdProof' ? 'ID Proof' : doc.documentType === 'AddressProof' ? 'Address Proof' : doc.documentType === 'IncomeProof' ? 'Income Proof' : doc.documentType === 'BankStatement' ? 'Bank Statement' : doc.documentType }}
+                    {{
+                      doc.documentType === 'IdProof'
+                        ? 'ID Proof'
+                        : doc.documentType === 'AddressProof'
+                          ? 'Address Proof'
+                          : doc.documentType === 'IncomeProof'
+                            ? 'Income Proof'
+                            : doc.documentType === 'BankStatement'
+                              ? 'Bank Statement'
+                              : doc.documentType
+                    }}
                   </p>
                   <p class="text-[11px] text-[var(--color-on-surface-variant)] font-body mt-0.5">
-                    {{ doc.fileName }} · {{ doc.uploadedAtUtc | date:'MMM d, y' }}
+                    {{ doc.fileName }} · {{ doc.uploadedAtUtc | date: 'MMM d, y' }}
                   </p>
                   @if (doc.status === 'ReuploadRequired' && doc.remarks) {
-                    <p class="text-[11px] text-amber-600 font-medium mt-0.5 flex items-center gap-1">
+                    <p
+                      class="text-[11px] text-amber-600 font-medium mt-0.5 flex items-center gap-1"
+                    >
                       <span class="material-symbols-outlined text-[12px]">info</span>
                       {{ doc.remarks }}
                     </p>
@@ -333,13 +532,25 @@
               </div>
               <div>
                 @if (doc.status === 'Verified') {
-                  <span class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase font-label">Verified</span>
+                  <span
+                    class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase font-label"
+                    >Verified</span
+                  >
                 } @else if (doc.status === 'ReuploadRequired') {
-                  <span class="bg-amber-50 border border-amber-200 text-amber-700 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase font-label">Re-upload</span>
+                  <span
+                    class="bg-amber-50 border border-amber-200 text-amber-700 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase font-label"
+                    >Re-upload</span
+                  >
                 } @else if (doc.status === 'UnderReview') {
-                  <span class="bg-blue-50 border border-blue-200 text-blue-700 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase font-label">Reviewing</span>
+                  <span
+                    class="bg-blue-50 border border-blue-200 text-blue-700 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase font-label"
+                    >Reviewing</span
+                  >
                 } @else {
-                  <span class="bg-slate-100 border border-slate-200 text-slate-500 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase font-label">Pending</span>
+                  <span
+                    class="bg-slate-100 border border-slate-200 text-slate-500 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase font-label"
+                    >Pending</span
+                  >
                 }
               </div>
             </div>
@@ -348,22 +559,28 @@
       } @else {
         <div class="py-10 text-center">
           <span class="material-symbols-outlined text-3xl text-slate-300">folder_open</span>
-          <p class="text-sm text-[var(--color-on-surface-variant)] mt-2 font-body">No documents uploaded yet.</p>
+          <p class="text-sm text-[var(--color-on-surface-variant)] mt-2 font-body">
+            No documents uploaded yet.
+          </p>
         </div>
       }
     </div>
 
     <!-- Back link -->
     <div class="text-center pb-4">
-      <a routerLink="/applicant/applications" class="text-xs text-[var(--color-primary)] font-bold hover:underline font-label inline-flex items-center gap-1">
+      <a
+        routerLink="/applicant/applications"
+        class="text-xs text-[var(--color-primary)] font-bold hover:underline font-label inline-flex items-center gap-1"
+      >
         <span class="material-symbols-outlined text-sm">arrow_back</span>
         Back to My Applications
       </a>
     </div>
-
   </div>
 } @else {
   <div class="flex items-center justify-center py-32">
-    <span class="w-10 h-10 border-4 border-[var(--color-primary-fixed)] border-t-[var(--color-primary)] rounded-full animate-spin"></span>
+    <span
+      class="w-10 h-10 border-4 border-[var(--color-primary-fixed)] border-t-[var(--color-primary)] rounded-full animate-spin"
+    ></span>
   </div>
 }

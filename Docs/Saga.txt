@@ -1,0 +1,90 @@
+# MassTransit vs. Manual Saga Implementation: Key Parameters and Concepts
+
+MassTransit is a .NET distributed application framework that simplifies implementing message-based workflows (sagas) compared to manual approaches. Below are the main parameters and features MassTransit manages for you, with explanations:
+
+## 1. CorrelationId
+- **Purpose:** Uniquely identifies a saga instance across all messages and services.
+- **How MassTransit helps:**
+  - Automatically maps the `CorrelationId` property from incoming messages to the saga instance.
+  - Ensures that all events for a given business process (e.g., a loan application) are routed to the correct saga instance.
+  - Handles creation and lookup of saga state by `CorrelationId`.
+- **Manual implementation:** You must manually extract, store, and match correlation IDs in your code, increasing risk of bugs.
+
+## 2. State Management
+- **Purpose:** Tracks the current state and data of a long-running process (e.g., application approval, document verification).
+- **How MassTransit helps:**
+  - Persists saga state in a backing store (e.g., in-memory, MongoDB, SQL, etc.).
+  - Loads and updates saga state automatically as messages arrive.
+  - Supports state machines (with Automatonymous) for complex workflows.
+- **Manual implementation:** You must design your own state persistence, concurrency, and recovery logic.
+
+## 3. Message Routing and Dispatch
+- **Purpose:** Ensures messages/events are delivered to the correct saga instance.
+- **How MassTransit helps:**
+  - Uses message headers and conventions to route messages.
+  - Handles message filtering, delivery, and retry logic.
+- **Manual implementation:** You must write custom routing, filtering, and error handling code.
+
+## 4. Idempotency and Duplicate Handling
+- **Purpose:** Prevents duplicate processing of the same event/message.
+- **How MassTransit helps:**
+  - Built-in support for idempotency by tracking processed messages.
+  - Ensures saga state transitions only once per unique event.
+- **Manual implementation:** You must track processed messages and implement deduplication logic.
+
+## 5. Timeout and Scheduling
+- **Purpose:** Supports time-based events (e.g., reminders, deadlines, compensation triggers).
+- **How MassTransit helps:**
+  - Built-in scheduling and timeout support for saga events.
+  - Can trigger events after a delay or at a specific time.
+- **Manual implementation:** You must implement your own timer, scheduler, and persistence for timeouts.
+
+## 6. Error Handling and Compensation
+- **Purpose:** Handles failures and triggers compensating actions if a step fails.
+- **How MassTransit helps:**
+  - Supports compensation logic and error policies in saga definitions.
+  - Can automatically retry, move to error queues, or trigger compensating events.
+- **Manual implementation:** You must design your own error/compensation flow and ensure consistency.
+
+## 7. Observability and Diagnostics
+- **Purpose:** Provides visibility into saga execution and message flow.
+- **How MassTransit helps:**
+  - Integrates with logging, tracing, and monitoring tools.
+  - Exposes saga state and event history for debugging.
+- **Manual implementation:** You must add custom logging, tracing, and diagnostics.
+
+## 8. Message Serialization and Versioning
+- **Purpose:** Handles message format, serialization, and backward compatibility.
+- **How MassTransit helps:**
+  - Supports multiple serializers (JSON, XML, etc.).
+  - Handles message versioning and schema evolution.
+- **Manual implementation:** You must manage serialization and compatibility yourself.
+
+---
+
+## Summary Table
+| Parameter/Feature         | MassTransit Handles | Manual Implementation |
+|--------------------------|--------------------|----------------------|
+| CorrelationId            | Yes                | Manual               |
+| State Management         | Yes                | Manual               |
+| Routing/Dispatch         | Yes                | Manual               |
+| Idempotency              | Yes                | Manual               |
+| Timeout/Scheduling       | Yes                | Manual               |
+| Error/Compensation       | Yes                | Manual               |
+| Observability            | Yes                | Manual               |
+| Serialization/Versioning | Yes                | Manual               |
+
+---
+
+## CorrelationId in Detail
+- Every saga instance is identified by a `CorrelationId` (usually a GUID).
+- All messages/events related to a business process must carry this ID.
+- MassTransit automatically extracts and uses this ID to find or create the correct saga instance.
+- This enables reliable, distributed, and parallel processing of many independent workflows.
+
+---
+
+## References
+- [MassTransit Sagas Documentation](https://masstransit.io/documentation/concepts/sagas)
+- [Automatonymous State Machines](https://masstransit.io/documentation/concepts/state)
+- [Saga Patterns (Microsoft Docs)](https://learn.microsoft.com/en-us/azure/architecture/patterns/saga)
