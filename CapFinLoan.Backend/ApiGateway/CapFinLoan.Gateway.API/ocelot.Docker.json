@@ -1,6 +1,14 @@
 {
   "Routes": [
     {
+      "UpstreamPathTemplate": "/gateway/chat/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
+      "DownstreamPathTemplate": "/api/chat/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "chatbot-service", "Port": 8080 }],
+      "SwaggerKey": "chat"
+    },
+    {
       "UpstreamPathTemplate": "/gateway/auth/{everything}",
       "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
       "DownstreamPathTemplate": "/api/auth/{everything}",

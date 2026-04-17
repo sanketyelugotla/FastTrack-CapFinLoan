@@ -1,6 +1,14 @@
 {
   "Routes": [
     {
+      "UpstreamPathTemplate": "/gateway/chat/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
+      "DownstreamPathTemplate": "/api/chat/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "localhost", "Port": 5026 }],
+      "SwaggerKey": "chat"
+    },
+    {
       "UpstreamPathTemplate": "/gateway/auth/{everything}",
       "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
       "DownstreamPathTemplate": "/api/auth/{everything}",

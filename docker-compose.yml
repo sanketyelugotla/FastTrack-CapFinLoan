@@ -213,6 +213,40 @@ services:
       retries: 5
       start_period: 20s
 
+  chatbot-service:
+    build:
+      context: ./CapFinLoan.Backend
+      dockerfile: ChatbotService/CapFinLoan.Chatbot.API/Dockerfile
+    container_name: capfinloan-chatbot-service
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      ASPNETCORE_URLS: http://+:8080
+      Gemini__ApiKey: ${Gemini__ApiKey:-}
+      BackendServices__ApplicationServiceUrl: http://application-service:8080
+      BackendServices__AdminServiceUrl: http://admin-service:8080
+      BackendServices__DocumentServiceUrl: http://document-service:8080
+    depends_on:
+      application-service:
+        condition: service_healthy
+      admin-service:
+        condition: service_healthy
+      document-service:
+        condition: service_healthy
+    ports:
+      - "5026:8080"
+    networks:
+      - capfinloan-net
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "bash -c '</dev/tcp/localhost/8080' 2>/dev/null && echo OK || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
   api-gateway:
     build:
       context: ./CapFinLoan.Backend
@@ -229,6 +263,8 @@ services:
       document-service:
         condition: service_healthy
       admin-service:
+        condition: service_healthy
+      chatbot-service:
         condition: service_healthy
     ports:
       - "5020:8080"

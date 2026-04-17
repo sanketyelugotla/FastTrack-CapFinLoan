@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="CapFinLoan.Chatbot.API/CapFinLoan.Chatbot.API.csproj" />
+  <Project Path="CapFinLoan.Chatbot.Application/CapFinLoan.Chatbot.Application.csproj" />
+  <Project Path="CapFinLoan.Chatbot.Infrastructure/CapFinLoan.Chatbot.Infrastructure.csproj" />
+</Solution>

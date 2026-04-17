@@ -15,6 +15,7 @@ namespace CapFinLoan.Application.UnitTests.Services;
 public class LoanApplicationServiceTests
 {
     private Mock<ILoanApplicationRepository> _repositoryMock;
+    private Mock<IApplicantProfileRepository> _profileRepositoryMock;
     private Mock<IEventPublisher> _eventPublisherMock;
     private LoanApplicationService _service;
 
@@ -22,8 +23,9 @@ public class LoanApplicationServiceTests
     public void Setup()
     {
         _repositoryMock = new Mock<ILoanApplicationRepository>();
+        _profileRepositoryMock = new Mock<IApplicantProfileRepository>();
         _eventPublisherMock = new Mock<IEventPublisher>();
-        _service = new LoanApplicationService(_repositoryMock.Object, _eventPublisherMock.Object);
+        _service = new LoanApplicationService(_profileRepositoryMock.Object, _repositoryMock.Object, _eventPublisherMock.Object);
     }
 
     private static LoanApplication CreateValidDraftApplication(Guid applicantId)

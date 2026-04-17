@@ -1,0 +1,65 @@
+/* Chat panel entrance animation */
+.chat-panel {
+  animation: chatSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes chatSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Typing dot animation */
+.typing-dot {
+  animation: typingBounce 1.2s ease-in-out infinite;
+}
+
+@keyframes typingBounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+/* Custom scrollbar for messages area */
+.chat-panel ::-webkit-scrollbar {
+  width: 4px;
+}
+
+.chat-panel ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-panel ::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.3);
+  border-radius: 2px;
+}
+
+.chat-panel ::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.5);
+}
+
+/* Code blocks inside chat messages */
+:host ::ng-deep code {
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* Strong/bold inside chat messages */
+:host ::ng-deep strong {
+  color: #e2e8f0;
+  font-weight: 600;
+}

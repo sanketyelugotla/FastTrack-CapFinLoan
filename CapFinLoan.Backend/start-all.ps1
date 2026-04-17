@@ -11,7 +11,8 @@ $services = @(
     @{ Name = "Admin Service"; Path = "AdminService\CapFinLoan.Admin.API" },
     @{ Name = "Document Service"; Path = "DocumentService\CapFinLoan.Document.API" },
     @{ Name = "API Gateway"; Path = "ApiGateway\CapFinLoan.Gateway.API" },
-    @{ Name = "Notification Service"; Path = "NotificationService\CapFinLoan.Notification.API" }
+    @{ Name = "Notification Service"; Path = "NotificationService\CapFinLoan.Notification.API" },
+    @{ Name = "Chatbot Service"; Path = "ChatbotService\CapFinLoan.Chatbot.API" }
 )
 
 Write-Host "Building solution once before launching services..." -ForegroundColor Yellow
@@ -33,4 +34,5 @@ Write-Host "Auth Service: http://localhost:5021"
 Write-Host "Application Service: http://localhost:5022"
 Write-Host "Document Service: http://localhost:5023"
 Write-Host "Admin Service: http://localhost:5024"
+Write-Host "Chatbot Service: http://localhost:5026"
 Write-Host "API Gateway: http://localhost:5020" -ForegroundColor Magenta

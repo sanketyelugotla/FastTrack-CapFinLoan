@@ -42,6 +42,11 @@
     <Project Path="NotificationService/CapFinLoan.Notification.Persistence/CapFinLoan.Notification.Persistence.csproj" />
     <Project Path="NotificationService/CapFinLoan.Notification.UnitTests/CapFinLoan.Notification.UnitTests.csproj" />
   </Folder>
+  <Folder Name="/ChatbotService/">
+    <Project Path="ChatbotService/CapFinLoan.Chatbot.API/CapFinLoan.Chatbot.API.csproj" />
+    <Project Path="ChatbotService/CapFinLoan.Chatbot.Application/CapFinLoan.Chatbot.Application.csproj" />
+    <Project Path="ChatbotService/CapFinLoan.Chatbot.Infrastructure/CapFinLoan.Chatbot.Infrastructure.csproj" />
+  </Folder>
   <Folder Name="/Shared/">
     <Project Path="Shared/CapFinLoan.Messaging.Contracts/CapFinLoan.Messaging.Contracts.csproj" />
   </Folder>
