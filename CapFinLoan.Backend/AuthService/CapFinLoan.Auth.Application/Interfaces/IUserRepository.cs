@@ -12,6 +12,7 @@ public interface IUserRepository
     Task CreateAsync(ApplicationUser user, string rawPassword, CancellationToken cancellationToken = default);
     Task UpdateAsync(ApplicationUser user, CancellationToken cancellationToken = default);
     Task<bool> CheckPasswordAsync(ApplicationUser user, string password);
+    Task ResetPasswordAsync(ApplicationUser user, string newPassword, CancellationToken cancellationToken = default);
     Task AddToRoleAsync(ApplicationUser user, string roleName, CancellationToken cancellationToken = default);
     Task<IList<string>> GetRolesAsync(ApplicationUser user, CancellationToken cancellationToken = default);
     Task AddClaimAsync(ApplicationUser user, Claim claim, CancellationToken cancellationToken = default);

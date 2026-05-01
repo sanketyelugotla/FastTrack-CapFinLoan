@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { AuthResponse, LoginRequest, OtpSendResponse, OtpVerificationRequest, SignupRequest } from '../models/auth.models';
+import { AuthResponse, LoginRequest, OtpSendResponse, OtpVerificationRequest, PasswordResetResponse, ResetPasswordWithOtpRequest, SignupRequest } from '../models/auth.models';
 
 interface StoredUser {
   userId: string;
@@ -74,6 +74,10 @@ export class AuthService {
     return this.http.post<OtpSendResponse>(`${this.apiUrl}/send-otp?email=${encodeURIComponent(email)}`, {});
   }
 
+  sendForgotPasswordOtp(email: string) {
+    return this.http.post<OtpSendResponse>(`${this.apiUrl}/forgot-password/send-otp?email=${encodeURIComponent(email)}`, {});
+  }
+
   verifyOtpAndSignup(request: OtpVerificationRequest) {
     return this.http.post<AuthResponse>(`${this.apiUrl}/verify-otp-signup`, request).pipe(
       tap(res => this.storeUser(res))
@@ -84,6 +88,10 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${this.apiUrl}/verify-otp-signup-admin`, request).pipe(
       tap(res => this.storeUser(res))
     );
+  }
+
+  resetPasswordWithOtp(request: ResetPasswordWithOtpRequest) {
+    return this.http.post<PasswordResetResponse>(`${this.apiUrl}/forgot-password/reset`, request);
   }
 
   logout() {

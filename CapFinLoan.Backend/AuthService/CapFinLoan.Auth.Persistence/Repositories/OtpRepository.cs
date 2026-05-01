@@ -37,22 +37,38 @@ public class OtpRepository : IOtpRepository
 
     public async Task<bool> VerifyOtpAsync(string email, string otpCode, CancellationToken cancellationToken = default)
     {
+        var otp = await GetValidOtpAsync(email, otpCode, cancellationToken);
+        if (otp is null)
+        {
+            return false;
+        }
+
+        await MarkOtpAsUsedAsync(otp.Id, cancellationToken);
+
+        return true;
+    }
+
+    public async Task<EmailVerificationOtp?> GetValidOtpAsync(string email, string otpCode, CancellationToken cancellationToken = default)
+    {
         var otp = await _context.EmailVerificationOtps
             .Where(x => x.Email == email.ToLowerInvariant() && x.OtpCode == otpCode && !x.IsUsed)
             .OrderByDescending(x => x.CreatedAtUtc)
             .FirstOrDefaultAsync(cancellationToken);
 
-        if (otp is null || !otp.IsValid)
+        return otp is not null && otp.IsValid ? otp : null;
+    }
+
+    public async Task MarkOtpAsUsedAsync(Guid otpId, CancellationToken cancellationToken = default)
+    {
+        var otp = await _context.EmailVerificationOtps.FirstOrDefaultAsync(x => x.Id == otpId, cancellationToken);
+        if (otp is null || otp.IsUsed)
         {
-            return false;
+            return;
         }
 
-        // Mark as used
         otp.IsUsed = true;
         _context.EmailVerificationOtps.Update(otp);
         await _context.SaveChangesAsync(cancellationToken);
-
-        return true;
     }
 
     public async Task<EmailVerificationOtp?> GetLatestOtpAsync(string email, CancellationToken cancellationToken = default)

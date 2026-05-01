@@ -42,6 +42,15 @@ public class AuthController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPost("forgot-password/send-otp")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> SendForgotPasswordOtp([FromQuery] string email, CancellationToken cancellationToken)
+    {
+        var result = await _authService.SendForgotPasswordOtpAsync(email, cancellationToken);
+        return Ok(result);
+    }
+
     [HttpPost("verify-otp-signup")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -75,6 +84,15 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginRequest request, CancellationToken cancellationToken)
     {
         var result = await _authService.LoginWithGoogleAsync(request.IdToken, cancellationToken);
+        return Ok(result);
+    }
+
+    [HttpPost("forgot-password/reset")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ResetPasswordWithOtp([FromBody] ResetPasswordWithOtpRequest request, CancellationToken cancellationToken)
+    {
+        var result = await _authService.ResetPasswordWithOtpAsync(request, cancellationToken);
         return Ok(result);
     }
 }

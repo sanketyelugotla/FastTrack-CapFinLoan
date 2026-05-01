@@ -15,6 +15,16 @@ public interface IOtpRepository
     Task<bool> VerifyOtpAsync(string email, string otpCode, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Get a valid OTP for email/code without consuming it.
+    /// </summary>
+    Task<EmailVerificationOtp?> GetValidOtpAsync(string email, string otpCode, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Mark a previously validated OTP as used.
+    /// </summary>
+    Task MarkOtpAsUsedAsync(Guid otpId, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Get latest OTP for email (without marking as used)
     /// </summary>
     Task<EmailVerificationOtp?> GetLatestOtpAsync(string email, CancellationToken cancellationToken = default);

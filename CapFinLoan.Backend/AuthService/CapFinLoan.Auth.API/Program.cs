@@ -35,7 +35,8 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
     options.User.RequireUniqueEmail = true;
 })
 .AddRoles<IdentityRole<Guid>>()
-.AddEntityFrameworkStores<AuthDbContext>();
+.AddEntityFrameworkStores<AuthDbContext>()
+.AddDefaultTokenProviders();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IOtpRepository, OtpRepository>();

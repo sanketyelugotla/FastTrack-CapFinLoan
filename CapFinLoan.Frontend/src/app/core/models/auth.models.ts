@@ -34,6 +34,18 @@ export interface OtpSendResponse {
   expiryMinutes: number;
 }
 
+export interface ResetPasswordWithOtpRequest {
+  email: string;
+  otpCode: string;
+  newPassword: string;
+}
+
+export interface PasswordResetResponse {
+  success: boolean;
+  message: string;
+  email: string;
+}
+
 export interface UserSummary {
   id: string;
   name: string;

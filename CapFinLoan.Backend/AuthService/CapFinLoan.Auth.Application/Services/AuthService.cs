@@ -51,6 +51,7 @@ public class AuthService : IAuthService
         {
             Email = normalizedEmail,
             OtpCode = otp.OtpCode,
+            Purpose = "signup",
             ExpiresAtUtc = otp.ExpiresAtUtc,
             SentAtUtc = DateTime.UtcNow
         }, cancellationToken);
@@ -61,6 +62,59 @@ public class AuthService : IAuthService
             Message = "OTP sent to your email. Please verify within 10 minutes.",
             Email = normalizedEmail,
             ExpiryMinutes = 10
+        };
+    }
+
+    public async Task<OtpSendResponse> SendForgotPasswordOtpAsync(string email, CancellationToken cancellationToken = default)
+    {
+        var normalizedEmail = email.Trim().ToLowerInvariant();
+        var user = await _userRepository.GetByEmailAsync(normalizedEmail, cancellationToken);
+
+        if (user is not null)
+        {
+            var otp = await _otpRepository.GenerateOtpAsync(normalizedEmail, expiryMinutes: 10, cancellationToken);
+
+            await _eventPublisher.PublishAsync(new OtpSendEvent
+            {
+                Email = normalizedEmail,
+                OtpCode = otp.OtpCode,
+                Purpose = "forgot-password",
+                ExpiresAtUtc = otp.ExpiresAtUtc,
+                SentAtUtc = DateTime.UtcNow
+            }, cancellationToken);
+        }
+
+        return new OtpSendResponse
+        {
+            Success = true,
+            Message = "If an account exists for this email, an OTP has been sent.",
+            Email = normalizedEmail,
+            ExpiryMinutes = 10
+        };
+    }
+
+    public async Task<PasswordResetResponse> ResetPasswordWithOtpAsync(ResetPasswordWithOtpRequest request, CancellationToken cancellationToken = default)
+    {
+        var email = request.Email.Trim().ToLowerInvariant();
+        var user = await _userRepository.GetByEmailAsync(email, cancellationToken)
+                   ?? throw new InvalidOtpException();
+
+        var validOtp = await _otpRepository.GetValidOtpAsync(email, request.OtpCode.Trim(), cancellationToken);
+        if (validOtp is null)
+        {
+            throw new InvalidOtpException();
+        }
+
+        await _userRepository.ResetPasswordAsync(user, request.NewPassword, cancellationToken);
+        await _otpRepository.MarkOtpAsUsedAsync(validOtp.Id, cancellationToken);
+        user.UpdatedAtUtc = DateTime.UtcNow;
+        await _userRepository.UpdateAsync(user, cancellationToken);
+
+        return new PasswordResetResponse
+        {
+            Success = true,
+            Message = "Password changed successfully. You can now sign in with your new password.",
+            Email = email
         };
     }
 

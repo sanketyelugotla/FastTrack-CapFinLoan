@@ -9,6 +9,8 @@ public interface IAuthService
     Task<OtpSendResponse> SendSignupOtpAsync(string email, CancellationToken cancellationToken = default);
     Task<AuthResponse> VerifyOtpAndSignupAsync(OtpVerificationRequest request, CancellationToken cancellationToken = default);
     Task<AuthResponse> VerifyOtpAndSignupAdminAsync(OtpVerificationRequest request, CancellationToken cancellationToken = default);
+    Task<OtpSendResponse> SendForgotPasswordOtpAsync(string email, CancellationToken cancellationToken = default);
+    Task<PasswordResetResponse> ResetPasswordWithOtpAsync(ResetPasswordWithOtpRequest request, CancellationToken cancellationToken = default);
 
     // Original methods (kept for backward compatibility)
     Task<AuthResponse> SignupAsync(SignupRequest request, CancellationToken cancellationToken = default);

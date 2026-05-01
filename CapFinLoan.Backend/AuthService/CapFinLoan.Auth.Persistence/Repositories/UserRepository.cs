@@ -63,6 +63,17 @@ public class UserRepository : IUserRepository
         return await _userManager.CheckPasswordAsync(user, password);
     }
 
+    public async Task ResetPasswordAsync(ApplicationUser user, string newPassword, CancellationToken cancellationToken = default)
+    {
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+        if (!result.Succeeded)
+        {
+            var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+            throw new AuthPersistenceException($"Failed to reset password: {errors}");
+        }
+    }
+
     // Add a user to a role using Identity roles (AspNetUserRoles table).
     public async Task AddToRoleAsync(ApplicationUser user, string roleName, CancellationToken cancellationToken = default)
     {

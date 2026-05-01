@@ -135,4 +135,83 @@ public class AuthServiceTests
             e.Email == email &&
             e.OtpCode == "123456"), It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    [Test]
+    public async Task SendForgotPasswordOtpAsync_UserExists_GeneratesOtpAndPublishesForgotPasswordEvent()
+    {
+        var email = "existing@example.com";
+        var user = new ApplicationUser { Email = email, UserName = email, IsActive = true };
+        var expectedOtp = new EmailVerificationOtp
+        {
+            OtpCode = "654321",
+            ExpiresAtUtc = DateTime.UtcNow.AddMinutes(10)
+        };
+
+        _userRepositoryMock.Setup(repo => repo.GetByEmailAsync(email, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user);
+        _otpRepositoryMock.Setup(repo => repo.GenerateOtpAsync(email, 10, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expectedOtp);
+
+        var result = await _authService.SendForgotPasswordOtpAsync(email);
+
+        result.Success.Should().BeTrue();
+        result.Email.Should().Be(email);
+        _eventPublisherMock.Verify(pub => pub.PublishAsync(It.Is<OtpSendEvent>(e =>
+            e.Email == email &&
+            e.OtpCode == "654321" &&
+            e.Purpose == "forgot-password"), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Test]
+    public async Task ResetPasswordWithOtpAsync_ValidOtp_ResetsPassword()
+    {
+        var email = "existing@example.com";
+        var user = new ApplicationUser { Email = email, UserName = email, IsActive = true };
+        var otp = new EmailVerificationOtp { Id = Guid.NewGuid(), Email = email, OtpCode = "123456", ExpiresAtUtc = DateTime.UtcNow.AddMinutes(10) };
+        var request = new ResetPasswordWithOtpRequest
+        {
+            Email = email,
+            OtpCode = "123456",
+            NewPassword = "NewPassword@123"
+        };
+
+        _userRepositoryMock.Setup(repo => repo.GetByEmailAsync(email, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user);
+        _otpRepositoryMock.Setup(repo => repo.GetValidOtpAsync(email, "123456", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(otp);
+
+        var result = await _authService.ResetPasswordWithOtpAsync(request);
+
+        result.Success.Should().BeTrue();
+        result.Email.Should().Be(email);
+        _userRepositoryMock.Verify(repo => repo.ResetPasswordAsync(user, "NewPassword@123", It.IsAny<CancellationToken>()), Times.Once);
+        _otpRepositoryMock.Verify(repo => repo.MarkOtpAsUsedAsync(otp.Id, It.IsAny<CancellationToken>()), Times.Once);
+        _userRepositoryMock.Verify(repo => repo.UpdateAsync(user, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Test]
+    public async Task ResetPasswordWithOtpAsync_ResetFailure_DoesNotConsumeOtp()
+    {
+        var email = "existing@example.com";
+        var user = new ApplicationUser { Email = email, UserName = email, IsActive = true };
+        var otp = new EmailVerificationOtp { Id = Guid.NewGuid(), Email = email, OtpCode = "123456", ExpiresAtUtc = DateTime.UtcNow.AddMinutes(10) };
+        var request = new ResetPasswordWithOtpRequest
+        {
+            Email = email,
+            OtpCode = "123456",
+            NewPassword = "NewPassword@123"
+        };
+
+        _userRepositoryMock.Setup(repo => repo.GetByEmailAsync(email, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user);
+        _otpRepositoryMock.Setup(repo => repo.GetValidOtpAsync(email, "123456", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(otp);
+        _userRepositoryMock.Setup(repo => repo.ResetPasswordAsync(user, "NewPassword@123", It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new AuthPersistenceException("reset failed"));
+
+        var action = async () => await _authService.ResetPasswordWithOtpAsync(request);
+
+        await action.Should().ThrowAsync<AuthPersistenceException>();
+        _otpRepositoryMock.Verify(repo => repo.MarkOtpAsUsedAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
 }
