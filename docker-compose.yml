@@ -235,6 +235,33 @@ services:
     networks:
       - capfinloan-net
 
+  chatbot-service:
+    build:
+      context: ./ChatbotService
+      dockerfile: Dockerfile
+    container_name: capfinloan-chatbot-service
+    environment:
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      JWT_SECRET: "CapFinLoan.Auth.Jwt.Signing.Key.ChangeThisInProduction.2026"
+      JWT_ISSUER: "CapFinLoan.AuthService"
+      JWT_AUDIENCE: "CapFinLoan.Gateway"
+      APPLICATION_SERVICE_URL: http://application-service:8080
+      DOCUMENT_SERVICE_URL: http://document-service:8080
+      CORS_ORIGINS: "http://localhost:4200,http://api-gateway:8080"
+    depends_on:
+      application-service:
+        condition: service_healthy
+    ports:
+      - "5026:8000"
+    networks:
+      - capfinloan-net
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/chat/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
   frontend:
     build:
       context: ./CapFinLoan.Frontend
