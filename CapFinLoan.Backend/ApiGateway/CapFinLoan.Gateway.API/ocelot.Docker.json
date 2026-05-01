@@ -35,6 +35,20 @@
       "SwaggerKey": "admin"
     },
     {
+      "UpstreamPathTemplate": "/gateway/chat",
+      "UpstreamHttpMethod": ["POST"],
+      "DownstreamPathTemplate": "/chat",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "chatbot-service", "Port": 8000 }]
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/chat/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "DELETE"],
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "chatbot-service", "Port": 8000 }]
+    },
+    {
       "UpstreamPathTemplate": "/gateway/api/{everything}",
       "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
       "DownstreamPathTemplate": "/api/{everything}",
