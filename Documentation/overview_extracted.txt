@@ -1,0 +1,188 @@
+SmartSure
+Insurance Management System
+High-Level System Overview
+Version 2.0  |  March 2026
+Prepared for non-technical stakeholders
+1. What Is SmartSure?
+SmartSure is a complete, end-to-end insurance management platform built to handle every stage of the insurance journey — from a customer browsing plans online, all the way through purchasing a policy, filing a claim, and receiving a payout decision.
+The platform serves two distinct groups of people:
+Customers — who can browse insurance options, get instant price quotes, buy policies, and track their claims from any device.
+Administrators — who manage the entire operation: reviewing claims, adjusting user accounts, setting discount codes, and generating reports for business decisions.
+In Plain Terms
+Think of SmartSure as the digital backbone of an insurance company. Everything that would normally require phone calls, paper forms, or visits to a branch office can be done through SmartSure's website — quickly, securely, and with a complete audit trail.
+2. Who Uses SmartSure?
+The system is designed around two user roles, each with its own interface and permissions.
+Role
+Who They Are
+What They Can Do
+Customer
+Any registered member of the public
+Browse plans, get quotes, buy policies, file claims, upload documents, track claim status, manage their profile
+Administrator
+Insurance company staff with elevated access
+Manage all users and policies, review and approve/reject claims, set discounts, generate business reports, view full audit history
+3. What the System Does
+SmartSure covers five core functions, each operating independently but connected behind the scenes.
+3.1 Identity & Account Management
+This covers everything related to user accounts and access control.
+Customers can register with their email and password, or log in instantly using their Google account.
+A one-time verification code is sent by email when a new account is created, confirming ownership of the email address.
+Customers can reset forgotten passwords via an emailed verification code.
+Administrators can assign roles, view all users, or remove accounts when needed.
+3.2 Insurance Products & Pricing
+SmartSure supports multiple types of insurance. Currently the platform is structured to handle two main categories:
+Vehicle Insurance — covering cars, motorcycles, and other vehicles. Pricing takes into account the vehicle's age, estimated value, and type of coverage chosen.
+Home Insurance — covering residential properties. Pricing considers the property's age, estimated rebuild value, and security features.
+Each insurance category has sub-types (e.g. Comprehensive vs. Third-Party for vehicles), and administrators can configure the base pricing for each.
+3.3 Quotes & Policy Purchase
+Before committing to a purchase, customers can request an instant price quote. SmartSure calculates:
+The asset's Insured Declared Value (IDV) — the estimated worth of what is being insured, calculated using standard depreciation rules for vehicles or rebuild cost estimates for homes.
+The final premium — the amount the customer pays, based on the IDV, the plan chosen, and any applicable discounts.
+Customers can also apply discount codes at checkout. The system validates the code, checks eligibility (some discounts are only available to first-time buyers), and applies the reduction automatically.
+Once a customer is happy with the quote, they proceed to purchase. The policy starts in a 'Pending' state and becomes 'Active' once payment is confirmed.
+3.4 Claims Management
+Filing and tracking a claim is fully self-service for customers:
+A customer selects the policy they are claiming against and describes the incident.
+Supporting documents (photos, reports, receipts) are uploaded directly through the platform and stored securely in the cloud.
+Once ready, the customer formally submits the claim for review.
+On the admin side:
+Administrators see all submitted claims in a central dashboard.
+A claim moves through defined stages: Submitted → Under Review → Approved or Rejected.
+The customer receives an automatic email notification at each stage change.
+A complete history of every status change is recorded and visible to both the customer and admins.
+3.5 Administration & Reporting
+Administrators have a dedicated control panel that provides:
+A live dashboard showing key metrics: total users, active policies, claim counts, and total revenue.
+The ability to generate detailed reports covering policy summaries, claims activity, revenue, and user activity — downloadable as PDF files.
+A full audit log: every significant action in the system (who did what, and when) is automatically recorded for accountability.
+4. How It Works — Key User Journeys
+The following section walks through the most common activities in plain language.
+4.1 Signing Up & Getting Started
+Step
+What Happens
+1
+Customer visits the website and clicks Register.
+2
+They fill in their name, email, phone number, and a password (or choose to sign in with Google).
+3
+A 6-digit verification code is emailed to them. They enter it to confirm their email address.
+4
+Their account is now active. They are directed to their personal dashboard.
+4.2 Buying a Policy
+Step
+What Happens
+1
+Customer browses available insurance types on the Insurance page.
+2
+They select a plan and enter details about the asset (e.g. car model and year, or home address and age).
+3
+SmartSure instantly calculates a price quote and shows a breakdown of how the premium was calculated.
+4
+Optionally, the customer applies a discount code to reduce the premium.
+5
+Customer confirms and pays. The policy is created and activated.
+6
+The policy appears in their dashboard with full details, terms, and coverage information.
+4.3 Filing a Claim
+Step
+What Happens
+1
+Customer selects the relevant policy from their dashboard and starts a new claim.
+2
+They describe what happened and upload any supporting evidence (photos, documents, etc.).
+3
+Once ready, they submit the claim for review.
+4
+An admin reviews the claim and either requests more information, approves, or rejects it.
+5
+The customer receives an email at each stage. The full status history is visible in their dashboard.
+5. Security & Data Protection
+SmartSure has been built with data security as a foundational requirement, not an afterthought.
+Security Feature
+What It Means in Practice
+Password Protection
+Passwords are never stored in readable form. They are converted into a one-way encrypted format that cannot be reversed, even by system administrators.
+Secure Login Sessions
+When a user logs in, they receive a temporary digital pass (token) that expires after a set period. The system never stores their password in a session.
+Email Verification
+New accounts require email confirmation via a time-limited one-time code, preventing fake registrations.
+Role-Based Access
+Customers can only see and act on their own data. Admins have broader access, but every admin action is logged with a timestamp.
+Secure File Storage
+Claim documents are uploaded to an encrypted third-party cloud service. Only a secure reference link is stored in SmartSure’s own database.
+OTP Lockout Protection
+If someone attempts to guess a one-time verification code more than 5 times, the system locks that attempt automatically.
+Google Sign-In
+Customers using Google to log in never need a password in SmartSure at all. Their Google identity is verified, and a separate secure session is created.
+6. System Components at a Glance
+SmartSure is built as four independent but connected modules. Each module handles a specific area of responsibility and communicates with the others automatically in the background. This design means that if one area needs to be updated or scaled, it does not affect the others.
+Module
+Responsibility
+Identity & Accounts
+Handles user registration, login, password resets, email verification, and Google sign-in. Manages roles (Customer vs Admin).
+Policies & Pricing
+Manages all insurance products, pricing rules, discounts, quotes, and the full policy lifecycle from purchase to cancellation.
+Claims
+Handles the entire claims process: creation, document uploads, status tracking, approvals, rejections, and customer notifications.
+Admin & Reporting
+Provides administrators with oversight tools: dashboards, audit logs, user management, and report generation.
+Background Communication
+The four modules automatically notify each other when important events happen. For example, when a policy is activated, the Claims module is immediately informed so it can accept claims against it. When a claim status changes, the Accounts module sends the customer an email. All of this happens invisibly and instantly.
+7. Supported Insurance Types
+The platform is pre-configured with insurance categories and sub-types. These can be extended by administrators as the business grows.
+Category
+Sub-Types Available
+Pricing Basis
+Vehicle Insurance
+Comprehensive, Third-Party, and other subtypes as configured
+Vehicle age, estimated market value, and depreciation schedule
+Home Insurance
+Various property coverage types as configured
+Year built, estimated rebuild cost, and security features
+8. Customer Notifications
+SmartSure keeps customers informed at every step through automated email notifications. No manual follow-up is required from administrators for routine status updates.
+Trigger Event
+Who Is Notified
+What They Receive
+Account registered
+New customer
+Welcome email with verification code
+Password reset requested
+Account holder
+Email with reset verification code
+Claim submitted
+Admin team (via dashboard)
+Claim appears in admin queue
+Claim moved to Under Review
+Customer
+Email notification of status change
+Claim approved
+Customer
+Email confirmation of approval with notes
+Claim rejected
+Customer
+Email with rejection reason
+9. Reporting Capabilities
+Administrators can generate four types of business reports, each downloadable as a PDF:
+Report Type
+What It Shows
+Policy Summary
+Overview of all policies across the platform: counts by status, insurance type, and time period.
+Claims Summary
+Breakdown of claims by status (pending, approved, rejected) with volumes and trends.
+Revenue
+Total premium income collected within a specified date range.
+User Activity
+Registration trends, active users, and account-level activity.
+All reports are stored in the system with a record of who generated them and when, supporting accountability and audit requirements.
+10. Summary
+SmartSure is a modern, fully self-contained insurance management platform that brings the entire customer journey online — from first visit to settled claim — while giving administrators the tools and visibility they need to run the business effectively.
+Key highlights:
+Complete self-service experience for customers, reducing reliance on staff for routine transactions.
+Structured, trackable claim workflows ensuring consistency and accountability.
+Role-based access and a full audit trail protecting both customers and the business.
+Automatic email notifications keeping customers informed without manual effort.
+Flexible pricing engine supporting discounts, first-time buyer offers, and instant quotes.
+Detailed reporting tools supporting business intelligence and compliance needs.
+Document Notes
+This document is a high-level overview intended for business stakeholders and non-technical audiences. It summarises the capabilities and design of SmartSure version 2.0 as of March 2026. A separate technical Low-Level Design document (SmartSure-LLD-v2) is available for engineering and implementation teams.
