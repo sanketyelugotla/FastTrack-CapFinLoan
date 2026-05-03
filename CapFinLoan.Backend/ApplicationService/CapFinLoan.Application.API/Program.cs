@@ -1,7 +1,9 @@
 using System.Text;
 using CapFinLoan.Application.Application.Interfaces;
+using CapFinLoan.Application.Application.Options;
 using CapFinLoan.Application.Application.Services;
 using CapFinLoan.Application.Infrastructure.Messaging;
+using CapFinLoan.Application.Infrastructure.Payments;
 using CapFinLoan.Application.Persistence.Data;
 using CapFinLoan.Application.Persistence.Repositories;
 using MassTransit;
@@ -9,6 +11,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+
+// Load environment variables from .env file
+DotNetEnv.Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,8 +26,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<IApplicantProfileRepository, ApplicantProfileRepository>();
 builder.Services.AddScoped<ILoanApplicationRepository, LoanApplicationRepository>();
+builder.Services.AddScoped<IWalletRepository, WalletRepository>();
 builder.Services.AddScoped<ILoanApplicationService, LoanApplicationService>();
+builder.Services.AddScoped<IWalletService, WalletService>();
 builder.Services.AddScoped<IEventPublisher, RabbitMqEventPublisher>();
+
+builder.Services.Configure<WalletOptions>(builder.Configuration.GetSection(WalletOptions.SectionName));
+builder.Services.Configure<RazorpayOptions>(builder.Configuration.GetSection(RazorpayOptions.SectionName));
+builder.Services.AddHttpClient<IRazorpayGateway, RazorpayGateway>();
 
 builder.Services.AddMassTransit(x =>
 {

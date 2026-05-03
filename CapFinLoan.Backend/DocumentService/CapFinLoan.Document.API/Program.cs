@@ -11,6 +11,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 
+// Load environment variables from .env file
+DotNetEnv.Env.Load();
+
 var builder = WebApplication.CreateBuilder(args);
 
 var rabbitHost = builder.Configuration["RabbitMQ:Host"] ?? "localhost";

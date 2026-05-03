@@ -583,6 +583,54 @@
         @if (currentStep() === 4) {
           <!-- Step 5: Review -->
           <div class="space-y-6">
+            <!-- Wallet Disclaimer Banner -->
+            <div
+              class="p-4 rounded-xl border flex items-start gap-3"
+              [class]="
+                walletBalanceSufficient()
+                  ? 'bg-amber-50 border-amber-300 text-amber-800'
+                  : 'bg-red-50 border-red-300 text-red-800'
+              "
+            >
+              <span
+                class="material-symbols-outlined text-xl shrink-0 mt-0.5"
+                style="font-variation-settings: 'FILL' 1"
+                [class]="walletBalanceSufficient() ? 'text-amber-500' : 'text-red-500'"
+              >
+                {{ walletBalanceSufficient() ? 'account_balance_wallet' : 'warning' }}
+              </span>
+              <div class="flex-1 text-sm">
+                <p class="font-semibold mb-0.5">
+                  @if (walletBalanceSufficient()) {
+                    Submission Fee Applies
+                  } @else {
+                    Insufficient Wallet Balance
+                  }
+                </p>
+                <p class="font-normal leading-relaxed">
+                  @if (walletBalanceSufficient()) {
+                    <strong>₹{{ applicationFee() }}</strong> will be automatically deducted from
+                    your wallet upon submission. Current balance:
+                    <strong>₹{{ walletBalance() | number: '1.2-2' }}</strong
+                    >.
+                  } @else {
+                    Your wallet balance (<strong>₹{{ walletBalance() | number: '1.2-2' }}</strong
+                    >) is insufficient. You need at least
+                    <strong>₹{{ applicationFee() }}</strong> to submit. Please top up your wallet
+                    first. Your draft has been saved.
+                  }
+                </p>
+              </div>
+              @if (!walletBalanceSufficient()) {
+                <a
+                  routerLink="/applicant/wallet"
+                  class="shrink-0 text-xs font-bold bg-red-600 text-white px-3 py-1.5 rounded-lg hover:bg-red-700"
+                >
+                  Top Up Wallet
+                </a>
+              }
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div class="bg-[var(--color-surface-container-low)] rounded-lg p-5">
                 <div class="flex justify-between items-center mb-4">
@@ -754,7 +802,7 @@
               <button
                 type="button"
                 (click)="submitApplication()"
-                [disabled]="saving()"
+                [disabled]="saving() || !walletBalanceSufficient()"
                 class="w-full sm:w-auto bg-[var(--color-success)] text-white px-10 py-3 rounded-lg font-bold shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all font-label flex items-center justify-center gap-2 disabled:opacity-50 disabled:scale-100"
               >
                 {{ saving() ? 'Submitting...' : 'Submit Application' }}

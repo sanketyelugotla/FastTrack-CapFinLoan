@@ -168,8 +168,16 @@ export class ProfileComponent implements OnInit {
           setTimeout(() => {
             this.successMessage = '';
           }, 5000);
+        },
+        error: (err) => {
+          this.successMessage = '';
+          alert('Failed to save profile: ' + (err.error?.message || 'Please check your details and try again.'));
         }
       });
+    } else {
+      this.successMessage = '';
+      this.profileForm.markAllAsTouched();
+      alert('Please fill all required fields correctly before saving.');
     }
   }
 }

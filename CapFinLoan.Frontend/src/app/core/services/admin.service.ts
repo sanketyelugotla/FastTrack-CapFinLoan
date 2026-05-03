@@ -9,6 +9,7 @@ import {
 } from '../models/admin.models';
 import { UserSummary } from '../models/auth.models';
 import { DocumentResponse, VerifyDocumentRequest } from '../models/document.models';
+import { WalletSummaryResponse } from '../models/application.models';
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
@@ -22,6 +23,10 @@ export class AdminService {
 
   getDashboard() {
     return this.http.get<AdminDashboardResponse>(`${this.baseUrl}/admin/applications/dashboard`);
+  }
+
+  getWalletSummary() {
+    return this.http.get<WalletSummaryResponse>(`${this.baseUrl}/applications/wallet/admin/summary`);
   }
 
   getApplicationById(id: string) {

@@ -3,10 +3,17 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import {
   ApplicantProfileResponse,
+  CreateTopUpOrderRequest,
+  CreateTopUpOrderResponse,
   LoanApplicationResponse,
   LoanApplicationStatusResponse,
   SaveApplicantProfileRequest,
-  SaveLoanApplicationRequest
+  SaveLoanApplicationRequest,
+  VerifyTopUpRequest,
+  VerifyTopUpResponse,
+  WalletConfigResponse,
+  WalletLedgerEntryResponse,
+  WalletSummaryResponse
 } from '../models/application.models';
 
 @Injectable({ providedIn: 'root' })
@@ -42,11 +49,43 @@ export class ApplicationService {
     return this.http.post<LoanApplicationResponse>(`${this.apiUrl}/${id}/submit`, {});
   }
 
+  getWalletSummary() {
+    return this.http.get<WalletSummaryResponse>(`${this.apiUrl}/wallet/summary`);
+  }
+
+  getWalletLedger(take = 20) {
+    return this.http.get<WalletLedgerEntryResponse[]>(`${this.apiUrl}/wallet/ledger?take=${take}`);
+  }
+
+  getWalletConfig() {
+    return this.http.get<WalletConfigResponse>(`${this.apiUrl}/wallet/config`);
+  }
+
+  createTopUpOrder(data: CreateTopUpOrderRequest) {
+    return this.http.post<CreateTopUpOrderResponse>(`${this.apiUrl}/wallet/topup/create-order`, data);
+  }
+
+  verifyTopUp(data: VerifyTopUpRequest) {
+    return this.http.post<VerifyTopUpResponse>(`${this.apiUrl}/wallet/topup/verify`, data);
+  }
+
   getStatus(id: string) {
     return this.http.get<LoanApplicationStatusResponse>(`${this.apiUrl}/${id}/status`);
   }
 
   deleteDraft(id: string) {
     return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+
+  getAdminWalletSummary() {
+    return this.http.get<WalletSummaryResponse>(`${this.apiUrl}/wallet/admin/summary`);
+  }
+
+  createAdminTopUpOrder(data: CreateTopUpOrderRequest) {
+    return this.http.post<CreateTopUpOrderResponse>(`${this.apiUrl}/wallet/admin/topup/create-order`, data);
+  }
+
+  verifyAdminTopUp(data: VerifyTopUpRequest) {
+    return this.http.post<VerifyTopUpResponse>(`${this.apiUrl}/wallet/admin/topup/verify`, data);
   }
 }

@@ -1,9 +1,10 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { AdminService } from '../../../core/services/admin.service';
+import { ApplicationService } from '../../../core/services/application.service';
 import { AdminApplicationDetail } from '../../../core/models/admin.models';
 import { DocumentResponse } from '../../../core/models/document.models';
 import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
@@ -18,6 +19,7 @@ import { StatusBadgeComponent } from '../../../shared/components/status-badge/st
 export class ApplicationReviewComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private adminService = inject(AdminService);
+  private applicationService = inject(ApplicationService);
 
   app = signal<AdminApplicationDetail | null>(null);
   documents = signal<DocumentResponse[]>([]);
@@ -29,6 +31,13 @@ export class ApplicationReviewComponent implements OnInit {
   interestRate: number | null = null;
   sanctionAmount: number | null = null;
 
+  // Admin wallet balance for disbursal check
+  adminWalletBalance = signal<number>(0);
+  adminWalletInsufficient = computed(() => {
+    const sanction = this.sanctionAmount ?? this.app()?.requestedAmount ?? 0;
+    return this.adminWalletBalance() < sanction;
+  });
+
   // Per-document inline reupload state
   reuploadExpandedDocId = signal<string | null>(null);
   docRemarks: Record<string, string> = {};
@@ -37,6 +46,11 @@ export class ApplicationReviewComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id')!;
     this.adminService.getApplicationById(id).subscribe(a => this.app.set(a));
     this.loadDocuments(id);
+    // Fetch admin wallet balance for disbursal check
+    this.applicationService.getAdminWalletSummary().subscribe({
+      next: s => this.adminWalletBalance.set(s.balance ?? 0),
+      error: () => { }
+    });
   }
 
   private normalizeStatus(status: string | null | undefined): string {
@@ -107,8 +121,14 @@ export class ApplicationReviewComponent implements OnInit {
         this.actionInProgress.set(false);
         return;
       }
+      const sanctionAmt = this.sanctionAmount || this.app()!.requestedAmount;
+      if (this.adminWalletBalance() < sanctionAmt) {
+        this.actionError.set(`Platform wallet has insufficient funds (₹${this.adminWalletBalance().toLocaleString()}) to disburse ₹${sanctionAmt.toLocaleString()}. Please add funds to the platform wallet.`);
+        this.actionInProgress.set(false);
+        return;
+      }
       request.interestRate = this.interestRate;
-      request.sanctionAmount = this.sanctionAmount || this.app()!.requestedAmount;
+      request.sanctionAmount = sanctionAmt;
     }
 
     this.adminService.updateStatus(id, request).subscribe({
@@ -121,7 +141,11 @@ export class ApplicationReviewComponent implements OnInit {
         this.actionInProgress.set(false);
       },
       error: (err) => {
-        this.setActionError('Failed to update application status.', err);
+        if (err.status === 402 || err.error?.errorCode === 'INSUFFICIENT_WALLET_BALANCE') {
+          this.actionError.set(err.error?.message || 'Platform wallet has insufficient funds for disbursal. Please add funds to the platform wallet.');
+        } else {
+          this.setActionError('Failed to update application status.', err);
+        }
         this.actionInProgress.set(false);
       }
     });

@@ -2,9 +2,11 @@ using CapFinLoan.Application.Application.Contracts.Requests;
 using CapFinLoan.Application.Application.Contracts.Responses;
 using CapFinLoan.Application.Application.Exceptions;
 using CapFinLoan.Application.Application.Interfaces;
+using CapFinLoan.Application.Application.Options;
 using CapFinLoan.Application.Domain.Constants;
 using CapFinLoan.Application.Domain.Entities;
 using CapFinLoan.Messaging.Contracts.Events;
+using Microsoft.Extensions.Options;
 
 namespace CapFinLoan.Application.Application.Services;
 
@@ -13,12 +15,21 @@ public class LoanApplicationService : ILoanApplicationService
     private readonly IApplicantProfileRepository _applicantProfileRepository;
     private readonly ILoanApplicationRepository _loanApplicationRepository;
     private readonly IEventPublisher _eventPublisher;
+    private readonly IWalletService _walletService;
+    private readonly WalletOptions _walletOptions;
 
-    public LoanApplicationService(IApplicantProfileRepository applicantProfileRepository, ILoanApplicationRepository loanApplicationRepository, IEventPublisher eventPublisher)
+    public LoanApplicationService(
+        IApplicantProfileRepository applicantProfileRepository,
+        ILoanApplicationRepository loanApplicationRepository,
+        IEventPublisher eventPublisher,
+        IWalletService walletService,
+        IOptions<WalletOptions> walletOptions)
     {
         _applicantProfileRepository = applicantProfileRepository;
         _loanApplicationRepository = loanApplicationRepository;
         _eventPublisher = eventPublisher;
+        _walletService = walletService;
+        _walletOptions = walletOptions.Value;
     }
 
     public async Task<ApplicantProfileResponse> GetProfileAsync(Guid applicantUserId, CancellationToken cancellationToken = default)
@@ -127,6 +138,12 @@ public class LoanApplicationService : ILoanApplicationService
         }
 
         ValidateForSubmission(application);
+
+        await _walletService.DebitApplicationFeeAndCreditAdminAsync(
+            application.ApplicantUserId,
+            application.Id,
+            _walletOptions.ApplicationFee,
+            cancellationToken);
 
         var previousStatus = application.Status;
         var now = DateTime.UtcNow;

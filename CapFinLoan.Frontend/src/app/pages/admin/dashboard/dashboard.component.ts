@@ -2,10 +2,11 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
 import { AdminDashboardResponse } from '../../../core/models/admin.models';
+import { AdminWalletCardComponent } from '../wallet-card/admin-wallet-card.component';
 
 @Component({
   selector: 'app-admin-dashboard',
-  imports: [RouterLink],
+  imports: [RouterLink, AdminWalletCardComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })

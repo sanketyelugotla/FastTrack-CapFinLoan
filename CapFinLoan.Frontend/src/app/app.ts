@@ -7,4 +7,4 @@ import { ToastComponent } from './shared/components/toast/toast.component';
   imports: [RouterOutlet, ToastComponent],
   template: `<router-outlet /><app-toast />`
 })
-export class App {}
+export class App { }

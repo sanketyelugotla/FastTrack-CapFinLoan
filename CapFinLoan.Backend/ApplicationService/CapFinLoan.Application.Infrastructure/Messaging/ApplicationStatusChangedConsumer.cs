@@ -1,4 +1,5 @@
 using CapFinLoan.Application.Domain.Constants;
+using CapFinLoan.Application.Application.Interfaces;
 using CapFinLoan.Application.Persistence.Data;
 using CapFinLoan.Messaging.Contracts.Events;
 using MassTransit;
@@ -14,11 +15,13 @@ public class ApplicationStatusChangedConsumer : IConsumer<ApplicationStatusChang
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IPublishEndpoint _publishEndpoint;
+    private readonly IWalletService _walletService;
 
-    public ApplicationStatusChangedConsumer(ApplicationDbContext dbContext, IPublishEndpoint publishEndpoint)
+    public ApplicationStatusChangedConsumer(ApplicationDbContext dbContext, IPublishEndpoint publishEndpoint, IWalletService walletService)
     {
         _dbContext = dbContext;
         _publishEndpoint = publishEndpoint;
+        _walletService = walletService;
     }
 
     public async Task Consume(ConsumeContext<ApplicationStatusChangedEvent> context)
@@ -68,6 +71,14 @@ public class ApplicationStatusChangedConsumer : IConsumer<ApplicationStatusChang
             // Step 3: Publish domain events based on the new status
             if (string.Equals(message.NewStatus, ApplicationStatuses.Approved, StringComparison.OrdinalIgnoreCase))
             {
+                var disbursalAmount = application.RequestedAmount;
+                await _walletService.CreditLoanDisbursalAsync(
+                    application.ApplicantUserId,
+                    application.Id,
+                    disbursalAmount,
+                    "Loan approved and disbursed to applicant wallet.",
+                    context.CancellationToken);
+
                 await _publishEndpoint.Publish(new LoanApprovedEvent
                 {
                     ApplicationId = application.Id,

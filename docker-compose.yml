@@ -6,7 +6,7 @@ services:
     container_name: capfinloan-sqlserver
     environment:
       ACCEPT_EULA: "Y"
-      MSSQL_SA_PASSWORD: "CapFinLoan@12345"
+      MSSQL_SA_PASSWORD: "${DB_PASSWORD:-CapFinLoan@12345}"
     ports:
       - "1433:1433"
     volumes:
@@ -47,11 +47,16 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Docker
       ASPNETCORE_URLS: http://+:8080
-      ConnectionStrings__CapFinLoanDb: "Server=sqlserver,1433;Database=CapFinLoan_AuthDb;User Id=sa;Password=CapFinLoan@12345;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True"
+      ConnectionStrings__CapFinLoanDb: "Server=sqlserver,1433;Database=CapFinLoan_AuthDb;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True"
       RabbitMQ__Host: rabbitmq
       RabbitMQ__Username: guest
       RabbitMQ__Password: guest
-      InternalApi__Key: capfinloan-internal-key
+      Jwt__Key: "${Jwt__Key}"
+      Jwt__Issuer: "${Jwt__Issuer}"
+      Jwt__Audience: "${Jwt__Audience}"
+      Jwt__ExpiryMinutes: "120"
+      InternalApi__Key: "${InternalApi__Key}"
+      Google__ClientId: "${Google__ClientId}"
     depends_on:
       sqlserver:
         condition: service_healthy
@@ -80,7 +85,14 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Docker
       ASPNETCORE_URLS: http://+:8080
-      ConnectionStrings__CapFinLoanDb: "Server=sqlserver,1433;Database=CapFinLoan_ApplicationDb;User Id=sa;Password=CapFinLoan@12345;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True"
+      ConnectionStrings__CapFinLoanDb: "Server=sqlserver,1433;Database=CapFinLoan_ApplicationDb;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True"
+      Jwt__Key: "${Jwt__Key}"
+      Jwt__Issuer: "${Jwt__Issuer}"
+      Jwt__Audience: "${Jwt__Audience}"
+      Jwt__ExpiryMinutes: "120"
+      Razorpay__KeyId: "${Razorpay__KeyId}"
+      Razorpay__KeySecret: "${Razorpay__KeySecret}"
+      Razorpay__BaseUrl: "${Razorpay__BaseUrl}"
       RabbitMQ__Host: rabbitmq
       RabbitMQ__Username: guest
       RabbitMQ__Password: guest
@@ -112,11 +124,15 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Docker
       ASPNETCORE_URLS: http://+:8080
-      ConnectionStrings__CapFinLoanDb: "Server=sqlserver,1433;Database=CapFinLoan_DocumentDb;User Id=sa;Password=CapFinLoan@12345;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True"
+      ConnectionStrings__CapFinLoanDb: "Server=sqlserver,1433;Database=CapFinLoan_DocumentDb;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True"
       RabbitMQ__Host: rabbitmq
       RabbitMQ__Username: guest
       RabbitMQ__Password: guest
       DocumentDependencies__ApplicationServiceBaseUrl: http://application-service:8080
+      Jwt__Key: "${Jwt__Key}"
+      Jwt__Issuer: "${Jwt__Issuer}"
+      Jwt__Audience: "${Jwt__Audience}"
+      Jwt__ExpiryMinutes: "120"
     depends_on:
       sqlserver:
         condition: service_healthy
@@ -147,12 +163,16 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Docker
       ASPNETCORE_URLS: http://+:8080
-      ConnectionStrings__CapFinLoanDb: "Server=sqlserver,1433;Database=CapFinLoan_AdminDb;User Id=sa;Password=CapFinLoan@12345;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True"
+      ConnectionStrings__CapFinLoanDb: "Server=sqlserver,1433;Database=CapFinLoan_AdminDb;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True"
       RabbitMQ__Host: rabbitmq
       RabbitMQ__Username: guest
       RabbitMQ__Password: guest
       AdminDependencies__AuthServiceBaseUrl: http://auth-service:8080
       AdminDependencies__DocumentServiceBaseUrl: http://document-service:8080
+      Jwt__Key: "${Jwt__Key}"
+      Jwt__Issuer: "${Jwt__Issuer}"
+      Jwt__Audience: "${Jwt__Audience}"
+      Jwt__ExpiryMinutes: "120"
     depends_on:
       sqlserver:
         condition: service_healthy
@@ -185,7 +205,7 @@ services:
       RabbitMQ__Username: guest
       RabbitMQ__Password: guest
       NotificationDependencies__AuthServiceBaseUrl: http://auth-service:8080/
-      NotificationDependencies__InternalApiKey: capfinloan-internal-key
+      NotificationDependencies__InternalApiKey: "${InternalApi__Key}"
       Email__SmtpHost: smtp.gmail.com
       Email__Port: 587
       Email__Username: ${EMAIL_USERNAME:-}
@@ -242,9 +262,9 @@ services:
     container_name: capfinloan-chatbot-service
     environment:
       GROQ_API_KEY: ${GROQ_API_KEY:-}
-      JWT_SECRET: "CapFinLoan.Auth.Jwt.Signing.Key.ChangeThisInProduction.2026"
-      JWT_ISSUER: "CapFinLoan.AuthService"
-      JWT_AUDIENCE: "CapFinLoan.Gateway"
+      JWT_SECRET: "${Jwt__Key}"
+      JWT_ISSUER: "${Jwt__Issuer}"
+      JWT_AUDIENCE: "${Jwt__Audience}"
       APPLICATION_SERVICE_URL: http://application-service:8080
       DOCUMENT_SERVICE_URL: http://document-service:8080
       CORS_ORIGINS: "http://localhost:4200,http://api-gateway:8080"
@@ -256,7 +276,13 @@ services:
     networks:
       - capfinloan-net
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/chat/health')"]
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/chat/health')",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5

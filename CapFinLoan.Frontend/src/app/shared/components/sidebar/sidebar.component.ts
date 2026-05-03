@@ -19,13 +19,15 @@ export class SidebarComponent {
       { label: 'Queue', path: '/admin/queue', exact: true, icon: 'format_list_bulleted' },
       { label: 'Documents', path: '/admin/documents', exact: true, icon: 'folder_open' },
       { label: 'Users', path: '/admin/users', exact: false, icon: 'group' },
-      { label: 'Reports', path: '/admin/reports', exact: true, icon: 'analytics' }
+      { label: 'Reports', path: '/admin/reports', exact: true, icon: 'analytics' },
+      { label: 'Platform Wallet', path: '/admin/wallet', exact: true, icon: 'account_balance_wallet' }
     ]
     : [
       { label: 'Dashboard', path: '/applicant/dashboard', exact: true, icon: 'dashboard' },
       { label: 'Apply Loan', path: '/applicant/apply', exact: true, icon: 'account_balance' },
       { label: 'My Applications', path: '/applicant/applications', exact: false, icon: 'description' },
       { label: 'My Documents', path: '/applicant/documents', exact: true, icon: 'folder_open' },
+      { label: 'My Wallet', path: '/applicant/wallet', exact: true, icon: 'account_balance_wallet' },
       { label: 'Profile', path: '/applicant/profile', exact: true, icon: 'person' }
     ]
   );

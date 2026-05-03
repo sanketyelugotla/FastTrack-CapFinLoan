@@ -32,6 +32,7 @@ export const routes: Routes = [
       { path: 'applications/:id/documents', loadComponent: () => import('./pages/applicant/documents/documents.component').then(m => m.DocumentsComponent) },
       { path: 'documents', loadComponent: () => import('./pages/applicant/my-documents/my-documents.component').then(m => m.MyDocumentsComponent) },
       { path: 'profile', loadComponent: () => import('./pages/applicant/profile/profile.component').then(m => m.ProfileComponent) },
+      { path: 'wallet', loadComponent: () => import('./pages/applicant/wallet/wallet.component').then(m => m.WalletComponent) },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
@@ -48,6 +49,7 @@ export const routes: Routes = [
       { path: 'applications/:id', loadComponent: () => import('./pages/admin/application-review/application-review.component').then(m => m.ApplicationReviewComponent) },
       { path: 'reports', loadComponent: () => import('./pages/admin/reports/reports.component').then(m => m.AdminReportsComponent) },
       { path: 'users', loadComponent: () => import('./pages/admin/users/users.component').then(m => m.AdminUsersComponent) },
+      { path: 'wallet', loadComponent: () => import('./pages/admin/admin-wallet/admin-wallet.component').then(m => m.AdminWalletComponent) },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },

@@ -348,30 +348,27 @@ async def _refresh_documents(session: SessionContext, jwt_token: str) -> list[di
 
 
 async def _hydrate_external_context(session: SessionContext, jwt_token: str) -> None:
-    if not session.profile_snapshot_loaded:
-        try:
-            await _refresh_profile(session, jwt_token)
-        except Exception as exc:
-            logger.info("Profile preload skipped: %s", exc)
-            session.profile_snapshot = {"personal_details": {}, "employment_details": {}}
-            session.profile_snapshot_loaded = True
-            session.onboarding_complete = False
+    try:
+        await _refresh_profile(session, jwt_token)
+    except Exception as exc:
+        logger.info("Profile preload skipped: %s", exc)
+        session.profile_snapshot = {"personal_details": {}, "employment_details": {}}
+        session.profile_snapshot_loaded = True
+        session.onboarding_complete = False
 
-    if not session.applications_snapshot_loaded:
-        try:
-            await _refresh_applications(session, jwt_token)
-        except Exception as exc:
-            logger.info("Application preload skipped: %s", exc)
-            session.applications_snapshot = []
-            session.applications_snapshot_loaded = True
+    try:
+        await _refresh_applications(session, jwt_token)
+    except Exception as exc:
+        logger.info("Application preload skipped: %s", exc)
+        session.applications_snapshot = []
+        session.applications_snapshot_loaded = True
 
-    if not session.documents_snapshot_loaded:
-        try:
-            await _refresh_documents(session, jwt_token)
-        except Exception as exc:
-            logger.info("Document preload skipped: %s", exc)
-            session.documents_snapshot = []
-            session.documents_snapshot_loaded = True
+    try:
+        await _refresh_documents(session, jwt_token)
+    except Exception as exc:
+        logger.info("Document preload skipped: %s", exc)
+        session.documents_snapshot = []
+        session.documents_snapshot_loaded = True
 
 
 def _loan_progress(session: SessionContext, label: str) -> ChatProgress:

@@ -1,15 +1,15 @@
 import { Component, inject, signal, OnInit, computed } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ApplicationService } from '../../../core/services/application.service';
 import { DocumentService } from '../../../core/services/document.service';
 import { SaveLoanApplicationRequest } from '../../../core/models/application.models';
 import { DocumentResponse } from '../../../core/models/document.models';
-import { DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-apply-loan',
-  imports: [FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './apply-loan.component.html',
   styleUrl: './apply-loan.component.css'
 })
@@ -26,6 +26,11 @@ export class ApplyLoanComponent implements OnInit {
   error = signal('');
   draftId = signal<string | null>(null);
   appStatus = signal<string>('Draft');
+
+  // Wallet balance check
+  walletBalance = signal<number>(0);
+  applicationFee = signal<number>(500);
+  walletBalanceSufficient = computed(() => this.walletBalance() >= this.applicationFee());
   profileAutoFilled = signal(false);
 
   /** True when the loaded application is no longer editable */
@@ -66,6 +71,16 @@ export class ApplyLoanComponent implements OnInit {
   };
 
   ngOnInit() {
+    // Pre-fetch wallet balance and config
+    this.appService.getWalletSummary().subscribe({
+      next: s => this.walletBalance.set(s.balance ?? 0),
+      error: () => { }
+    });
+    this.appService.getWalletConfig().subscribe({
+      next: c => this.applicationFee.set(c.applicationFee ?? 500),
+      error: () => { }
+    });
+
     this.docService.getMyDocuments().subscribe({
       next: docs => {
         this.genericDocuments.set(docs.filter(d => d.applicationId === '00000000-0000-0000-0000-000000000000'));
@@ -329,6 +344,10 @@ export class ApplyLoanComponent implements OnInit {
 
   submitApplication() {
     if (!this.draftId()) return;
+    if (!this.walletBalanceSufficient()) {
+      this.error.set(`Insufficient wallet balance. You need ₹${this.applicationFee()} to submit. Please top up your wallet. Your draft has been saved.`);
+      return;
+    }
     this.saving.set(true);
     this.error.set('');
 
@@ -341,7 +360,13 @@ export class ApplyLoanComponent implements OnInit {
           },
           error: (err) => {
             this.saving.set(false);
-            this.error.set(err.error?.message || 'Submission failed. Please check all required fields.');
+            const errorCode = err.error?.errorCode;
+            if (errorCode === 'INSUFFICIENT_WALLET_BALANCE') {
+              this.walletBalance.set(0); // reflect updated balance
+              this.error.set(err.error?.message || 'Insufficient wallet balance. Please top up your wallet. Your application remains as a draft.');
+            } else {
+              this.error.set(err.error?.message || 'Submission failed. Please check all required fields.');
+            }
           }
         });
       },

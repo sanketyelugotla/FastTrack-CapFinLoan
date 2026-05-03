@@ -101,3 +101,59 @@ export interface LoanApplicationStatusResponse {
   currentStatus: string;
   timeline: ApplicationStatusHistoryResponse[];
 }
+
+export interface WalletSummaryResponse {
+  walletAccountId: string;
+  ownerUserId: string;
+  ownerType: string;
+  currency: string;
+  balance: number;
+  recentEntries: WalletLedgerEntryResponse[];
+}
+
+export interface WalletLedgerEntryResponse {
+  id: string;
+  walletAccountId: string;
+  direction: string;
+  entryType: string;
+  amount: number;
+  currency: string;
+  status: string;
+  referenceId: string | null;
+  correlationId: string | null;
+  remarks: string | null;
+  createdAtUtc: string;
+}
+
+export interface CreateTopUpOrderRequest {
+  amount: number;
+  currency?: string | null;
+}
+
+export interface CreateTopUpOrderResponse {
+  provider: string;
+  keyId: string;
+  providerOrderId: string;
+  amount: number;
+  currency: string;
+  referenceId: string;
+}
+
+export interface VerifyTopUpRequest {
+  providerOrderId: string;
+  providerPaymentId: string;
+  providerSignature: string;
+}
+
+export interface VerifyTopUpResponse {
+  success: boolean;
+  message: string;
+  wallet: WalletSummaryResponse;
+}
+
+export interface WalletConfigResponse {
+  applicationFee: number;
+  minTopUpAmount: number;
+  maxTopUpAmount: number;
+  currency: string;
+}
