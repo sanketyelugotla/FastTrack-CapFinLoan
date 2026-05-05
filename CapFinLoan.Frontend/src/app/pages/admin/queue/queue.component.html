@@ -90,6 +90,7 @@
                             <th class="px-6 py-4 text-[11px] font-bold uppercase text-[var(--color-on-surface-variant)] tracking-widest font-label">App #</th>
                             <th class="px-6 py-4 text-[11px] font-bold uppercase text-[var(--color-on-surface-variant)] tracking-widest font-label">Applicant Name</th>
                             <th class="px-6 py-4 text-[11px] font-bold uppercase text-[var(--color-on-surface-variant)] tracking-widest font-label">Loan Scope</th>
+                            <th class="px-6 py-4 text-[11px] font-bold uppercase text-[var(--color-on-surface-variant)] tracking-widest font-label">Remarks</th>
                             <th class="px-6 py-4 text-[11px] font-bold uppercase text-[var(--color-on-surface-variant)] tracking-widest text-right font-label">Amount</th>
                             <th class="px-6 py-4 text-[11px] font-bold uppercase text-[var(--color-on-surface-variant)] tracking-widest font-label">Status</th>
                             <th class="px-6 py-4 text-[11px] font-bold uppercase text-[var(--color-on-surface-variant)] tracking-widest text-right font-label">Action</th>
@@ -112,6 +113,15 @@
                                 </td>
                                 <td class="px-6 py-5 text-sm text-[var(--color-on-surface-variant)] font-body">
                                     {{ app.requestedTenureMonths }} mo
+                                </td>
+                                <td class="px-6 py-5 max-w-[200px] font-body">
+                                    @if (app.remarks) {
+                                      <span class="inline-block text-xs text-[var(--color-on-surface-variant)] bg-[var(--color-surface-container-low)] rounded-lg px-3 py-1.5 leading-snug truncate max-w-[180px]" [title]="app.remarks">
+                                        {{ app.remarks }}
+                                      </span>
+                                    } @else {
+                                      <span class="text-xs text-slate-300 dark:text-slate-600 italic">—</span>
+                                    }
                                 </td>
                                 <td class="px-6 py-5 text-sm font-bold text-[var(--color-primary)] text-right font-body">
                                     ₹{{ app.requestedAmount | number }}

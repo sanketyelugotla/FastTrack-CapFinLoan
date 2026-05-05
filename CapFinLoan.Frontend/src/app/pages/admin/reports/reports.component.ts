@@ -1,15 +1,19 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { DatePipe, DecimalPipe, SlicePipe } from '@angular/common';
 import { AdminService } from '../../../core/services/admin.service';
-import { AdminDashboardResponse } from '../../../core/models/admin.models';
+import { AdminDashboardResponse, AdminApplicationSummary } from '../../../core/models/admin.models';
+import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
 
 @Component({
   selector: 'app-admin-reports',
+  imports: [DatePipe, DecimalPipe, SlicePipe, StatusBadgeComponent],
   templateUrl: './reports.component.html'
 })
 export class AdminReportsComponent implements OnInit {
   private adminService = inject(AdminService);
 
   dashboard = signal<AdminDashboardResponse | null>(null);
+  recentApplications = signal<AdminApplicationSummary[]>([]);
   loading = signal(true);
   actionLoading = signal(false);
 
@@ -31,6 +35,11 @@ export class AdminReportsComponent implements OnInit {
       },
       error: () => this.loading.set(false)
     });
+
+    this.adminService.getQueue().subscribe({
+      next: (apps) => this.recentApplications.set(apps),
+      error: () => {}
+    });
   }
 
   downloadCsv() {
@@ -43,7 +52,7 @@ export class AdminReportsComponent implements OnInit {
           return;
         }
 
-        const headers = ['Application Number', 'Applicant Name', 'Email', 'Phone', 'Requested Amount (₹)', 'Tenure (Months)', 'Status', 'Submitted Date'];
+        const headers = ['Application Number', 'Applicant Name', 'Email', 'Phone', 'Requested Amount (₹)', 'Tenure (Months)', 'Status', 'Remarks', 'Submitted Date'];
         const rows = apps.map(app => [
           app.applicationNumber,
           app.applicantName,
@@ -52,6 +61,7 @@ export class AdminReportsComponent implements OnInit {
           app.requestedAmount.toLocaleString('en-IN'),
           app.requestedTenureMonths.toString(),
           app.status,
+          app.remarks ?? '',
           app.submittedAtUtc ? new Date(app.submittedAtUtc).toLocaleDateString('en-IN') : 'N/A'
         ]);
 

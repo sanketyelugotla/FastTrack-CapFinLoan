@@ -307,6 +307,56 @@
           </div>
         </div>
       </div>
+      <!-- Recent Applications with Remarks -->
+      @if (recentApplications().length > 0) {
+        <section class="bg-white dark:bg-slate-900 border border-[var(--color-outline-variant)]/20 rounded-xl shadow-sm overflow-hidden">
+          <div class="px-8 py-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+            <div>
+              <h4 class="font-headline text-base font-bold text-[var(--color-primary)]">Recent Applications</h4>
+              <p class="text-xs text-[var(--color-on-surface-variant)] mt-0.5 font-body">All recent activity with applicant remarks and status</p>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-50 dark:bg-slate-900/50">
+                  <th class="px-6 py-3 font-label font-bold text-[10px] uppercase tracking-widest text-[var(--color-on-surface-variant)]">App #</th>
+                  <th class="px-6 py-3 font-label font-bold text-[10px] uppercase tracking-widest text-[var(--color-on-surface-variant)]">Applicant</th>
+                  <th class="px-6 py-3 font-label font-bold text-[10px] uppercase tracking-widest text-[var(--color-on-surface-variant)]">Amount</th>
+                  <th class="px-6 py-3 font-label font-bold text-[10px] uppercase tracking-widest text-[var(--color-on-surface-variant)]">Submitted</th>
+                  <th class="px-6 py-3 font-label font-bold text-[10px] uppercase tracking-widest text-[var(--color-on-surface-variant)]">Remarks</th>
+                  <th class="px-6 py-3 font-label font-bold text-[10px] uppercase tracking-widest text-[var(--color-on-surface-variant)] text-right">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                @for (app of recentApplications(); track app.id) {
+                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                    <td class="px-6 py-3 font-mono text-xs font-bold text-[var(--color-primary)]">LN-{{ app.applicationNumber }}</td>
+                    <td class="px-6 py-3">
+                      <p class="text-sm font-semibold text-[var(--color-primary)] font-body">{{ app.applicantName }}</p>
+                      <p class="text-[10px] text-[var(--color-on-surface-variant)] font-body">{{ app.email }}</p>
+                    </td>
+                    <td class="px-6 py-3 text-sm font-bold text-[var(--color-primary)] font-body">₹{{ app.requestedAmount | number }}</td>
+                    <td class="px-6 py-3 text-xs text-[var(--color-on-surface-variant)] font-body">{{ app.submittedAtUtc | date: 'mediumDate' }}</td>
+                    <td class="px-6 py-3 max-w-[220px]">
+                      @if (app.remarks) {
+                        <span class="inline-block text-xs text-[var(--color-on-surface-variant)] bg-[var(--color-surface-container-low)] rounded-lg px-3 py-1.5 leading-snug" [title]="app.remarks">
+                          {{ app.remarks.length > 60 ? (app.remarks | slice:0:60) + '...' : app.remarks }}
+                        </span>
+                      } @else {
+                        <span class="text-xs text-slate-300 dark:text-slate-600 italic">— No remarks</span>
+                      }
+                    </td>
+                    <td class="px-6 py-3 text-right">
+                      <app-status-badge [status]="app.status" />
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </section>
+      }
     </div>
   }
 </div>

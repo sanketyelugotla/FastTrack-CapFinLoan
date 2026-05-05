@@ -1,7 +1,8 @@
 <aside
   class="h-screen w-72 fixed left-0 top-0 hidden md:flex flex-col bg-slate-50 dark:bg-slate-950 border-r border-slate-200/10 z-50"
 >
-  <div class="p-6 mb-4">
+  <!-- Brand -->
+  <div class="px-6 pt-6 pb-3">
     <a routerLink="/" class="flex items-center gap-3 group cursor-pointer no-underline">
       <div
         class="w-10 h-10 bg-[var(--color-primary-container)] rounded-lg flex items-center justify-center text-white group-hover:scale-105 transition-transform"
@@ -9,21 +10,27 @@
         <span class="material-symbols-outlined">{{ headerIcon() }}</span>
       </div>
       <div>
-        <span class="block font-headline font-bold text-xl text-[var(--color-primary)]">{{
-          headerTitle()
-        }}</span>
+        <span class="block font-headline font-bold text-xl text-[var(--color-primary)]"
+          >Cap FinLoan</span
+        >
+        <span
+          class="block text-[10px] font-bold uppercase tracking-widest text-[var(--color-outline)] font-label"
+        >
+          {{ role() === 'ADMIN' ? 'Admin Portal' : 'Applicant Portal' }}
+        </span>
       </div>
     </a>
   </div>
 
-  <nav class="flex flex-col gap-2 p-6 flex-1">
+  <nav class="flex flex-col gap-1 px-4 pb-2 flex-1 overflow-y-auto">
+    <div class="border-t border-slate-200/50 dark:border-slate-800 my-1"></div>
+
     @for (item of navItems(); track item.path) {
       <a
         [routerLink]="item.path"
         [routerLinkActive]="'bg-white dark:bg-slate-900 text-[var(--color-primary-container)] dark:text-blue-100 shadow-sm'"
         [routerLinkActiveOptions]="{ exact: item.exact }"
         class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900 transition-all duration-200 font-label text-sm font-medium"
-        [class.text-blue-950]="false"
       >
         <span class="material-symbols-outlined text-xl">{{ item.icon }}</span>
         {{ item.label }}
@@ -31,7 +38,8 @@
     }
   </nav>
 
-  <div class="p-6 mt-auto">
+  <!-- Bottom: New Application / View Reports -->
+  <div class="px-4 pb-2">
     @if (role() === 'APPLICANT') {
       <a
         routerLink="/applicant/apply"
@@ -49,10 +57,34 @@
         View Reports
       </a>
     }
+  </div>
 
+  <!-- User Profile Block -->
+  <div class="px-4 py-3 mx-4 mb-2 mt-1 rounded-xl">
+    <div class="flex items-center gap-3">
+      <div
+        class="w-9 h-9 flex items-center justify-center rounded-full bg-[var(--color-primary-container)] text-white text-sm font-bold shrink-0 shadow-sm"
+      >
+        {{ userInitial() }}
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">
+          {{ auth.currentUser()?.name }}
+        </p>
+        <p
+          class="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500 dark:text-slate-400"
+        >
+          {{ auth.currentUser()?.role }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logout -->
+  <div class="px-4 pb-5">
     <button
       (click)="auth.logout()"
-      class="w-full flex items-center gap-3 px-4 py-3 mt-4 text-slate-500 dark:text-slate-400 hover:text-[var(--color-error)] transition-colors font-label text-sm font-medium"
+      class="w-full flex items-center gap-3 px-4 py-2.5 text-slate-500 dark:text-slate-400 hover:text-[var(--color-error)] hover:bg-red-50 dark:hover:bg-red-950/20 rounded-xl transition-all font-label text-sm font-medium"
     >
       <span class="material-symbols-outlined text-xl">logout</span>
       Logout
