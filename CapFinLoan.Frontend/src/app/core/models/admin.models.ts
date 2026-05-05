@@ -17,6 +17,7 @@ export interface AdminApplicationSummary {
   requestedAmount: number;
   requestedTenureMonths: number;
   status: string;
+  remarks: string | null;
   createdAtUtc: string;
   updatedAtUtc: string;
   submittedAtUtc: string | null;

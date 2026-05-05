@@ -157,3 +157,8 @@ export interface WalletConfigResponse {
   maxTopUpAmount: number;
   currency: string;
 }
+
+export interface WithdrawRequest {
+  amount: number;
+  remarks?: string | null;
+}

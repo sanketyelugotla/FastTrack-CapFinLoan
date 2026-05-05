@@ -17,513 +17,241 @@ declare var Razorpay: any;
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   template: `
-    <div class="wallet-dashboard fade-in">
-      <div class="glass-header">
-        <div class="header-content">
-          <h1>Platform Wallet</h1>
-          <p class="subtitle">Securely manage platform funds and application fees</p>
+    <div class="wallet-page">
+      <!-- Header -->
+      <div class="wallet-header">
+        <div>
+          <h1 class="wallet-title">Platform Wallet</h1>
+          <p class="wallet-sub">Manage platform funds and application fee collection.</p>
         </div>
       </div>
 
-      <!-- Top Row: Add Funds (left) + Fee Info (right) -->
-      <div class="content-grid">
-        <!-- Left Column: Balance & TopUp -->
-        <div class="left-column">
-          <!-- Balance Card -->
-          <div class="glass-card balance-card">
-            <div class="card-body">
-              <h2 class="section-title">Admin Balance</h2>
-              <div class="balance-display">
-                <span class="currency-symbol">₹</span>
-                <span class="balance-amount">{{ walletSummary()?.balance | number: '1.2-2' }}</span>
-              </div>
-              <div class="balance-meta">
-                <span class="badge badge-primary">Platform Master Wallet</span>
-                <span class="last-updated">
-                  Last active: {{ (walletSummary()?.recentEntries?.[0]?.createdAtUtc | date:'medium') || 'Never' }}
-                </span>
-              </div>
-            </div>
+      <!-- Main row: Balance + Actions -->
+      <div class="main-row">
+        <!-- Balance Card -->
+        <div class="balance-card">
+          <div class="bal-label">PLATFORM BALANCE</div>
+          <div class="bal-amount">
+            <span class="bal-currency">&#8377;</span>
+            <span class="bal-number">{{ walletSummary()?.balance | number:'1.0-0' }}</span>
           </div>
-
-          <!-- Top-up Form -->
-          <div class="glass-card topup-card">
-            <div class="card-header border-bottom">
-              <div class="icon-circle"><i class="material-symbols-outlined">add_circle</i></div>
-              <h3>Inject Funds</h3>
-            </div>
-            <div class="card-body">
-              <form [formGroup]="topupForm" (ngSubmit)="createOrder()">
-                <div class="form-group">
-                  <label for="amount">Top-up Amount</label>
-                  <div class="input-wrapper">
-                    <span class="input-prefix">₹</span>
-                    <input
-                      type="number"
-                      id="amount"
-                      formControlName="amount"
-                      placeholder="Enter amount"
-                      class="glass-input"
-                    />
-                  </div>
-                  <small class="help-text">Min: ₹{{ walletConfig().minTopUpAmount }} | Max: ₹{{ walletConfig().maxTopUpAmount }}</small>
-                </div>
-                
-                <button
-                  type="submit"
-                  class="btn-glass-primary full-width"
-                  [disabled]="loading() || !topupForm.valid"
-                >
-                  <span class="material-symbols-outlined" *ngIf="!loading()">account_balance_wallet</span>
-                  <span class="material-symbols-outlined rotating" *ngIf="loading()">autorenew</span>
-                  {{ loading() ? 'Processing securely...' : 'Add Funds via Razorpay' }}
-                </button>
-              </form>
-            </div>
+          <div class="bal-meta">
+            <span class="bal-type">Master Wallet</span>
+            <span class="bal-cur">{{ walletSummary()?.currency || 'INR' }}</span>
+          </div>
+          <div class="bal-last">
+            Last activity: {{ (walletSummary()?.recentEntries?.[0]?.createdAtUtc | date:'medium') || 'Never' }}
           </div>
         </div>
 
-        <!-- Right Column: Fee Info -->
-        <div class="right-column">
-          <div class="glass-card fee-info-card">
-            <div class="card-header border-bottom">
-              <div class="icon-circle"><span class="material-symbols-outlined">info</span></div>
-              <h3>Platform Fee Summary</h3>
+        <!-- Action Cards -->
+        <div class="action-col">
+          <button class="action-card action-add" (click)="showAddMoney.set(true)">
+            <div class="action-icon-wrap add-icon-wrap">
+              <span class="material-symbols-outlined">add_card</span>
             </div>
-            <div class="card-body">
-              <div class="fee-row">
-                <span class="fee-label">Application Submission Fee</span>
-                <strong class="fee-value">₹{{ walletConfig().applicationFee }}</strong>
-              </div>
-              <p class="fee-desc">Automatically collected from applicant wallets when a new loan application is submitted.</p>
-              <div class="fee-row mt-1">
-                <span class="fee-label">Min Top-up</span>
-                <strong class="fee-value">₹{{ walletConfig().minTopUpAmount }}</strong>
-              </div>
-              <div class="fee-row">
-                <span class="fee-label">Max Top-up</span>
-                <strong class="fee-value">₹{{ walletConfig().maxTopUpAmount }}</strong>
-              </div>
-              <div class="fee-row">
-                <span class="fee-label">Currency</span>
-                <strong class="fee-value">{{ walletConfig().currency }}</strong>
-              </div>
+            <div class="action-text">
+              <span class="action-title">Inject Funds</span>
+              <span class="action-sub">via Razorpay</span>
+            </div>
+          </button>
+
+          <div class="info-card">
+            <div class="info-row">
+              <span class="info-label">Application Fee</span>
+              <span class="info-value">&#8377;{{ walletConfig().applicationFee }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Min / Max Top-up</span>
+              <span class="info-value">&#8377;{{ walletConfig().minTopUpAmount }} / &#8377;{{ walletConfig().maxTopUpAmount }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Currency</span>
+              <span class="info-value">{{ walletConfig().currency }}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Bottom Row: Transactions (full width) -->
-      <div class="glass-card transactions-card mt-card">
-        <div class="card-header border-bottom">
-          <h3>Recent Platform Transactions</h3>
+      <!-- Transactions -->
+      <div class="tx-section">
+        <div class="tx-header">
+          <h3 class="tx-title">Recent Platform Transactions</h3>
         </div>
-        
-        <div class="card-body p-0">
-          <div *ngIf="(walletSummary()?.recentEntries?.length ?? 0) > 0; else noTransactions" class="transaction-list">
-            <div class="transaction-item" *ngFor="let entry of walletSummary()?.recentEntries ?? []">
-              <div class="tx-icon" [ngClass]="entry.direction === 'Credit' ? 'tx-in' : 'tx-out'">
-                <span class="material-symbols-outlined">
-                  {{ entry.direction === 'Credit' ? 'arrow_downward' : 'arrow_upward' }}
-                </span>
-              </div>
-              <div class="tx-details">
-                <div class="tx-title">{{ entry.entryType }}</div>
-                <div class="tx-remarks">{{ entry.remarks }}</div>
-                <div class="tx-date">{{ entry.createdAtUtc | date: 'MMM d, y, h:mm a' }}</div>
-              </div>
-              <div class="tx-amount" [ngClass]="entry.direction === 'Credit' ? 'text-success' : 'text-danger'">
-                {{ entry.direction === 'Credit' ? '+' : '-' }}₹{{ entry.amount | number: '1.2-2' }}
-              </div>
+        <div *ngIf="(walletSummary()?.recentEntries?.length ?? 0) > 0; else noTx" class="tx-list">
+          <div class="tx-row" *ngFor="let e of walletSummary()?.recentEntries ?? []">
+            <div class="tx-dot" [class.tx-credit]="e.direction === 'Credit'" [class.tx-debit]="e.direction !== 'Credit'">
+              <span class="material-symbols-outlined">{{ e.direction === 'Credit' ? 'add' : 'remove' }}</span>
+            </div>
+            <div class="tx-info">
+              <div class="tx-type">{{ e.entryType }}</div>
+              <div class="tx-remark">{{ e.remarks }}</div>
+              <div class="tx-date">{{ e.createdAtUtc | date:'MMM d, y · h:mm a' }}</div>
+            </div>
+            <div class="tx-amt" [class.credit]="e.direction === 'Credit'" [class.debit]="e.direction !== 'Credit'">
+              {{ e.direction === 'Credit' ? '+' : '-' }}&#8377;{{ e.amount | number:'1.0-0' }}
             </div>
           </div>
-          <ng-template #noTransactions>
-            <div class="empty-state">
-              <span class="material-symbols-outlined empty-icon">receipt_long</span>
-              <p>No transactions found</p>
-              <span class="text-muted">Platform wallet activity will appear here</span>
+        </div>
+        <ng-template #noTx>
+          <div class="no-tx">
+            <span class="material-symbols-outlined no-tx-icon">receipt_long</span>
+            <p>No transactions yet.</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Add Money Overlay -->
+      <div class="overlay" *ngIf="showAddMoney()" (click)="showAddMoney.set(false)">
+        <div class="modal" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <div class="modal-icon add-modal-icon">
+              <span class="material-symbols-outlined">add_card</span>
             </div>
-          </ng-template>
+            <div>
+              <div class="modal-title">Inject Platform Funds</div>
+              <div class="modal-sub">via Razorpay — secure payment</div>
+            </div>
+            <button class="modal-close" (click)="showAddMoney.set(false)">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+          <form [formGroup]="topupForm" (ngSubmit)="createOrder()">
+            <div class="field-group">
+              <label>Amount</label>
+              <div class="input-row">
+                <span class="prefix">&#8377;</span>
+                <input type="number" formControlName="amount" placeholder="Enter amount" class="modal-input" />
+              </div>
+              <small>Min: &#8377;{{ walletConfig().minTopUpAmount }} &nbsp;|&nbsp; Max: &#8377;{{ walletConfig().maxTopUpAmount }}</small>
+            </div>
+            <button type="submit" class="modal-btn add-btn" [disabled]="loading() || !topupForm.valid">
+              <span class="material-symbols-outlined" *ngIf="!loading()">account_balance_wallet</span>
+              <span class="material-symbols-outlined spin" *ngIf="loading()">autorenew</span>
+              {{ loading() ? 'Processing...' : 'Pay via Razorpay' }}
+            </button>
+          </form>
         </div>
       </div>
 
-      <!-- Toast Notifications -->
-      <div class="toast-container" *ngIf="errorMessage() || successMessage()">
-        <div class="glass-toast error-toast" *ngIf="errorMessage()">
-          <span class="material-symbols-outlined">error</span>
-          <span>{{ errorMessage() }}</span>
+      <!-- Toasts -->
+      <div class="toast-wrap" *ngIf="errorMessage() || successMessage()">
+        <div class="toast error-toast" *ngIf="errorMessage()">
+          <span class="material-symbols-outlined">error</span> {{ errorMessage() }}
         </div>
-        <div class="glass-toast success-toast" *ngIf="successMessage()">
-          <span class="material-symbols-outlined">check_circle</span>
-          <span>{{ successMessage() }}</span>
+        <div class="toast success-toast" *ngIf="successMessage()">
+          <span class="material-symbols-outlined">check_circle</span> {{ successMessage() }}
         </div>
       </div>
     </div>
   `,
   styles: [`
-    /* Light Theme - Admin Wallet */
-    :host {
-      display: block;
-      min-height: 100vh;
-      background: linear-gradient(135deg, #f8f9fa 0%, #f0f2f5 100%);
-      color: #191C1E;
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    :host { display: block; }
+    .wallet-page { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem; font-family: 'Inter', system-ui, sans-serif; }
+
+    .wallet-header { margin-bottom: 1.75rem; }
+    .wallet-title { font-size: 1.9rem; font-weight: 700; color: #92400e; margin: 0; }
+    .wallet-sub { color: #64748b; font-size: 0.9rem; margin: 0.25rem 0 0; }
+
+    .main-row { display: grid; grid-template-columns: 1fr 260px; gap: 1.25rem; margin-bottom: 1.25rem; }
+    @media (max-width: 640px) { .main-row { grid-template-columns: 1fr; } }
+
+    /* Balance */
+    .balance-card {
+      background: linear-gradient(135deg, #78350f 0%, #d97706 100%);
+      border-radius: 20px; padding: 2rem; color: white; display: flex;
+      flex-direction: column; gap: 0.4rem; min-height: 180px;
     }
+    .bal-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; opacity: 0.55; text-transform: uppercase; }
+    .bal-amount { display: flex; align-items: flex-end; gap: 0.25rem; margin: 0.5rem 0 0.25rem; }
+    .bal-currency { font-size: 2rem; font-weight: 400; opacity: 0.7; align-self: flex-start; margin-top: 0.4rem; }
+    .bal-number { font-size: 3.5rem; font-weight: 700; line-height: 1; }
+    .bal-meta { display: flex; gap: 0.75rem; align-items: center; margin-top: 0.5rem; }
+    .bal-type { font-size: 0.75rem; background: rgba(255,255,255,0.15); border-radius: 20px; padding: 0.25rem 0.75rem; }
+    .bal-cur { font-size: 0.75rem; opacity: 0.5; }
+    .bal-last { font-size: 0.72rem; opacity: 0.5; margin-top: auto; }
 
-    .wallet-dashboard {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 1.5rem;
+    /* Action column */
+    .action-col { display: flex; flex-direction: column; gap: 1rem; }
+
+    .action-card {
+      display: flex; align-items: center; gap: 1rem;
+      border-radius: 16px; padding: 1.25rem 1.5rem;
+      border: none; cursor: pointer; text-align: left;
+      transition: transform 0.15s, box-shadow 0.15s;
     }
+    .action-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+    .action-add { background: #78350f; color: white; }
 
-    .fade-in { animation: fadeIn 0.6s ease-out; }
+    .action-icon-wrap { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+    .add-icon-wrap { background: rgba(255,255,255,0.15); color: white; }
 
-    .glass-header {
-      background: rgba(255, 255, 255, 0.95);
-      border: 1px solid rgba(0, 0, 0, 0.08);
-      border-radius: 16px;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    .action-text { display: flex; flex-direction: column; gap: 0.1rem; }
+    .action-title { font-size: 1rem; font-weight: 600; }
+    .action-sub { font-size: 0.75rem; opacity: 0.6; }
+
+    /* Info card */
+    .info-card {
+      background: white; border: 1px solid #e2e8f0;
+      border-radius: 16px; padding: 1rem 1.25rem;
+      display: flex; flex-direction: column; gap: 0.6rem; flex: 1;
     }
-
-    .header-content h1 {
-      margin: 0 0 0.5rem 0;
-      font-size: 1.8rem;
-      font-weight: 700;
-      background: linear-gradient(to right, #001736, #d97706);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .subtitle {
-      margin: 0;
-      color: #64748b;
-      font-size: 0.95rem;
-    }
-
-    .content-grid {
-      display: grid;
-      grid-template-columns: 1fr 1.5fr;
-      gap: 1.5rem;
-    }
-
-    @media (max-width: 992px) {
-      .content-grid { grid-template-columns: 1fr; }
-    }
-
-    .left-column {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .mt-card { margin-top: 1.5rem; }
-
-    .glass-card {
-      background: rgba(255, 255, 255, 0.95);
-      border: 1px solid rgba(0, 0, 0, 0.08);
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-    }
-
-    .card-header {
-      padding: 1.25rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .border-bottom { border-bottom: 1px solid rgba(0, 0, 0, 0.08); }
-
-    .card-header h3 {
-      margin: 0;
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: #191C1E;
-    }
-
-    .card-body { padding: 1.25rem; }
-    .p-0 { padding: 0; }
-
-    .section-title {
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: #64748b;
-      margin: 0 0 0.8rem 0;
-    }
-
-    .balance-display {
-      display: flex;
-      align-items: baseline;
-      margin-bottom: 1.2rem;
-    }
-
-    .currency-symbol {
-      font-size: 1.4rem;
-      color: #d97706;
-      margin-right: 0.25rem;
-    }
-
-    .balance-amount {
-      font-size: 2.2rem;
-      font-weight: 800;
-      color: #191C1E;
-      letter-spacing: -1px;
-    }
-
-    .balance-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-top: 0.8rem;
-      border-top: 1px solid rgba(0, 0, 0, 0.08);
-    }
-
-    .badge {
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .badge-primary {
-      background: rgba(217, 119, 6, 0.1);
-      color: #92400e;
-      border: 1px solid rgba(217, 119, 6, 0.3);
-    }
-
-    .last-updated { font-size: 0.75rem; color: #94a3b8; }
-
-    .icon-circle {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: rgba(217, 119, 6, 0.1);
-      color: #d97706;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .form-group { margin-bottom: 1.2rem; }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 0.6rem;
-      color: #334155;
-      font-size: 0.9rem;
-      font-weight: 500;
-    }
-
-    .input-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-
-    .input-prefix {
-      position: absolute;
-      left: 1rem;
-      color: #64748b;
-      font-size: 1.1rem;
-      font-weight: 500;
-    }
-
-    .glass-input {
-      width: 100%;
-      padding: 0.8rem 0.8rem 0.8rem 2.3rem;
-      background: #f8f9fa;
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      border-radius: 12px;
-      color: #191C1E;
-      font-size: 0.95rem;
-      font-weight: 500;
-    }
-
-    .glass-input:focus {
-      outline: none;
-      border-color: #d97706;
-      background: #ffffff;
-      box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
-    }
-
-    .help-text {
-      display: block;
-      margin-top: 0.4rem;
-      color: #94a3b8;
-      font-size: 0.75rem;
-    }
-
-    .btn-glass-primary {
-      background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
-      color: white;
-      border: none;
-      padding: 0.8rem 1.2rem;
-      border-radius: 12px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.75rem;
-      box-shadow: 0 2px 8px rgba(217, 119, 6, 0.25);
-    }
-
-    .btn-glass-primary:disabled {
-      background: #cbd5e1;
-      color: #94a3b8;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-
-    .full-width { width: 100%; }
-    .rotating { animation: spin 1s linear infinite; }
-
-    /* Fee Info Card */
-    .fee-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.6rem 0;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    .fee-row:last-of-type { border-bottom: none; }
-    .mt-1 { margin-top: 0.5rem; }
-
-    .fee-label {
-      font-size: 0.85rem;
-      color: #64748b;
-    }
-
-    .fee-value {
-      font-size: 0.9rem;
-      color: #d97706;
-    }
-
-    .fee-desc {
-      font-size: 0.8rem;
-      color: #94a3b8;
-      margin: 0.5rem 0 1rem;
-      line-height: 1.5;
-    }
+    .info-row { display: flex; justify-content: space-between; align-items: center; }
+    .info-label { font-size: 0.78rem; color: #94a3b8; }
+    .info-value { font-size: 0.82rem; font-weight: 600; color: #374151; }
 
     /* Transactions */
-    .transaction-list { display: flex; flex-direction: column; }
+    .tx-section { background: white; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; }
+    .tx-header { padding: 1rem 1.5rem; border-bottom: 1px solid #f1f5f9; }
+    .tx-title { font-size: 0.95rem; font-weight: 700; color: #1e293b; margin: 0; }
+    .tx-list { }
+    .tx-row { display: flex; align-items: center; gap: 1rem; padding: 0.9rem 1.5rem; border-bottom: 1px solid #f8fafc; }
+    .tx-row:last-child { border-bottom: none; }
+    .tx-row:hover { background: #f8fafc; }
+    .tx-dot { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .tx-credit { background: #dcfce7; color: #16a34a; }
+    .tx-debit { background: #fee2e2; color: #dc2626; }
+    .tx-info { flex: 1; }
+    .tx-type { font-size: 0.85rem; font-weight: 600; color: #1e293b; }
+    .tx-remark { font-size: 0.75rem; color: #94a3b8; }
+    .tx-date { font-size: 0.72rem; color: #cbd5e1; }
+    .tx-amt { font-size: 0.9rem; font-weight: 700; white-space: nowrap; }
+    .credit { color: #16a34a; }
+    .debit { color: #dc2626; }
+    .no-tx { padding: 2.5rem; text-align: center; color: #94a3b8; }
+    .no-tx-icon { font-size: 2.5rem; display: block; margin-bottom: 0.5rem; }
 
-    .transaction-item {
-      display: flex;
-      align-items: center;
-      padding: 1rem 1.25rem;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-    }
-
-    .transaction-item:last-child { border-bottom: none; }
-
-    .tx-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 1rem;
-    }
-
-    .tx-in { background: rgba(34, 197, 94, 0.1); color: #15803d; }
-    .tx-out { background: rgba(239, 68, 68, 0.1); color: #991b1b; }
-
-    .tx-details { flex: 1; }
-
-    .tx-title {
-      font-weight: 600;
-      color: #191C1E;
-      margin-bottom: 0.2rem;
-      font-size: 0.95rem;
-    }
-
-    .tx-remarks { font-size: 0.8rem; color: #64748b; margin-bottom: 0.2rem; }
-    .tx-date { font-size: 0.7rem; color: #94a3b8; }
-
-    .tx-amount {
-      font-weight: 700;
-      font-size: 1rem;
-      letter-spacing: 0.5px;
-    }
-
-    .text-success { color: #15803d; }
-    .text-danger { color: #991b1b; }
-    .text-muted { color: #94a3b8; font-size: 0.8rem; }
-
-    .empty-state {
-      padding: 3rem 2rem;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .empty-icon { font-size: 3rem; color: #cbd5e1; margin-bottom: 1rem; }
-
-    .empty-state p {
-      color: #64748b;
-      font-size: 1rem;
-      font-weight: 500;
-      margin: 0 0 0.5rem 0;
-    }
+    /* Overlay */
+    .overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; animation: fadeO 0.2s ease; }
+    @keyframes fadeO { from { opacity: 0; } to { opacity: 1; } }
+    .modal { background: white; border-radius: 20px; padding: 2rem; width: 100%; max-width: 420px; margin: 1rem; box-shadow: 0 20px 60px rgba(0,0,0,0.2); animation: slideM 0.25s cubic-bezier(0.34,1.56,0.64,1); }
+    @keyframes slideM { from { opacity: 0; transform: scale(0.92) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    .modal-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.75rem; }
+    .modal-icon { width: 46px; height: 46px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .add-modal-icon { background: #78350f; color: white; }
+    .modal-title { font-size: 1.1rem; font-weight: 700; color: #0f172a; }
+    .modal-sub { font-size: 0.8rem; color: #94a3b8; }
+    .modal-close { margin-left: auto; background: #f1f5f9; border: none; border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #64748b; }
+    .modal-close:hover { background: #e2e8f0; }
+    .field-group { margin-bottom: 1.25rem; }
+    .field-group label { display: block; font-size: 0.825rem; font-weight: 600; color: #374151; margin-bottom: 0.45rem; }
+    .input-row { display: flex; align-items: center; border: 1.5px solid #e2e8f0; border-radius: 12px; overflow: hidden; background: #f8fafc; }
+    .input-row:focus-within { border-color: #d97706; background: white; }
+    .prefix { padding: 0 0.75rem; color: #64748b; font-size: 1rem; }
+    .modal-input { flex: 1; border: none; background: transparent; padding: 0.75rem 0.75rem 0.75rem 0; font-size: 1rem; color: #0f172a; outline: none; }
+    .field-group small { display: block; margin-top: 0.35rem; font-size: 0.75rem; color: #94a3b8; }
+    .modal-btn { width: 100%; padding: 0.85rem; border: none; border-radius: 12px; font-size: 0.95rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.6rem; transition: opacity 0.2s; margin-top: 0.5rem; }
+    .modal-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .add-btn { background: #78350f; color: white; }
+    .spin { animation: doSpin 1s linear infinite; }
+    @keyframes doSpin { 100% { transform: rotate(360deg); } }
 
     /* Toasts */
-    .toast-container {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      z-index: 1000;
-    }
-
-    .glass-toast {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 1rem 1.5rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-      font-weight: 500;
-      font-size: 0.95rem;
-      animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    .error-toast {
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      color: #991b1b;
-    }
-
-    .success-toast {
-      background: rgba(34, 197, 94, 0.15);
-      border: 1px solid rgba(34, 197, 94, 0.3);
-      color: #15803d;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(50px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-
-    @keyframes spin { 100% { transform: rotate(360deg); } }
+    .toast-wrap { position: fixed; bottom: 2rem; right: 2rem; z-index: 2000; display: flex; flex-direction: column; gap: 0.75rem; }
+    .toast { display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem 1.25rem; border-radius: 12px; font-weight: 500; font-size: 0.9rem; box-shadow: 0 4px 16px rgba(0,0,0,0.12); animation: slideIn 0.3s ease; }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+    .error-toast { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+    .success-toast { background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; }
   `]
 })
 export class AdminWalletComponent implements OnInit {
@@ -531,17 +259,13 @@ export class AdminWalletComponent implements OnInit {
   private fb = inject(FormBuilder);
 
   walletSummary = signal<WalletSummaryResponse | null>(null);
-  walletConfig = signal<WalletConfigResponse>({
-    applicationFee: 500,
-    minTopUpAmount: 100,
-    maxTopUpAmount: 500000,
-    currency: 'INR'
-  });
+  walletConfig = signal<WalletConfigResponse>({ applicationFee: 500, minTopUpAmount: 100, maxTopUpAmount: 500000, currency: 'INR' });
 
   topupForm: FormGroup;
   loading = signal(false);
   errorMessage = signal('');
   successMessage = signal('');
+  showAddMoney = signal(false);
 
   constructor() {
     this.topupForm = this.fb.group({
@@ -549,30 +273,17 @@ export class AdminWalletComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    this.loadWalletData();
-  }
+  ngOnInit() { this.loadWalletData(); }
 
   loadWalletData() {
     this.applicationService.getAdminWalletSummary().subscribe({
-      next: (summary) => {
-        this.walletSummary.set(summary);
-      },
-      error: (err) => {
-        this.errorMessage.set('Failed to load wallet data');
-        console.error(err);
-        setTimeout(() => this.errorMessage.set(''), 5000);
-      }
+      next: (s) => this.walletSummary.set(s),
+      error: () => this.showError('Failed to load wallet data')
     });
-
     this.applicationService.getWalletConfig().subscribe({
       next: (config) => {
         this.walletConfig.set(config);
-        this.topupForm.get('amount')?.setValidators([
-          Validators.required,
-          Validators.min(config.minTopUpAmount),
-          Validators.max(config.maxTopUpAmount)
-        ]);
+        this.topupForm.get('amount')?.setValidators([Validators.required, Validators.min(config.minTopUpAmount), Validators.max(config.maxTopUpAmount)]);
         this.topupForm.get('amount')?.updateValueAndValidity();
       },
       error: (err) => console.error(err)
@@ -580,86 +291,42 @@ export class AdminWalletComponent implements OnInit {
   }
 
   createOrder() {
-    if (!this.topupForm.valid) {
-      this.errorMessage.set('Please enter a valid amount');
-      setTimeout(() => this.errorMessage.set(''), 3000);
-      return;
-    }
-
+    if (!this.topupForm.valid) return;
     this.loading.set(true);
-    this.errorMessage.set('');
-    this.successMessage.set('');
-
-    const request: CreateTopUpOrderRequest = {
-      amount: this.topupForm.get('amount')?.value,
-      currency: 'INR'
-    };
-
-    this.applicationService.createAdminTopUpOrder(request).subscribe({
-      next: (response: CreateTopUpOrderResponse) => {
-        this.handleRazorpayPayment(response);
-      },
-      error: (err) => {
-        this.loading.set(false);
-        this.errorMessage.set(err.error?.message || 'Failed to create payment order');
-        console.error(err);
-        setTimeout(() => this.errorMessage.set(''), 5000);
-      }
+    this.applicationService.createAdminTopUpOrder({ amount: this.topupForm.value.amount, currency: 'INR' }).subscribe({
+      next: (r: CreateTopUpOrderResponse) => this.handleRazorpay(r),
+      error: (err) => { this.loading.set(false); this.showError(err.error?.message || 'Failed to create order'); }
     });
   }
 
-  private handleRazorpayPayment(orderResponse: CreateTopUpOrderResponse) {
-    const options = {
-      key: orderResponse.keyId,
-      amount: orderResponse.amount * 100,
-      currency: orderResponse.currency,
-      name: 'CapFinLoan Platform',
-      description: 'Platform Wallet Top-up',
-      order_id: orderResponse.providerOrderId,
-      handler: (response: any) => {
-        this.verifyPayment(response);
-      },
-      prefill: {
-        name: 'CapFinLoan Admin',
-        contact: '9999999999'
-      },
-      theme: {
-        color: '#f59e0b'
-      },
-      modal: {
-        ondismiss: () => {
-          this.loading.set(false);
-          this.errorMessage.set('Payment cancelled');
-          setTimeout(() => this.errorMessage.set(''), 3000);
-        }
-      }
-    };
-
-    const razorpay = new Razorpay(options);
-    razorpay.open();
+  private handleRazorpay(order: CreateTopUpOrderResponse) {
+    new Razorpay({
+      key: order.keyId, amount: order.amount * 100, currency: order.currency,
+      name: 'CapFinLoan Platform', description: 'Platform Wallet Top-up',
+      order_id: order.providerOrderId,
+      handler: (r: any) => this.verifyPayment(r),
+      theme: { color: '#d97706' },
+      modal: { ondismiss: () => { this.loading.set(false); this.showError('Payment cancelled'); } }
+    }).open();
   }
 
-  private verifyPayment(paymentResponse: any) {
-    const verifyRequest: VerifyTopUpRequest = {
-      providerOrderId: paymentResponse.razorpay_order_id,
-      providerPaymentId: paymentResponse.razorpay_payment_id,
-      providerSignature: paymentResponse.razorpay_signature
-    };
-
-    this.applicationService.verifyAdminTopUp(verifyRequest).subscribe({
-      next: (response) => {
+  private verifyPayment(p: any) {
+    this.applicationService.verifyAdminTopUp({
+      providerOrderId: p.razorpay_order_id,
+      providerPaymentId: p.razorpay_payment_id,
+      providerSignature: p.razorpay_signature
+    }).subscribe({
+      next: (r) => {
         this.loading.set(false);
-        this.successMessage.set('✓ Top-up successful! Platform wallet has been credited.');
-        this.walletSummary.set(response.wallet);
+        this.walletSummary.set(r.wallet);
         this.topupForm.reset();
-        setTimeout(() => this.successMessage.set(''), 5000);
+        this.showAddMoney.set(false);
+        this.showSuccess('Platform wallet credited successfully!');
       },
-      error: (err) => {
-        this.loading.set(false);
-        this.errorMessage.set(err.error?.message || 'Payment verification failed');
-        console.error(err);
-        setTimeout(() => this.errorMessage.set(''), 5000);
-      }
+      error: (err) => { this.loading.set(false); this.showError(err.error?.message || 'Verification failed'); }
     });
   }
+
+  private showError(msg: string) { this.errorMessage.set(msg); setTimeout(() => this.errorMessage.set(''), 5000); }
+  private showSuccess(msg: string) { this.successMessage.set(msg); setTimeout(() => this.successMessage.set(''), 5000); }
 }

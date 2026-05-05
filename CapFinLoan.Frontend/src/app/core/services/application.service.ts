@@ -13,7 +13,8 @@ import {
   VerifyTopUpResponse,
   WalletConfigResponse,
   WalletLedgerEntryResponse,
-  WalletSummaryResponse
+  WalletSummaryResponse,
+  WithdrawRequest
 } from '../models/application.models';
 
 @Injectable({ providedIn: 'root' })
@@ -67,6 +68,10 @@ export class ApplicationService {
 
   verifyTopUp(data: VerifyTopUpRequest) {
     return this.http.post<VerifyTopUpResponse>(`${this.apiUrl}/wallet/topup/verify`, data);
+  }
+
+  withdraw(data: WithdrawRequest) {
+    return this.http.post<WalletSummaryResponse>(`${this.apiUrl}/wallet/withdraw`, data);
   }
 
   getStatus(id: string) {
