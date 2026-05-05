@@ -7,4 +7,5 @@ public static class WalletEntryTypes
     public const string LoanDisbursal = "LoanDisbursal";
     public const string LoanRepayment = "LoanRepayment";
     public const string Compensation = "Compensation";
+    public const string Withdrawal = "Withdrawal";
 }

@@ -113,6 +113,14 @@ public class ApplicationsController : ControllerBase
         return Ok(response);
     }
 
+    [HttpPost("wallet/withdraw")]
+    [Authorize(Roles = RoleNames.Applicant)]
+    public async Task<IActionResult> Withdraw([FromBody] WithdrawRequest request, CancellationToken cancellationToken)
+    {
+        var summary = await _walletService.WithdrawAsync(GetUserId(), request.Amount, request.Remarks, cancellationToken);
+        return Ok(summary);
+    }
+
     [HttpGet("wallet/admin/summary")]
     [Authorize(Roles = RoleNames.Admin)]
     public async Task<IActionResult> GetAdminWalletSummary(CancellationToken cancellationToken)

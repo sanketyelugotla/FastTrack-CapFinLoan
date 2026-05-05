@@ -399,6 +399,36 @@ public class WalletService : IWalletService
         }, cancellationToken);
     }
 
+    public async Task<WalletSummaryResponse> WithdrawAsync(Guid applicantUserId, decimal amount, string? remarks, CancellationToken cancellationToken = default)
+    {
+        if (amount <= 0)
+            throw new ApplicationValidationException("Withdrawal amount must be greater than zero.");
+
+        var wallet = await _walletRepository.GetOrCreateWalletAsync(applicantUserId, WalletOwnerTypes.Applicant, _walletOptions.Currency, cancellationToken);
+        var balance = await _walletRepository.GetBalanceAsync(wallet.Id, cancellationToken);
+
+        if (amount > balance)
+            throw new ApplicationValidationException($"Insufficient balance. Available balance: {balance:N2}.");
+
+        var idempotencyKey = $"withdraw_{applicantUserId:N}_{Guid.NewGuid():N}";
+        await _walletRepository.AddLedgerEntryAsync(new WalletLedgerEntry
+        {
+            WalletAccountId = wallet.Id,
+            Direction = WalletEntryDirections.Debit,
+            EntryType = WalletEntryTypes.Withdrawal,
+            Amount = amount,
+            Currency = _walletOptions.Currency,
+            Status = "Posted",
+            ReferenceId = string.Empty,
+            CorrelationId = idempotencyKey,
+            IdempotencyKey = idempotencyKey,
+            Remarks = remarks ?? "Wallet withdrawal by applicant.",
+            CreatedAtUtc = DateTime.UtcNow,
+        }, cancellationToken);
+
+        return await BuildWalletSummaryAsync(wallet, 10, cancellationToken);
+    }
+
     private async Task<WalletSummaryResponse> BuildWalletSummaryAsync(WalletAccount wallet, int recentCount, CancellationToken cancellationToken)
     {
         var balance = await _walletRepository.GetBalanceAsync(wallet.Id, cancellationToken);

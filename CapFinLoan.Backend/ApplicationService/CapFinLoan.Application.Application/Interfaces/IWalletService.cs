@@ -15,4 +15,5 @@ public interface IWalletService
     Task DebitApplicationFeeAndCreditAdminAsync(Guid applicantUserId, Guid applicationId, decimal feeAmount, CancellationToken cancellationToken = default);
     Task CreditLoanDisbursalAsync(Guid applicantUserId, Guid applicationId, decimal amount, string remarks, CancellationToken cancellationToken = default);
     Task RepayEmiAsync(Guid applicantUserId, Guid applicationId, decimal amount, CancellationToken cancellationToken = default);
+    Task<WalletSummaryResponse> WithdrawAsync(Guid applicantUserId, decimal amount, string? remarks, CancellationToken cancellationToken = default);
 }
