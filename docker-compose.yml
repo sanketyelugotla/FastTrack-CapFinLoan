@@ -267,6 +267,7 @@ services:
       JWT_AUDIENCE: "${Jwt__Audience}"
       APPLICATION_SERVICE_URL: http://application-service:8080
       DOCUMENT_SERVICE_URL: http://document-service:8080
+      ADMIN_SERVICE_URL: http://admin-service:8080
       CORS_ORIGINS: "http://localhost:4200,http://api-gateway:8080"
     depends_on:
       application-service:
