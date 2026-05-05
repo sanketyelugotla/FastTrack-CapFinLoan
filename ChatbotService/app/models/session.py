@@ -17,6 +17,7 @@ class SessionContext(BaseModel):
     user_id: str
     user_name: str = ""
     user_email: str = ""
+    user_role: str = ""
 
     # Conversation state
     conversation_stage: str = "idle"
@@ -34,6 +35,11 @@ class SessionContext(BaseModel):
     selected_application_id: Optional[str] = None
     selected_application_number: Optional[str] = None
     onboarding_complete: bool = False
+
+    # Admin State
+    admin_dashboard_snapshot: dict[str, Any] = Field(default_factory=dict)
+    admin_applications_snapshot: list[dict[str, Any]] = Field(default_factory=list)
+    admin_documents_snapshot: list[dict[str, Any]] = Field(default_factory=list)
 
     # Collected loan application fields
     loan_type: Optional[str] = None

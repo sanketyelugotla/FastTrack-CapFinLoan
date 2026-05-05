@@ -6,8 +6,9 @@ import logging
 import math
 import re
 from typing import Any, Optional
+from jose import jwt
 
-from app.models.chat import ChatAction, ChatProgress, ChatResponse
+from app.models.chat import ChatRequest, ChatResponse, ChatAction, ChatProgress
 from app.models.session import SessionContext
 from app.services.backend_client import backend_client
 
@@ -348,6 +349,25 @@ async def _refresh_documents(session: SessionContext, jwt_token: str) -> list[di
 
 
 async def _hydrate_external_context(session: SessionContext, jwt_token: str) -> None:
+    # Extract role
+    try:
+        payload = jwt.get_unverified_claims(jwt_token)
+        role = payload.get("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", "")
+        if isinstance(role, list):
+            role = role[0] if role else ""
+        session.user_role = role
+    except Exception as exc:
+        logger.info("JWT decode skipped: %s", exc)
+
+    if session.user_role == "Admin":
+        try:
+            session.admin_dashboard_snapshot = await backend_client.get_admin_dashboard(jwt_token)
+            session.admin_applications_snapshot = await backend_client.get_admin_applications(jwt_token)
+            session.admin_documents_snapshot = await backend_client.get_admin_documents(jwt_token)
+        except Exception as exc:
+            logger.info("Admin preload skipped: %s", exc)
+        return
+
     try:
         await _refresh_profile(session, jwt_token)
     except Exception as exc:
@@ -534,6 +554,50 @@ async def _save_draft(session_id: str, session: SessionContext, jwt_token: str) 
     )
 
 
+async def _handle_admin_message(
+    session_id: str,
+    session: SessionContext,
+    user_message: str,
+) -> ChatResponse:
+    from app.services.groq_client import groq_client
+    import json
+
+    admin_context = {
+        "dashboard": session.admin_dashboard_snapshot,
+        "applications": session.admin_applications_snapshot,
+        "documents": session.admin_documents_snapshot,
+    }
+    
+    system_prompt = (
+        "You are an admin dashboard assistant for CapFinLoan. "
+        "You have access to the current admin data (dashboard metrics, all applications, and all documents). "
+        "Use the provided JSON context to accurately answer the admin's questions. "
+        "The context contains lists of applications with their 'createdAt' or 'submittedAt' dates. "
+        "To determine which application should be taken action first, look for the oldest Pending applications. "
+        "Be concise, helpful, and format your output nicely."
+        f"\n\nContext:\n{json.dumps(admin_context, default=str)[:8000]}"
+    )
+
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_message}
+    ]
+
+    try:
+        completion = await groq_client.chat(messages=messages, temperature=0.1)
+        reply = completion.get("content", "I am unable to analyze the admin data right now.")
+    except Exception as e:
+        logger.error("Admin LLM failed: %s", e)
+        reply = "An error occurred while analyzing the admin data."
+
+    return ChatResponse(
+        session_id=session_id,
+        reply=reply,
+        quick_replies=["Show pending documents", "Show application summary", "Oldest pending application"],
+        action=None
+    )
+
+
 async def handle_message(
     session_id: str,
     session: SessionContext,
@@ -542,6 +606,11 @@ async def handle_message(
 ) -> ChatResponse:
     session.add_message("user", user_message)
     await _hydrate_external_context(session, jwt_token)
+
+    if session.user_role == "Admin":
+        response = await _handle_admin_message(session_id, session, user_message)
+        session.add_message("assistant", response.reply)
+        return response
 
     normalized = _normalize_text(user_message)
     if not normalized:

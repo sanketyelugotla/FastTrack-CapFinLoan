@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     # ── Backend service URLs (local dev defaults) ───────────────
     application_service_url: str = "http://localhost:5022"
     document_service_url: str = "http://localhost:5023"
+    admin_service_url: str = "http://localhost:5024"
 
     # ── Session ─────────────────────────────────────────────────
     session_ttl_minutes: int = 30

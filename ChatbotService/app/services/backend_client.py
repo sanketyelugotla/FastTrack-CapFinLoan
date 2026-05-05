@@ -49,6 +49,26 @@ class BackendClient:
         """GET /api/documents/application/{applicationId} — get documents for a specific application."""
         return await self._get(f"{self._doc_base}/api/documents/application/{application_id}", token)
 
+    # ── Admin Methods ───────────────────────────────────────────
+
+    async def get_admin_dashboard(self, token: str) -> dict[str, Any]:
+        """GET /api/admin/applications/dashboard — get dashboard metrics."""
+        return await self._get(f"{settings.admin_service_url}/api/admin/applications/dashboard", token)
+
+    async def get_admin_applications(self, token: str, status: Optional[str] = None) -> list[dict[str, Any]]:
+        """GET /api/admin/applications — get full application queue."""
+        url = f"{settings.admin_service_url}/api/admin/applications"
+        if status:
+            url += f"?status={status}"
+        return await self._get(url, token)
+
+    async def get_admin_documents(self, token: str, status: Optional[str] = None) -> list[dict[str, Any]]:
+        """GET /api/internal/documents/all — get all documents (admin only)."""
+        url = f"{self._doc_base}/api/internal/documents/all"
+        if status:
+            url += f"?status={status}"
+        return await self._get(url, token)
+
     # ── Internal helpers ─────────────────────────────────────────
 
     async def _get(self, url: str, token: str) -> Any:
