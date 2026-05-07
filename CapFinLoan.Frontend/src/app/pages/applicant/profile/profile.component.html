@@ -343,11 +343,14 @@
               <label class="input-label">Monthly Income (₹)</label>
               @if (isEditing) {
                 <div class="relative">
-                  <span class="absolute left-4 top-3 text-[var(--color-outline-variant)]">₹</span>
+                  <span
+                    class="absolute left-4 top-3 text-[var(--color-outline-variant)] pointer-events-none"
+                    >₹</span
+                  >
                   <input
                     type="number"
                     formControlName="monthlyIncome"
-                    class="input-field pl-8"
+                    class="input-field pl-10"
                     placeholder="50000"
                   />
                 </div>
@@ -364,11 +367,14 @@
               <label class="input-label">Annual Income (₹)</label>
               @if (isEditing) {
                 <div class="relative">
-                  <span class="absolute left-4 top-3 text-[var(--color-outline-variant)]">₹</span>
+                  <span
+                    class="absolute left-4 top-3 text-[var(--color-outline-variant)] pointer-events-none"
+                    >₹</span
+                  >
                   <input
                     type="number"
                     formControlName="annualIncome"
-                    class="input-field pl-8"
+                    class="input-field pl-10"
                     placeholder="600000"
                   />
                 </div>
@@ -385,11 +391,14 @@
               <label class="input-label">Existing EMI / Debt Payments (₹)</label>
               @if (isEditing) {
                 <div class="relative">
-                  <span class="absolute left-4 top-3 text-[var(--color-outline-variant)]">₹</span>
+                  <span
+                    class="absolute left-4 top-3 text-[var(--color-outline-variant)] pointer-events-none"
+                    >₹</span
+                  >
                   <input
                     type="number"
                     formControlName="existingEmiAmount"
-                    class="input-field pl-8"
+                    class="input-field pl-10"
                     placeholder="0"
                   />
                 </div>

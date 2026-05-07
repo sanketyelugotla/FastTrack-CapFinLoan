@@ -9,6 +9,7 @@
     font-family: 'Inter', system-ui, sans-serif;
 }
 
+/* Header */
 .wallet-header {
     margin-bottom: 1.75rem;
 }
@@ -26,6 +27,7 @@
     margin: 0.25rem 0 0;
 }
 
+/* Main row */
 .main-row {
     display: grid;
     grid-template-columns: 1fr 260px;
@@ -39,7 +41,7 @@
     }
 }
 
-/* Balance */
+/* Balance Card */
 .balance-card {
     background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
     border: 1.5px solid #bfdbfe;
@@ -98,18 +100,12 @@
     padding: 0.25rem 0.75rem;
 }
 
-.bal-cur {
+.bal-currency-tag {
     font-size: 0.75rem;
     color: #64748b;
 }
 
-.bal-last {
-    font-size: 0.72rem;
-    opacity: 0.5;
-    margin-top: auto;
-}
-
-/* Action column */
+/* Action Cards */
 .action-col {
     display: flex;
     flex-direction: column;
@@ -144,6 +140,12 @@
     border: 1.5px solid #bfdbfe;
 }
 
+.action-withdraw {
+    background: #f0fdf4;
+    color: #166534;
+    border: 1.5px solid #bbf7d0;
+}
+
 .action-icon-wrap {
     width: 42px;
     height: 42px;
@@ -156,6 +158,11 @@
 .add-icon-wrap {
     background: #dbeafe;
     color: #1e40af;
+}
+
+.withdraw-icon-wrap {
+    background: #dcfce7;
+    color: #16a34a;
 }
 
 .action-text {
@@ -174,33 +181,61 @@
     opacity: 0.6;
 }
 
-/* Info card */
-.info-card {
+/* Fee Banner */
+.fee-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     background: white;
     border: 1px solid #e2e8f0;
     border-radius: 16px;
-    padding: 1rem 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    flex: 1;
+    padding: 1.1rem 1.5rem;
+    margin-bottom: 1.25rem;
+    gap: 1rem;
 }
 
-.info-row {
+.fee-banner-left {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 1rem;
 }
 
-.info-label {
-    font-size: 0.78rem;
-    color: #94a3b8;
+.fee-icon {
+    font-size: 1.75rem;
+    color: #4ade80;
+    background: #f0fdf4;
+    border-radius: 10px;
+    padding: 0.3rem;
 }
 
-.info-value {
-    font-size: 0.82rem;
+.fee-title {
     font-weight: 600;
-    color: #374151;
+    font-size: 0.9rem;
+    color: #1e293b;
+}
+
+.fee-sub {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.apply-btn {
+    background: transparent;
+    border: 1.5px solid #1e293b;
+    border-radius: 10px;
+    padding: 0.55rem 1.1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #1e293b;
+    cursor: pointer;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+}
+
+.apply-btn:hover {
+    background: #1e293b;
+    color: white;
 }
 
 /* Transactions */
@@ -211,16 +246,29 @@
     overflow: hidden;
 }
 
-.tx-header {
-    padding: 1rem 1.5rem;
+.tx-tabs {
+    display: flex;
     border-bottom: 1px solid #f1f5f9;
+    padding: 0 1.5rem;
 }
 
-.tx-title {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #1e293b;
-    margin: 0;
+.tx-tab {
+    padding: 0.9rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.2s;
+}
+
+.tx-tab.active {
+    color: #0f172a;
+    border-bottom-color: #0f172a;
+    font-weight: 600;
 }
 
 .tx-list {}
@@ -310,7 +358,7 @@
     margin-bottom: 0.5rem;
 }
 
-/* Overlay */
+/* Overlay & Modal */
 .overlay {
     position: fixed;
     inset: 0;
@@ -320,10 +368,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    animation: fadeO 0.2s ease;
+    animation: fadeOverlay 0.2s ease;
 }
 
-@keyframes fadeO {
+@keyframes fadeOverlay {
     from {
         opacity: 0;
     }
@@ -341,10 +389,10 @@
     max-width: 420px;
     margin: 1rem;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-    animation: slideM 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: slideModal 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-@keyframes slideM {
+@keyframes slideModal {
     from {
         opacity: 0;
         transform: scale(0.92) translateY(20px);
@@ -376,6 +424,11 @@
 .add-modal-icon {
     background: #1a2744;
     color: white;
+}
+
+.withdraw-modal-icon {
+    background: #2d1f0a;
+    color: #f5c870;
 }
 
 .modal-title {
@@ -420,6 +473,11 @@
     margin-bottom: 0.45rem;
 }
 
+.optional {
+    font-weight: 400;
+    color: #94a3b8;
+}
+
 .input-row {
     display: flex;
     align-items: center;
@@ -449,6 +507,21 @@
     padding: 0.75rem 0.75rem 0.75rem 0;
     font-size: 1rem;
     color: #0f172a;
+    outline: none;
+}
+
+.modal-input.plain {
+    width: 100%;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    background: #f8fafc;
+    box-sizing: border-box;
+}
+
+.modal-input.plain:focus {
+    border-color: #0f172a;
+    background: white;
     outline: none;
 }
 
@@ -493,45 +566,6 @@
 .withdraw-btn {
     background: #7c3f00;
     color: #f5c870;
-}
-
-.action-withdraw {
-    background: #f0fdf4;
-    color: #166534;
-    border: 1.5px solid #bbf7d0;
-}
-
-.withdraw-icon-wrap {
-    background: #dcfce7;
-    color: #16a34a;
-}
-
-.withdraw-modal-icon {
-    background: #2d1f0a;
-    color: #f5c870;
-}
-
-.modal-input.plain {
-    border: 1.5px solid #e2e8f0;
-    border-radius: 12px;
-    background: #f8fafc;
-    padding: 0.75rem 1rem;
-    width: 100%;
-    box-sizing: border-box;
-    font-size: 1rem;
-    color: #0f172a;
-    outline: none;
-}
-
-.modal-input.plain:focus {
-    border-color: #0f172a;
-    background: white;
-    outline: none;
-}
-
-.optional {
-    font-weight: 400;
-    color: #94a3b8;
 }
 
 .spin {

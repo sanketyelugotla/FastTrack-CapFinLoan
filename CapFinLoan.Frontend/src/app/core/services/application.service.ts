@@ -93,4 +93,8 @@ export class ApplicationService {
   verifyAdminTopUp(data: VerifyTopUpRequest) {
     return this.http.post<VerifyTopUpResponse>(`${this.apiUrl}/wallet/admin/topup/verify`, data);
   }
+
+  withdrawAdmin(data: WithdrawRequest) {
+    return this.http.post<WalletSummaryResponse>(`${this.apiUrl}/wallet/admin/withdraw`, data);
+  }
 }

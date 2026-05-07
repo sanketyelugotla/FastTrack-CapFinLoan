@@ -1,9 +1,10 @@
+// This file is unused — routing uses AdminWalletComponent from admin-wallet.component.ts
+// Kept as an empty stub to avoid breaking the project structure.
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-admin-wallet',
+  selector: 'app-admin-wallet-stub',
   imports: [],
-  templateUrl: './admin-wallet.html',
-  styleUrl: './admin-wallet.css',
+  template: '',
 })
-export class AdminWallet {}
+export class AdminWallet { }

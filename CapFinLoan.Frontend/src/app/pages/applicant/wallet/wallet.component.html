@@ -2,8 +2,8 @@
   <!-- Header -->
   <div class="wallet-header">
     <div>
-      <h1 class="wallet-title">Platform Wallet</h1>
-      <p class="wallet-sub">Manage platform funds and application fee collection.</p>
+      <h1 class="wallet-title">My Wallet</h1>
+      <p class="wallet-sub">Your money, all in one place.</p>
     </div>
   </div>
 
@@ -11,33 +11,31 @@
   <div class="main-row">
     <!-- Balance Card -->
     <div class="balance-card">
-      <div class="bal-label">PLATFORM BALANCE</div>
+      <div class="bal-label">AVAILABLE BALANCE</div>
       <div class="bal-amount">
         <span class="bal-currency">&#8377;</span>
         <span class="bal-number">{{ walletSummary()?.balance | number: '1.0-0' }}</span>
       </div>
       <div class="bal-meta">
-        <span class="bal-type">Master Wallet</span>
-        <span class="bal-cur">{{ walletSummary()?.currency || 'INR' }}</span>
-      </div>
-      <div class="bal-last">
-        Last activity:
-        {{ (walletSummary()?.recentEntries?.[0]?.createdAtUtc | date: 'medium') || 'Never' }}
+        <span class="bal-type">{{ walletSummary()?.ownerType || 'Applicant' }} Wallet</span>
+        <span class="bal-currency-tag">{{ walletSummary()?.currency || 'INR' }}</span>
       </div>
     </div>
 
     <!-- Action Cards -->
     <div class="action-col">
+      <!-- Add Money -->
       <button class="action-card action-add" (click)="openAddMoneyModal()">
         <div class="action-icon-wrap add-icon-wrap">
-          <span class="material-symbols-outlined">add_card</span>
+          <span class="material-symbols-outlined">credit_card</span>
         </div>
         <div class="action-text">
-          <span class="action-title">Inject Funds</span>
+          <span class="action-title">Add Money</span>
           <span class="action-sub">via Razorpay</span>
         </div>
       </button>
 
+      <!-- Withdraw -->
       <button class="action-card action-withdraw" (click)="openWithdrawModal()">
         <div class="action-icon-wrap withdraw-icon-wrap">
           <span class="material-symbols-outlined">account_balance</span>
@@ -50,13 +48,38 @@
     </div>
   </div>
 
+  <!-- Fee Info Banner -->
+  <div class="fee-banner">
+    <div class="fee-banner-left">
+      <span class="material-symbols-outlined fee-icon">currency_rupee</span>
+      <div>
+        <div class="fee-title">Need a loan?</div>
+        <div class="fee-sub">
+          &#8377;{{ walletConfig().applicationFee }} application fee will be deducted from your
+          wallet.
+        </div>
+      </div>
+    </div>
+    <a routerLink="/applicant/apply" class="apply-btn">Apply for Loan &#8594;</a>
+  </div>
+
   <!-- Transactions -->
   <div class="tx-section">
-    <div class="tx-header">
-      <h3 class="tx-title">Recent Platform Transactions</h3>
+    <div class="tx-tabs">
+      <button class="tx-tab" [class.active]="txFilter() === 'all'" (click)="txFilter.set('all')">
+        All Transactions
+      </button>
+      <button
+        class="tx-tab"
+        [class.active]="txFilter() === 'debit'"
+        (click)="txFilter.set('debit')"
+      >
+        Withdrawals
+      </button>
     </div>
-    <div *ngIf="(walletSummary()?.recentEntries?.length ?? 0) > 0; else noTx" class="tx-list">
-      <div class="tx-row" *ngFor="let e of walletSummary()?.recentEntries ?? []">
+
+    <div *ngIf="filteredEntries().length > 0; else noTx" class="tx-list">
+      <div class="tx-row" *ngFor="let e of filteredEntries()">
         <div
           class="tx-dot"
           [class.tx-credit]="e.direction === 'Credit'"
@@ -88,15 +111,15 @@
     </ng-template>
   </div>
 
-  <!-- Add Money Overlay -->
+  <!-- ===== Add Money Overlay ===== -->
   <div class="overlay" *ngIf="showAddMoney()" (click)="closeModals()">
     <div class="modal" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <div class="modal-icon add-modal-icon">
-          <span class="material-symbols-outlined">add_card</span>
+          <span class="material-symbols-outlined">credit_card</span>
         </div>
         <div>
-          <div class="modal-title">Inject Platform Funds</div>
+          <div class="modal-title">Add Money</div>
           <div class="modal-sub">via Razorpay secure payment</div>
         </div>
         <button class="modal-close" (click)="closeModals()">
@@ -130,7 +153,7 @@
     </div>
   </div>
 
-  <!-- Withdraw Overlay -->
+  <!-- ===== Withdraw Overlay ===== -->
   <div class="overlay" *ngIf="showWithdraw()" (click)="closeModals()">
     <div class="modal" (click)="$event.stopPropagation()">
       <div class="modal-header">
@@ -176,7 +199,7 @@
         >
           <span class="material-symbols-outlined" *ngIf="!withdrawLoading()">south_west</span>
           <span class="material-symbols-outlined spin" *ngIf="withdrawLoading()">autorenew</span>
-          {{ withdrawLoading() ? 'Processing...' : 'Withdraw' }}
+          {{ withdrawLoading() ? 'Processing...' : 'Withdraw Funds' }}
         </button>
       </form>
     </div>
