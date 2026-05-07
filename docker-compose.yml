@@ -233,6 +233,44 @@ services:
       retries: 5
       start_period: 20s
 
+  wallet-service:
+    build:
+      context: ./CapFinLoan.Backend
+      dockerfile: WalletService/Dockerfile
+    container_name: capfinloan-wallet-service
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__CapFinLoanDb: "Server=sqlserver,1433;Database=CapFinLoan_WalletDb;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True"
+      RabbitMQ__Host: rabbitmq
+      RabbitMQ__Username: guest
+      RabbitMQ__Password: guest
+      Jwt__Key: "${Jwt__Key}"
+      Jwt__Issuer: "${Jwt__Issuer}"
+      Jwt__Audience: "${Jwt__Audience}"
+      Razorpay__KeyId: "${Razorpay__KeyId}"
+      Razorpay__KeySecret: "${Razorpay__KeySecret}"
+      Razorpay__BaseUrl: "${Razorpay__BaseUrl}"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "5027:8080"
+    networks:
+      - capfinloan-net
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "bash -c '</dev/tcp/localhost/8080' 2>/dev/null && echo OK || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
   api-gateway:
     build:
       context: ./CapFinLoan.Backend
@@ -249,6 +287,8 @@ services:
       document-service:
         condition: service_healthy
       admin-service:
+        condition: service_healthy
+      wallet-service:
         condition: service_healthy
     ports:
       - "5020:8080"

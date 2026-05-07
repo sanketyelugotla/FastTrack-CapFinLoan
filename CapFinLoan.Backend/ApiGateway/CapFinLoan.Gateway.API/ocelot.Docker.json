@@ -35,6 +35,14 @@
       "SwaggerKey": "admin"
     },
     {
+      "UpstreamPathTemplate": "/gateway/wallet/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
+      "DownstreamPathTemplate": "/api/wallet/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "wallet-service", "Port": 8080 }],
+      "SwaggerKey": "wallet"
+    },
+    {
       "UpstreamPathTemplate": "/gateway/chat",
       "UpstreamHttpMethod": ["POST"],
       "DownstreamPathTemplate": "/chat",
@@ -98,6 +106,17 @@
           "Name": "Admin Service",
           "Version": "v1",
           "Url": "http://admin-service:8080/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "wallet",
+      "TransformByOcelotConfig": true,
+      "Config": [
+        {
+          "Name": "Wallet Service",
+          "Version": "v1",
+          "Url": "http://wallet-service:8080/swagger/v1/swagger.json"
         }
       ]
     }

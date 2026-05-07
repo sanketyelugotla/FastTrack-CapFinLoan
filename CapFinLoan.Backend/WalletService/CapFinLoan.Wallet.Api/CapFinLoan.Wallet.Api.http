@@ -1,0 +1,6 @@
+@CapFinLoan.Wallet.Api_HostAddress = http://localhost:5139
+
+GET {{CapFinLoan.Wallet.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

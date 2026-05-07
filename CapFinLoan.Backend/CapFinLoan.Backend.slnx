@@ -45,7 +45,13 @@
   <Folder Name="/Shared/">
     <Project Path="Shared/CapFinLoan.Messaging.Contracts/CapFinLoan.Messaging.Contracts.csproj" />
   </Folder>
+  <Folder Name="/WalletService/">
+    <Project Path="WalletService/CapFinLoan.Wallet.Api/CapFinLoan.Wallet.Api.csproj" />
+    <Project Path="WalletService/CapFinLoan.Wallet.Application/CapFinLoan.Wallet.Application.csproj" />
+    <Project Path="WalletService/CapFinLoan.Wallet.Domain/CapFinLoan.Wallet.Domain.csproj" />
+    <Project Path="WalletService/CapFinLoan.Wallet.Infrastructure/CapFinLoan.Wallet.Infrastructure.csproj" />
+  </Folder>
   <Properties Name="Visual Studio">
-    <Property Name="StartupItem" Value="ApiGateway\CapFinLoan.Gateway.API\CapFinLoan.Gateway.API.csproj;AdminService\CapFinLoan.Admin.API\CapFinLoan.Admin.API.csproj;ApplicationService\CapFinLoan.Application.API\CapFinLoan.Application.API.csproj;AuthService\CapFinLoan.Auth.API\CapFinLoan.Auth.API.csproj;DocumentService\CapFinLoan.Document.API\CapFinLoan.Document.API.csproj;NotificationService\CapFinLoan.Notification.API\CapFinLoan.Notification.API.csproj" />
+    <Property Name="StartupItem" Value="WalletService\CapFinLoan.Wallet.Api\CapFinLoan.Wallet.Api.csproj;ApiGateway\CapFinLoan.Gateway.API\CapFinLoan.Gateway.API.csproj;AdminService\CapFinLoan.Admin.API\CapFinLoan.Admin.API.csproj;ApplicationService\CapFinLoan.Application.API\CapFinLoan.Application.API.csproj;AuthService\CapFinLoan.Auth.API\CapFinLoan.Auth.API.csproj;DocumentService\CapFinLoan.Document.API\CapFinLoan.Document.API.csproj;NotificationService\CapFinLoan.Notification.API\CapFinLoan.Notification.API.csproj" />
   </Properties>
 </Solution>

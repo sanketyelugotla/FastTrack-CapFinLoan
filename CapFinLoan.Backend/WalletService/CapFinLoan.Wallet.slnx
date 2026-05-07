@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="CapFinLoan.Wallet.Api/CapFinLoan.Wallet.Api.csproj" />
+  <Project Path="CapFinLoan.Wallet.Application/CapFinLoan.Wallet.Application.csproj" />
+  <Project Path="CapFinLoan.Wallet.Domain/CapFinLoan.Wallet.Domain.csproj" />
+  <Project Path="CapFinLoan.Wallet.Infrastructure/CapFinLoan.Wallet.Infrastructure.csproj" />
+</Solution>
