@@ -14,16 +14,28 @@ namespace CapFinLoan.Application.UnitTests.Services;
 [TestFixture]
 public class LoanApplicationServiceTests
 {
+    private Mock<IApplicantProfileRepository> _applicantProfileRepositoryMock;
     private Mock<ILoanApplicationRepository> _repositoryMock;
     private Mock<IEventPublisher> _eventPublisherMock;
+    private Mock<IWalletService> _walletServiceMock;
     private LoanApplicationService _service;
 
     [SetUp]
     public void Setup()
     {
+        _applicantProfileRepositoryMock = new Mock<IApplicantProfileRepository>();
         _repositoryMock = new Mock<ILoanApplicationRepository>();
         _eventPublisherMock = new Mock<IEventPublisher>();
-        _service = new LoanApplicationService(_repositoryMock.Object, _eventPublisherMock.Object);
+        _walletServiceMock = new Mock<IWalletService>();
+        
+        var walletOptions = Microsoft.Extensions.Options.Options.Create(new CapFinLoan.Application.Application.Options.WalletOptions { ApplicationFee = 500 });
+        
+        _service = new LoanApplicationService(
+            _applicantProfileRepositoryMock.Object, 
+            _repositoryMock.Object, 
+            _eventPublisherMock.Object, 
+            _walletServiceMock.Object, 
+            walletOptions);
     }
 
     private static LoanApplication CreateValidDraftApplication(Guid applicantId)
