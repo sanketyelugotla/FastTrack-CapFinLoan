@@ -81,3 +81,5 @@ ChatbotService/**/__pycache__/
 ChatbotService/*.pyc
 ChatbotService/.venv/
 ChatbotService/venv/
+
+questions.txt

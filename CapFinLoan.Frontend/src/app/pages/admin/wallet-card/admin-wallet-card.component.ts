@@ -30,7 +30,7 @@ import { WalletSummaryResponse } from '../../../core/models/application.models';
             </div>
             <div class="stat-item">
               <span class="stat-label">Recent Transactions</span>
-              <span class="stat-value">{{ wallet.recentEntries?.length ?? 0 }}</span>
+              <span class="stat-value">{{ wallet.recentEntries.length }}</span>
             </div>
           </div>
         </div>
